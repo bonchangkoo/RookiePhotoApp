@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
 
 import kr.co.yogiyo.rookiephotoapp.R;
@@ -58,6 +59,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_capture:
                 break;
             case R.id.btn_change_camera:
+                if (cameraKitView.getFacing() == CameraKit.FACING_FRONT) {
+                    cameraKitView.setFacing(CameraKit.FACING_BACK);
+                } else {
+                    cameraKitView.setFacing(CameraKit.FACING_FRONT);
+                }
                 break;
         }
     }
