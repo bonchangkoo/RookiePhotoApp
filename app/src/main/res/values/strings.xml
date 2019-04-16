@@ -1,9 +1,3 @@
 <resources>
     <string name="app_name">RookiePhotoApp</string>
-    <string name="text_back">x/뒤로</string>
-    <string name="text_flash">플래쉬</string>
-    <string name="text_timer">타이머</string>
-    <string name="text_warning">가로로 촬영해주세요</string>
-    <string name="text_capture">찰칵</string>
-    <string name="text_change">카메라 전환</string>
 </resources>
