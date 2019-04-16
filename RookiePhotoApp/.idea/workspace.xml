@@ -6,7 +6,14 @@
     </shared>
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="09435142-99c1-4891-88e5-65674f93840a" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="09435142-99c1-4891-88e5-65674f93840a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/kr/co/yogiyo/rookiephotoapp/camera/CameraActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/kr/co/yogiyo/rookiephotoapp/camera/CameraActivity.java" afterDir="false" />
+    </list>
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,7 +32,11 @@
     <session id="-1173055792">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+<<<<<<< HEAD
           <entry key="project.closed" value="3" />
+=======
+          <entry key="project.closed" value="2" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
           <entry key="project.open.time.0" value="3" />
           <entry key="project.opened" value="3" />
         </counts>
@@ -61,7 +72,85 @@
     </session>
   </component>
   <component name="FileEditorManager">
+<<<<<<< HEAD
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+=======
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_camera.xml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="645">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
+              <folding>
+                <element signature="e#410#429#0" expanded="true" />
+                <element signature="e#606#626#0" expanded="true" />
+                <element signature="e#795#815#0" expanded="true" />
+                <element signature="e#1255#1277#0" expanded="true" />
+                <element signature="e#1482#1504#0" expanded="true" />
+                <element signature="e#1676#1697#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/kr/co/yogiyo/rookiephotoapp/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/kr/co/yogiyo/rookiephotoapp/camera/CameraActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="138">
+              <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-28/android/os/Environment.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="239">
+              <caret line="478" column="23" selection-start-line="478" selection-start-column="23" selection-end-line="478" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="28" column="43" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" column="11" lean-forward="true" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+              <folding>
+                <element signature="e#269#287#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+          <provider editor-type-id="android-manifest" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+          <provider editor-type-id="android-designer2" />
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+    </leaf>
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -85,13 +174,21 @@
       </list>
     </option>
   </component>
+<<<<<<< HEAD
   <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+=======
+  <component name="ProjectFrameBounds" fullScreen="true">
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
     <option name="x" value="208" />
     <option name="y" value="250" />
     <option name="width" value="1440" />
     <option name="height" value="797" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+=======
+  <component name="ProjectLevelVcsManager">
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
@@ -126,13 +223,52 @@
             <path>
               <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
+<<<<<<< HEAD
               <item name="generatedJava" type="edd41e36:AndroidSourceTypeNode" />
+=======
+              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
             </path>
             <path>
               <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
+<<<<<<< HEAD
               <item name="generatedJava" type="edd41e36:AndroidSourceTypeNode" />
               <item name="rookiephotoapp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+=======
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="rookiephotoapp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="rookiephotoapp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="camera" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="rookiephotoapp" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="edit" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+            </path>
+            <path>
+              <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
             </path>
             <path>
               <item name="RookiePhotoApp" type="1abcf292:AndroidViewProjectNode" />
@@ -240,7 +376,12 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="409" y="0" width="1031" height="900" extended-state="6" />
+=======
+    <frame x="0" y="0" width="1031" height="900" extended-state="0" />
+    <editor active="true" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.30637008" />
@@ -252,7 +393,11 @@
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Run" />
       <window_info anchor="bottom" id="Debug" />
+<<<<<<< HEAD
       <window_info anchor="bottom" id="Version Control" order="0" show_stripe_button="false" />
+=======
+      <window_info anchor="bottom" id="Version Control" order="0" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
       <window_info anchor="bottom" id="Logcat" order="1" />
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Terminal" order="3" />
@@ -305,6 +450,16 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+=======
+    <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-28/android/os/Environment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="478" column="23" selection-start-line="478" selection-start-column="23" selection-end-line="478" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_preview.xml">
       <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
@@ -352,6 +507,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/kr/co/yogiyo/rookiephotoapp/camera/CameraActivity.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="333">
           <caret line="52" column="29" selection-start-line="52" selection-start-column="16" selection-end-line="52" selection-end-column="29" />
         </state>
@@ -361,6 +517,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="478" column="23" selection-start-line="478" selection-start-column="23" selection-end-line="478" selection-end-column="23" />
+=======
+        <state relative-caret-position="138">
+          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
+>>>>>>> 45293167634cd36874b268fd95fdb7ca936225a7
         </state>
       </provider>
     </entry>
