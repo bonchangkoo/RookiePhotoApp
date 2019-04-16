@@ -50,6 +50,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_back:
+                onBackPressed();
                 break;
             case R.id.btn_flash:
                 break;
@@ -60,6 +61,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_change_camera:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
