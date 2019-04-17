@@ -5,32 +5,60 @@
     android:layout_height="match_parent"
     tools:context=".camera.CameraActivity">
 
-    <Button
-        android:id="@+id/btn_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_back" />
-
-    <Button
-        android:id="@+id/btn_flash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/text_flash" />
-
-    <Button
-        android:id="@+id/btn_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:text="@string/text_timer" />
-
     <com.camerakit.CameraKitView
         android:id="@+id/camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:keepScreenOn="true" />
+
+    <FrameLayout
+        android:id="@+id/frame_control_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_back" />
+
+        <Button
+            android:id="@+id/btn_flash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/text_flash" />
+
+        <Button
+            android:id="@+id/btn_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:text="@string/text_timer" />
+
+        <Button
+            android:id="@+id/btn_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="@string/text_capture" />
+
+        <Button
+            android:id="@+id/btn_change_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="@string/text_change" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_timer_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:textColor="@color/color_FFFFFF"
+        android:textSize="40sp" />
 
     <TextView
         android:id="@+id/tv_warning"
@@ -41,20 +69,5 @@
         android:text="@string/text_warning"
         android:textSize="40sp"
         android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/btn_capture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:text="@string/text_capture" />
-
-    <Button
-        android:id="@+id/btn_change_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:text="@string/text_change" />
-
 
 </FrameLayout>
