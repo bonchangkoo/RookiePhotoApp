@@ -1,5 +1,6 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,6 +11,8 @@ import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
 
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
+import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -51,6 +54,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_back:
+                onBackPressed();
                 break;
             case R.id.btn_flash:
                 if (cameraKitView.getFlash() == CameraKit.FLASH_OFF) {
@@ -62,10 +66,25 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.btn_timer:
                 break;
             case R.id.btn_capture:
+                cameraKitView.captureImage(new CameraKitView.ImageCallback() {
+                    @Override
+                    public void onImage(CameraKitView cameraKitView, byte[] bytes) {
+                        ResultHolder.dispose();
+                        ResultHolder.setImage(bytes);
+                        Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
+                        startActivity(intent);
+                    }
+                });
                 break;
             case R.id.btn_change_camera:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
