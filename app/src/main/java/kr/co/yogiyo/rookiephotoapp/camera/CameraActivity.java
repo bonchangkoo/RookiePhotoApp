@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
 
 import kr.co.yogiyo.rookiephotoapp.R;
@@ -56,6 +57,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 onBackPressed();
                 break;
             case R.id.btn_flash:
+                if (cameraKitView.getFlash() == CameraKit.FLASH_OFF) {
+                    cameraKitView.setFlash(CameraKit.FLASH_ON);
+                } else {
+                    cameraKitView.setFlash(CameraKit.FLASH_OFF);
+                }
                 break;
             case R.id.btn_timer:
                 break;
