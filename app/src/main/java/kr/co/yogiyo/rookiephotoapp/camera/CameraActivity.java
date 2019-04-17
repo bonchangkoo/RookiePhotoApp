@@ -1,6 +1,11 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -14,7 +19,11 @@ import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder;
 
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener, SensorEventListener {
+
+
+    private SensorManager verticalRecognitionSensorManager;
+    private Sensor verticalRecognitionSensor;
 
     private CameraKitView cameraKitView;
     private Button backButton;
@@ -29,6 +38,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        verticalRecognitionSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        verticalRecognitionSensor = verticalRecognitionSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
 
         initView();
     }
@@ -102,6 +115,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         cameraKitView.onResume();
+        verticalRecognitionSensorManager.registerListener(this, verticalRecognitionSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -123,4 +137,25 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                float x = event.values[0];
+                float y = event.values[1];
+
+                if ((x > 5 && y < 5) || (x < -5 && y > -5)) {
+                    wariningTextView.setVisibility(View.INVISIBLE);
+                } else if ((x > -5 && y > 5) || (x < 5 && y < -5)) {
+                    wariningTextView.setVisibility(View.VISIBLE);
+                }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
