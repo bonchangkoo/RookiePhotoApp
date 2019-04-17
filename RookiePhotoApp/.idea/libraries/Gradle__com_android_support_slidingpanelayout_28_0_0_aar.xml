@@ -5,8 +5,13 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/c9f6833461d2263c2169e43ded767ab7/res" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/c9f6833461d2263c2169e43ded767ab7/jars/classes.jar!/" />
 =======
+<<<<<<< HEAD
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/c9f6833461d2263c2169e43ded767ab7/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/c9f6833461d2263c2169e43ded767ab7/jars/classes.jar!/" />
+=======
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/3910485a7fec509e5d4f361ee70560a0/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/3910485a7fec509e5d4f361ee70560a0/res" />
+>>>>>>> develop
 >>>>>>> develop
     </CLASSES>
     <JAVADOC />

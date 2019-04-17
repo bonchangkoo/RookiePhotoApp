@@ -5,8 +5,13 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/45c63a8013c0a8a9c2fec3fe8601499f/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/45c63a8013c0a8a9c2fec3fe8601499f/res" />
 =======
+<<<<<<< HEAD
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/45c63a8013c0a8a9c2fec3fe8601499f/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/45c63a8013c0a8a9c2fec3fe8601499f/res" />
+=======
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/5aef54c30b8b04798dd595bee198e62a/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/5aef54c30b8b04798dd595bee198e62a/res" />
+>>>>>>> develop
 >>>>>>> develop
     </CLASSES>
     <JAVADOC />

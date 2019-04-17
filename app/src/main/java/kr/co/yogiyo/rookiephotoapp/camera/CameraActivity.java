@@ -77,6 +77,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 });
                 break;
             case R.id.btn_change_camera:
+                if (cameraKitView.getFacing() == CameraKit.FACING_FRONT) {
+                    cameraKitView.setFacing(CameraKit.FACING_BACK);
+                } else {
+                    cameraKitView.setFacing(CameraKit.FACING_FRONT);
+                }
                 break;
         }
     }

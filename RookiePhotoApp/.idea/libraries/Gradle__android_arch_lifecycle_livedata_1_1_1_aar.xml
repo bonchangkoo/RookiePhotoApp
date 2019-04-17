@@ -5,8 +5,13 @@
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/d89d38687d0dd7d80296e04764079351/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/d89d38687d0dd7d80296e04764079351/res" />
 =======
+<<<<<<< HEAD
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/d89d38687d0dd7d80296e04764079351/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/d89d38687d0dd7d80296e04764079351/res" />
+=======
       <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/65e6e8210c26b9d8803be65f23a6324d/res" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/65e6e8210c26b9d8803be65f23a6324d/jars/classes.jar!/" />
+>>>>>>> develop
 >>>>>>> develop
     </CLASSES>
     <JAVADOC />
