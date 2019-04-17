@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder;
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener, SensorEventListener {
 
+    private static final float STANDARD_SENSOR_LOACTION = 5.0f;
 
     private SensorManager verticalRecognitionSensorManager;
     private Sensor verticalRecognitionSensor;
@@ -115,7 +117,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         cameraKitView.onResume();
-        verticalRecognitionSensorManager.registerListener(this, verticalRecognitionSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        verticalRecognitionSensorManager.registerListener(this, verticalRecognitionSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -145,9 +147,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 float x = event.values[0];
                 float y = event.values[1];
 
-                if ((x > 5 && y < 5) || (x < -5 && y > -5)) {
+                if ((x > STANDARD_SENSOR_LOACTION && y < STANDARD_SENSOR_LOACTION) || (x < -STANDARD_SENSOR_LOACTION && y > -STANDARD_SENSOR_LOACTION)) {
                     wariningTextView.setVisibility(View.INVISIBLE);
-                } else if ((x > -5 && y > 5) || (x < 5 && y < -5)) {
+                } else if ((x > -STANDARD_SENSOR_LOACTION && y > STANDARD_SENSOR_LOACTION) || (x < STANDARD_SENSOR_LOACTION && y < -STANDARD_SENSOR_LOACTION)) {
                     wariningTextView.setVisibility(View.VISIBLE);
                 }
         }
