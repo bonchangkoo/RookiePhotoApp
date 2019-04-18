@@ -95,7 +95,16 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 setCaptureDelayNext();
                 break;
             case R.id.btn_capture:
-                capture();
+                cameraKitView.captureImage(new CameraKitView.ImageCallback() {
+                    @Override
+                    public void onImage(CameraKitView cameraKitView, byte[] bytes) {
+                        ResultHolder.dispose();
+                        ResultHolder.setImage(bytes);
+                        Intent startPreviewActivityIntent = new Intent(CameraActivity.this, PreviewActivity.class);
+                        startActivity(startPreviewActivityIntent);
+                    }
+                });
+
                 break;
             case R.id.btn_change_camera:
                 if (cameraKitView.getFacing() == CameraKit.FACING_FRONT) {
