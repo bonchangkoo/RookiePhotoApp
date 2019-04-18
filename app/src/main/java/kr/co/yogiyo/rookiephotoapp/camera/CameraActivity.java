@@ -71,8 +71,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                     public void onImage(CameraKitView cameraKitView, byte[] bytes) {
                         ResultHolder.dispose();
                         ResultHolder.setImage(bytes);
-                        Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
-                        startActivity(intent);
+                        Intent startPreviewActivityIntent = new Intent(CameraActivity.this, PreviewActivity.class);
+                        startActivity(startPreviewActivityIntent);
                     }
                 });
                 break;
