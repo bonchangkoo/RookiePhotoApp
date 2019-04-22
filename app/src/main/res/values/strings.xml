@@ -6,4 +6,6 @@
     <string name="text_warning">가로로 촬영해주세요</string>
     <string name="text_capture">찰칵</string>
     <string name="text_change">카메라 전환</string>
+    <string name="text_timer_message_format">%d</string>
+    <string name="text_timer_button_text_format">%d 초</string>
 </resources>
