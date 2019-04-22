@@ -213,6 +213,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         --captureTimer;
         if (captureTimer == 0) {
             captureNow();
+            finishDelayCapture();
         } else if (captureTimer > 0) {
             updateTimerMessage();
             timerHandler.postDelayed(makeDecrementTimerFunction(captureID), 1000);
