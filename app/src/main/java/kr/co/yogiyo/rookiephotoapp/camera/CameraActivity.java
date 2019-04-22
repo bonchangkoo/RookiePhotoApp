@@ -109,11 +109,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (timerHandler != null) {
+        if (timerHandler.hasMessages(0)) {
             finishDelayCapture();
         } else {
-            finish();
+            super.onBackPressed();
         }
     }
 
@@ -127,13 +126,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         cameraKitView.onResume();
-        setControlButtonsVisibility(true);
     }
 
     @Override
     protected void onPause() {
         cameraKitView.onPause();
-        if (timerHandler != null) {
+        if (timerHandler.hasMessages(0)) {
             finishDelayCapture();
         }
         super.onPause();
@@ -184,8 +182,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void updateDelayButton() {
         if (captureDelay==0) {
             timerButton.setText(getString(R.string.text_timer));
-        }
-        else {
+        } else {
             String timerButtonTextFormat = getString(R.string.text_timer_button_text_format);
             timerButton.setText(String.format(timerButtonTextFormat, captureDelay));
         }
@@ -232,8 +229,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void finishDelayCapture() {
-        timerHandler.removeMessages(0);
+        timerHandler.removeCallbacksAndMessages(null);
         timerMessageTextView.setVisibility(View.GONE);
+        setControlButtonsVisibility(true);
     }
 
 }
