@@ -20,12 +20,7 @@ import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder;
 
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener, SensorEventListener {
-
-    private static final float STANDARD_SENSOR_LOACTION = 5.0f;
-
-    private SensorManager verticalRecognitionSensorManager;
-    private Sensor verticalRecognitionSensor;
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
     private CameraKitView cameraKitView;
     private Button backButton;
@@ -33,17 +28,12 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button timerButton;
     private Button captureButton;
     private Button changeCameraButton;
-    private TextView wariningTextView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-
-        verticalRecognitionSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        verticalRecognitionSensor = verticalRecognitionSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
 
         initView();
     }
@@ -55,7 +45,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerButton = findViewById(R.id.btn_timer);
         captureButton = findViewById(R.id.btn_capture);
         changeCameraButton = findViewById(R.id.btn_change_camera);
-        wariningTextView = findViewById(R.id.tv_warning);
 
         cameraKitView.setOnClickListener(this);
         backButton.setOnClickListener(this);
@@ -117,7 +106,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         cameraKitView.onResume();
-        verticalRecognitionSensorManager.registerListener(this, verticalRecognitionSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
@@ -138,26 +126,4 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                float x = event.values[0];
-                float y = event.values[1];
-
-                if ((x > STANDARD_SENSOR_LOACTION && y < STANDARD_SENSOR_LOACTION) || (x < -STANDARD_SENSOR_LOACTION && y > -STANDARD_SENSOR_LOACTION)) {
-                    wariningTextView.setVisibility(View.INVISIBLE);
-                } else if ((x > -STANDARD_SENSOR_LOACTION && y > STANDARD_SENSOR_LOACTION) || (x < STANDARD_SENSOR_LOACTION && y < -STANDARD_SENSOR_LOACTION)) {
-                    wariningTextView.setVisibility(View.VISIBLE);
-                }
-        }
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 }
