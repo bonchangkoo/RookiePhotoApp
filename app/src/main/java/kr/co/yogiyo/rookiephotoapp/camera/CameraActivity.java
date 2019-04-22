@@ -1,8 +1,14 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,7 +28,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button timerButton;
     private Button captureButton;
     private Button changeCameraButton;
-    private TextView wariningTextView;
 
 
     @Override
@@ -40,7 +45,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerButton = findViewById(R.id.btn_timer);
         captureButton = findViewById(R.id.btn_capture);
         changeCameraButton = findViewById(R.id.btn_change_camera);
-        wariningTextView = findViewById(R.id.tv_warning);
 
         cameraKitView.setOnClickListener(this);
         backButton.setOnClickListener(this);
@@ -121,6 +125,5 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
 
 }
