@@ -6,8 +6,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.yalantis.ucrop.UCrop;
@@ -20,10 +22,12 @@ import kr.co.yogiyo.rookiephotoapp.R;
 
 public class EditPhotoActivity extends BaseActivity {
 
+    private static final String TAG = "EditPhotoActivity";
+
     public static final int EDIT_SELECTED_PHOTO = 0;
     public static final int EDIT_CAPTURED_PHOTO = 1;
 
-    private int requestMode = 1;
+    private static final int REQUEST_PICK_GALLERY = 123;
 
     private static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
 
@@ -34,17 +38,20 @@ public class EditPhotoActivity extends BaseActivity {
 
         Intent intent = getIntent();
 
-        int intentNumber = intent.getIntExtra("IntentNumber", EDIT_SELECTED_PHOTO);
+        // 갤러리에서 가져온 사진과 찍은 사진을 구별하기 위한 Intent
+        int photoCategoryNumber = intent.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
 
-        if (intentNumber == EDIT_SELECTED_PHOTO) { // 0 이 갤러리 선택
-            // 1) 갤러리에서 사진 선택
+        if (photoCategoryNumber == EDIT_SELECTED_PHOTO) { // 갤러리에서 사진 선택
             pickFromGallery();
-        } else if (intentNumber == EDIT_CAPTURED_PHOTO) {
-            // 2) 찍은 사진을 편집
-            Uri uri = intent.getParcelableExtra("Preview");
-            startCrop(uri);
-        }
+        } else if (photoCategoryNumber == EDIT_CAPTURED_PHOTO) {  // 찍은 사진을 편집
+            Uri capturedPhotoUri = intent.getParcelableExtra(getString(R.string.capture_photo_uri));
 
+            if (capturedPhotoUri != null) {
+                startCrop(capturedPhotoUri);
+            } else {
+                Toast.makeText(this, getString(R.string.dont_load_captured_photo), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -52,22 +59,32 @@ public class EditPhotoActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == requestMode) {
+            if (requestCode == REQUEST_PICK_GALLERY) {
                 final Uri selectedUri = data.getData();
                 if (selectedUri != null) {
                     startCrop(selectedUri);
                 } else {
-                    Toast.makeText(EditPhotoActivity.this, R.string.toast_cannot_retrieve_selected_image, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.toast_cannot_retrieve_selected_image, Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == UCrop.REQUEST_CROP) {
                 // 편집 완료 후 이동할 화면
-                //handleCropResult(data);
+                // handleCropResult(data);
             }
         }
         if (resultCode == UCrop.RESULT_ERROR) {
-            //handleCropError(data);
+            handleCropError(data);
         }
+    }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+    private void handleCropError(@NonNull Intent result) {
+        final Throwable cropError = UCrop.getError(result);
+        if (cropError != null) {
+            Log.e(TAG, "handleCropError: ", cropError);
+            Toast.makeText(EditPhotoActivity.this, cropError.getMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(EditPhotoActivity.this, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     // 갤러리에서 이미지 선택 : EDIT_SELECTED_PHOTO
@@ -78,7 +95,7 @@ public class EditPhotoActivity extends BaseActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                     REQUEST_STORAGE_READ_ACCESS_PERMISSION);
-        } else {
+        } else { // 권한 허용 후
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
                     .setType("image/*")
                     .addCategory(Intent.CATEGORY_OPENABLE);
@@ -87,8 +104,8 @@ public class EditPhotoActivity extends BaseActivity {
                 String[] mimeTypes = {"image/jpeg", "image/png"};
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
             }
-
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.label_select_picture)), requestMode);
+            // 갤러리 이동
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.label_select_picture)), REQUEST_PICK_GALLERY);
         }
     }
 
@@ -105,6 +122,5 @@ public class EditPhotoActivity extends BaseActivity {
 
         uCrop.start(EditPhotoActivity.this);
     }
-
 }
 
