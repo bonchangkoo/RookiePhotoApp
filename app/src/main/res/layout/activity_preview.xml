@@ -25,17 +25,18 @@
             android:id="@+id/btn_back_capture"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="뒤로"
-            android:textSize="30dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="@string/text_preview_back"
+            android:textSize="30sp"
+            tools:ignore="NestedWeights" />
 
         <Button
             android:id="@+id/btn_edit"
             android:layout_width="0dp"
-            android:text="편집"
-            android:textSize="30dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="@string/text_edit"
+            android:textSize="30sp" />
 
     </LinearLayout>
 

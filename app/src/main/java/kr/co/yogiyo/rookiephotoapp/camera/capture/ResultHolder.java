@@ -1,10 +1,6 @@
 package kr.co.yogiyo.rookiephotoapp.camera.capture;
 
-import android.util.Size;
-
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
 
 public class ResultHolder {
 
