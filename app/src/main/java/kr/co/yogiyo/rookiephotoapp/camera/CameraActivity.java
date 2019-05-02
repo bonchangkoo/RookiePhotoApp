@@ -1,16 +1,10 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,11 +12,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.camerakit.CameraKit;
-import com.camerakit.CameraKitView;
 import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraUtils;
+import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.Facing;
 import com.otaliastudios.cameraview.Flash;
 import com.otaliastudios.cameraview.Gesture;
@@ -49,7 +42,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private int captureDelay;
     private int flashType;
 
-    private CameraKitView cameraKitView;
+    private CameraView cameraView;
     private FrameLayout controlButtonsFrameLayout;
     private Button backButton;
     private Button flashButton;
@@ -70,7 +63,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
-        cameraKitView = findViewById(R.id.camera);
+        cameraView = findViewById(R.id.camera);
         controlButtonsFrameLayout = findViewById(R.id.frame_control_buttons);
         backButton = findViewById(R.id.btn_back);
         flashButton = findViewById(R.id.btn_flash);
@@ -80,16 +73,18 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerMessageTextView = findViewById(R.id.text_timer_message);
         darkScreenFrame = findViewById(R.id.frame_dark_screen);
 
-        cameraKitView.setOnClickListener(this);
         backButton.setOnClickListener(this);
         flashButton.setOnClickListener(this);
         timerButton.setOnClickListener(this);
         captureButton.setOnClickListener(this);
         changeCameraButton.setOnClickListener(this);
 
+        initCameraView();
+
         updateDelayButton();
     }
 
+    private void initCameraView() {
 //        cameraView.setLifecycleOwner(this);
         cameraView.addCameraListener(new CameraListener() {
             @Override
@@ -116,6 +111,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         SizeSelector ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0);
         SizeSelector result = SizeSelectors.or(ratio, SizeSelectors.biggest());
         cameraView.setPictureSize(result);
+    }
+
     private void initialize() {
         timerHandler = new Handler();
         captureTimer = 0;
@@ -156,46 +153,37 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onStart() {
         super.onStart();
-        cameraKitView.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cameraKitView.onResume();
+        cameraView.start();
     }
 
     @Override
     protected void onPause() {
-        cameraKitView.onPause();
+        super.onPause();
+        cameraView.stop();
         if (timerHandler.hasMessages(0)) {
             finishDelayCapture();
         }
-        super.onPause();
     }
 
     @Override
     protected void onStop() {
-        cameraKitView.onStop();
         super.onStop();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraView.destroy();
     }
 
     private void captureNow() {
-        cameraKitView.captureImage(new CameraKitView.ImageCallback() {
-            @Override
-            public void onImage(CameraKitView cameraKitView, byte[] bytes) {
-                ResultHolder.dispose();
-                ResultHolder.setImage(bytes);
-                Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
-                startActivity(intent);
-            }
-        });
+        cameraView.capturePicture();
+//        cameraView.captureSnapshot();
         startBlinkAnimation();
     }
 
