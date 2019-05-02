@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
+import com.otaliastudios.cameraview.Flash;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private int captureTimer;
     private int currentCaptureID;
     private int captureDelay;
+    private int flashType;
 
     private CameraKitView cameraKitView;
     private FrameLayout controlButtonsFrameLayout;
@@ -93,11 +95,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 onBackPressed();
                 break;
             case R.id.btn_flash:
-                if (cameraKitView.getFlash() == CameraKit.FLASH_OFF) {
-                    cameraKitView.setFlash(CameraKit.FLASH_ON);
-                } else {
-                    cameraKitView.setFlash(CameraKit.FLASH_OFF);
-                }
+                setFlashNext();
                 break;
             case R.id.btn_timer:
                 setCaptureDelayNext();
@@ -242,6 +240,35 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerHandler.removeCallbacksAndMessages(null);
         timerMessageTextView.setVisibility(View.GONE);
         setControlButtonsVisibility(true);
+    }
+
+    private void setFlashNext() {
+        flashType = (flashType + 1) % Flash.values().length;
+        switch (flashType) {
+            case 0:
+                cameraView.setFlash(Flash.OFF);
+                updateFlashButton("");
+                break;
+            case 1:
+                cameraView.setFlash(Flash.ON);
+                updateFlashButton(Flash.ON.name());
+                break;
+            case 2:
+                cameraView.setFlash(Flash.AUTO);
+                updateFlashButton(Flash.AUTO.name());
+                break;
+            case 3:
+                cameraView.setFlash(Flash.TORCH);
+                updateFlashButton(Flash.TORCH.name());
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateFlashButton(String flashTypeString) {
+        String flashButtonTextFormat = getString(R.string.text_flash_button_text_format);
+        flashButton.setText(String.format(flashButtonTextFormat, flashTypeString));
     }
     private void startBlinkAnimation() {
         darkScreenFrame.setVisibility(View.VISIBLE);
