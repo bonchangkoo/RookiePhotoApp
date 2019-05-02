@@ -20,10 +20,15 @@ import android.widget.TextView;
 
 import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
+import com.otaliastudios.cameraview.AspectRatio;
 import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraUtils;
 import com.otaliastudios.cameraview.Facing;
 import com.otaliastudios.cameraview.Flash;
+import com.otaliastudios.cameraview.Gesture;
+import com.otaliastudios.cameraview.GestureAction;
+import com.otaliastudios.cameraview.SizeSelector;
+import com.otaliastudios.cameraview.SizeSelectors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -106,6 +111,11 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         });
+        cameraView.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER);
+
+        SizeSelector ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0);
+        SizeSelector result = SizeSelectors.or(ratio, SizeSelectors.biggest());
+        cameraView.setPictureSize(result);
     private void initialize() {
         timerHandler = new Handler();
         captureTimer = 0;
