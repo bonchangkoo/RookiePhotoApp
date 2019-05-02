@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
+import com.otaliastudios.cameraview.Facing;
 import com.otaliastudios.cameraview.Flash;
 
 import java.util.Arrays;
@@ -104,11 +105,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 capture();
                 break;
             case R.id.btn_change_camera:
-                if (cameraKitView.getFacing() == CameraKit.FACING_FRONT) {
-                    cameraKitView.setFacing(CameraKit.FACING_BACK);
-                } else {
-                    cameraKitView.setFacing(CameraKit.FACING_FRONT);
-                }
+                changeFacing();
                 break;
         }
     }
@@ -270,6 +267,22 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         String flashButtonTextFormat = getString(R.string.text_flash_button_text_format);
         flashButton.setText(String.format(flashButtonTextFormat, flashTypeString));
     }
+
+    private void changeFacing() {
+        if (cameraView.getFacing() == Facing.FRONT) {
+            cameraView.setFacing(Facing.BACK);
+            updateFacingButton(Facing.BACK.name());
+        } else {
+            cameraView.setFacing(Facing.FRONT);
+            updateFacingButton(Facing.FRONT.name());
+        }
+    }
+
+    private void updateFacingButton(String facingTypeString) {
+        String facingButtonTextFormat = getString(R.string.text_facing_button_text_format);
+        changeCameraButton.setText(String.format(facingButtonTextFormat, facingTypeString));
+    }
+
     private void startBlinkAnimation() {
         darkScreenFrame.setVisibility(View.VISIBLE);
 
