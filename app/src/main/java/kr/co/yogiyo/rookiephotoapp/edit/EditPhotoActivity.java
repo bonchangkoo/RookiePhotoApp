@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,17 +18,17 @@ import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
 
-import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
 
-public class EditPhotoActivity extends BaseActivity {
+public class EditPhotoActivity extends AppCompatActivity {
 
-    private static final String TAG = "EditPhotoActivity";
+    private static final String TAG = EditPhotoActivity.class.getSimpleName();
 
     public static final int EDIT_SELECTED_PHOTO = 0;
     public static final int EDIT_CAPTURED_PHOTO = 1;
 
     private static final int REQUEST_PICK_GALLERY = 123;
+    private static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
 
     private static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
 
@@ -115,7 +116,7 @@ public class EditPhotoActivity extends BaseActivity {
 
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 
-        // Crop Gestures는 SCALE만 가능하게
+        // Crop Gestures는 SCALE만 가능하게 옵션 설정
         UCrop.Options options = new UCrop.Options();
         options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.SCALE);
         uCrop.withOptions(options);

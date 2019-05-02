@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_edit_photo:
                 // 사진 선택
                 Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
-                doStartEditPhotoActivityIntent.putExtra("IntentNumber", EditPhotoActivity.EDIT_SELECTED_PHOTO);
+                doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
                 startActivity(doStartEditPhotoActivityIntent);
                 break;
         }
