@@ -6,6 +6,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 
 import com.camerakit.CameraKit;
 import com.camerakit.CameraKitView;
+import com.otaliastudios.cameraview.CameraListener;
+import com.otaliastudios.cameraview.CameraUtils;
 import com.otaliastudios.cameraview.Facing;
 import com.otaliastudios.cameraview.Flash;
 
@@ -82,6 +85,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         updateDelayButton();
     }
 
+//        cameraView.setLifecycleOwner(this);
+        cameraView.addCameraListener(new CameraListener() {
+            @Override
+            public void onPictureTaken(byte[] jpeg) {
+                if (jpeg != null) {
+                    CameraUtils.decodeBitmap(jpeg, new CameraUtils.BitmapCallback() {
+                        @Override
+                        public void onBitmapReady(Bitmap bitmap) {
+                            if (bitmap == null) {
+                                finish();
+                                return;
+                            }
+                            ResultHolder.dispose();
+                            ResultHolder.setBitmap(bitmap);
+                            Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }
+        });
     private void initialize() {
         timerHandler = new Handler();
         captureTimer = 0;
