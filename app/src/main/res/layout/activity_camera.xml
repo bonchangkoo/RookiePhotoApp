@@ -60,4 +60,11 @@
         android:textColor="@color/color_FFFFFF"
         android:textSize="40sp" />
 
+    <FrameLayout
+        android:id="@+id/frame_dark_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_BF424242"
+        android:visibility="gone" />
+
 </FrameLayout>

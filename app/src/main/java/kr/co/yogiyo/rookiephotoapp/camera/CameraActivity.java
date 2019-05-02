@@ -11,6 +11,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -44,7 +46,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button captureButton;
     private Button changeCameraButton;
     private TextView timerMessageTextView;
-
+    private FrameLayout darkScreenFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         captureButton = findViewById(R.id.btn_capture);
         changeCameraButton = findViewById(R.id.btn_change_camera);
         timerMessageTextView = findViewById(R.id.text_timer_message);
+        darkScreenFrame = findViewById(R.id.frame_dark_screen);
 
         cameraKitView.setOnClickListener(this);
         backButton.setOnClickListener(this);
@@ -164,6 +167,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
             }
         });
+        startBlinkAnimation();
     }
 
     private void capture() {
@@ -238,5 +242,27 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerHandler.removeCallbacksAndMessages(null);
         timerMessageTextView.setVisibility(View.GONE);
         setControlButtonsVisibility(true);
+    }
+    private void startBlinkAnimation() {
+        darkScreenFrame.setVisibility(View.VISIBLE);
+
+        Animation blinkAnimation = AnimationUtils.loadAnimation(CameraActivity.this, R.anim.blink);
+        blinkAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                darkScreenFrame.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        darkScreenFrame.startAnimation(blinkAnimation);
     }
 }
