@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewmodel"
+            type="kr.co.yogiyo.rookiephotoapp.camera.CameraV2ViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".camera.CameraV2Activity">
+
+        <com.otaliastudios.cameraview.CameraView
+            android:id="@+id/camera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:keepScreenOn="true" />
+
+        <FrameLayout
+            android:id="@+id/frame_control_buttons"
+            android:visibility="@{viewmodel.frameControlButtonVisibility}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_back" />
+
+            <Button
+                android:id="@+id/btn_flash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@{viewmodel.flashButtonLabel}" />
+
+            <Button
+                android:id="@+id/btn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:text="@{viewmodel.delayButtonLabel}" />
+
+            <Button
+                android:id="@+id/btn_capture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:onClick="@{viewmodel::onClickCaptureButton}"
+                android:text="@string/text_capture" />
+
+            <Button
+                android:id="@+id/btn_change_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:text="@{viewmodel.facingButtonLabel}" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_timer_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:textColor="@color/color_FFFFFF"
+            android:visibility="@{viewmodel.delayVisibility}"
+            android:text="@{String.valueOf(viewmodel.delayMessageLabel)}"
+            android:textSize="40sp" />
+
+        <FrameLayout
+            android:id="@+id/frame_dark_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_BF424242"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</layout>
