@@ -85,7 +85,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initCameraView() {
-//        cameraView.setLifecycleOwner(this);
         cameraView.addCameraListener(new CameraListener() {
             @Override
             public void onPictureTaken(byte[] jpeg) {
@@ -183,7 +182,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     private void captureNow() {
         cameraView.capturePicture();
-//        cameraView.captureSnapshot();
         startBlinkAnimation();
     }
 
