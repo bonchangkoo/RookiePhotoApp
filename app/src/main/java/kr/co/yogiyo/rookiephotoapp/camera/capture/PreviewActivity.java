@@ -1,11 +1,11 @@
 package kr.co.yogiyo.rookiephotoapp.camera.capture;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import kr.co.yogiyo.rookiephotoapp.R;
 
@@ -20,21 +20,17 @@ public class PreviewActivity extends AppCompatActivity {
 
         PreviewImageView = findViewById(R.id.preview_image);
 
-        byte[] jpeg = ResultHolder.getImage();
+        Bitmap bitmap = ResultHolder.getBitmap();
 
-        if (jpeg != null) {
-            PreviewImageView.setVisibility(View.VISIBLE);
+        PreviewImageView.setVisibility(View.VISIBLE);
+        PreviewImageView.setImageBitmap(bitmap);
 
-            Bitmap bitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
+        Toast.makeText(this, String.format("width: %d, height: %d \nsize : %f MB",
+                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)),
+                Toast.LENGTH_SHORT).show();
+    }
 
-            if (bitmap == null) {
-                finish();
-                return;
-            }
-
-            PreviewImageView.setImageBitmap(bitmap);
-        }
-
-
+    private static float getApproximateFileMegabytes(Bitmap bitmap) {
+        return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024 / 1024;
     }
 }
