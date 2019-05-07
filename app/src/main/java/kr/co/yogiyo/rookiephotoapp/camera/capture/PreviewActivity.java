@@ -39,7 +39,7 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
         previewImageView.setImageBitmap(capturedImageBitmap);
       
         showToast(String.format("width: %d, height: %d \nsize : %f MB",
-                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)));
+                capturedImageBitmap.getWidth(), capturedImageBitmap.getHeight(), getApproximateFileMegabytes(capturedImageBitmap)));
 
     }
 
