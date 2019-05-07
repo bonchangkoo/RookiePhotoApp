@@ -31,13 +31,13 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private void initImageView() {
         previewImageView = findViewById(R.id.preview_image);
 
-        Bitmap bitmap = ResultHolder.getBitmap();
-      
+        capturedImageBitmap = ResultHolder.getBitmap();
+
         previewImageView.setVisibility(View.VISIBLE);
-        previewImageView.setImageBitmap(bitmap); 
-      
+        previewImageView.setImageBitmap(capturedImageBitmap);
+
         Toast.makeText(this, String.format("width: %d, height: %d \nsize : %f MB",
-                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)),
+                capturedImageBitmap.getWidth(), capturedImageBitmap.getHeight(), getApproximateFileMegabytes(capturedImageBitmap)),
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -47,7 +47,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         backButton.setOnClickListener(this);
         editPhotoButton.setOnClickListener(this);
     }
-  
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -58,6 +58,8 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 // 편집화면으로 이동
                 break;
         }
+
+    }
 
     private static float getApproximateFileMegabytes(Bitmap bitmap) {
         return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024 / 1024;
