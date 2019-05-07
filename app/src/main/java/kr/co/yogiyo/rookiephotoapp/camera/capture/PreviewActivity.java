@@ -2,11 +2,9 @@ package kr.co.yogiyo.rookiephotoapp.camera.capture;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
@@ -37,7 +35,7 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
 
         previewImageView.setVisibility(View.VISIBLE);
         previewImageView.setImageBitmap(capturedImageBitmap);
-      
+
         showToast(String.format("width: %d, height: %d \nsize : %f MB",
                 capturedImageBitmap.getWidth(), capturedImageBitmap.getHeight(), getApproximateFileMegabytes(capturedImageBitmap)));
 
