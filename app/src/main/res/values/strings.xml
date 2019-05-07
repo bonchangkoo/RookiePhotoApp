@@ -22,6 +22,9 @@
     <string name="dont_load_captured_photo">사진을 로드할 수 없습니다</string>
     <string name="toast_unexpected_error">예상치못한 오류</string>
 
+    <!--activity_edit_result.xml-->
+    <string name="format_crop_result_d_d">Crop Result (%1$dx%2$d)</string>
+
     <string name="text_preview_back">뒤로</string>
     <string name="text_edit">편집</string>
 
