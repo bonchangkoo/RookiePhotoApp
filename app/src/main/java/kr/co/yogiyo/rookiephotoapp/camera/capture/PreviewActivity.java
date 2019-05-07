@@ -48,6 +48,15 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         editPhotoButton.setOnClickListener(this);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (capturedImageBitmap != null && !capturedImageBitmap.isRecycled()) {
+            capturedImageBitmap.recycle();
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
