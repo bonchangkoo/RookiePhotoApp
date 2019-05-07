@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.support.v7.app.AppCompatActivity;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;

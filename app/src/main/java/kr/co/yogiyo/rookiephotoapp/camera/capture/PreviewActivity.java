@@ -1,12 +1,12 @@
 package kr.co.yogiyo.rookiephotoapp.camera.capture;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import kr.co.yogiyo.rookiephotoapp.R;
 
@@ -31,20 +31,14 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     private void initImageView() {
         previewImageView = findViewById(R.id.preview_image);
 
-        byte[] jpeg = ResultHolder.getImage();
-
-        if (jpeg != null) {
-            previewImageView.setVisibility(View.VISIBLE);
-
-            capturedImageBitmap = BitmapFactory.decodeByteArray(jpeg, 0, jpeg.length);
-
-            if (capturedImageBitmap == null) {
-                finish();
-                return;
-            }
-
-            previewImageView.setImageBitmap(capturedImageBitmap);
-        }
+        Bitmap bitmap = ResultHolder.getBitmap();
+      
+        previewImageView.setVisibility(View.VISIBLE);
+        previewImageView.setImageBitmap(bitmap); 
+      
+        Toast.makeText(this, String.format("width: %d, height: %d \nsize : %f MB",
+                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)),
+                Toast.LENGTH_SHORT).show();
     }
 
     private void initView() {
@@ -53,8 +47,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
         backButton.setOnClickListener(this);
         editPhotoButton.setOnClickListener(this);
     }
-
-
+  
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -65,6 +58,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
                 // 편집화면으로 이동
                 break;
         }
+
+    private static float getApproximateFileMegabytes(Bitmap bitmap) {
+        return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024 / 1024;
+
     }
 
 }

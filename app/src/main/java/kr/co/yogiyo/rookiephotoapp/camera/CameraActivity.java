@@ -1,16 +1,29 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
 import android.content.Intent;
+
+import android.graphics.Bitmap;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.camerakit.CameraKit;
-import com.camerakit.CameraKitView;
+import com.otaliastudios.cameraview.AspectRatio;
+import com.otaliastudios.cameraview.CameraListener;
+import com.otaliastudios.cameraview.CameraUtils;
+import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.Facing;
+import com.otaliastudios.cameraview.Flash;
+import com.otaliastudios.cameraview.Gesture;
+import com.otaliastudios.cameraview.GestureAction;
+import com.otaliastudios.cameraview.SizeSelector;
+import com.otaliastudios.cameraview.SizeSelectors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +42,9 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private int captureTimer;
     private int currentCaptureID;
     private int captureDelay;
+    private int flashType;
 
-    private CameraKitView cameraKitView;
+    private CameraView cameraView;
     private FrameLayout controlButtonsFrameLayout;
     private Button backButton;
     private Button flashButton;
@@ -38,7 +52,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private Button captureButton;
     private Button changeCameraButton;
     private TextView timerMessageTextView;
-
+    private FrameLayout darkScreenFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +65,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void initView() {
-        cameraKitView = findViewById(R.id.camera);
+        cameraView = findViewById(R.id.camera);
         controlButtonsFrameLayout = findViewById(R.id.frame_control_buttons);
         backButton = findViewById(R.id.btn_back);
         flashButton = findViewById(R.id.btn_flash);
@@ -59,15 +73,45 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         captureButton = findViewById(R.id.btn_capture);
         changeCameraButton = findViewById(R.id.btn_change_camera);
         timerMessageTextView = findViewById(R.id.text_timer_message);
+        darkScreenFrame = findViewById(R.id.frame_dark_screen);
 
-        cameraKitView.setOnClickListener(this);
         backButton.setOnClickListener(this);
         flashButton.setOnClickListener(this);
         timerButton.setOnClickListener(this);
         captureButton.setOnClickListener(this);
         changeCameraButton.setOnClickListener(this);
 
+        initCameraView();
+
         updateDelayButton();
+    }
+
+    private void initCameraView() {
+        cameraView.addCameraListener(new CameraListener() {
+            @Override
+            public void onPictureTaken(byte[] jpeg) {
+                if (jpeg != null) {
+                    CameraUtils.decodeBitmap(jpeg, new CameraUtils.BitmapCallback() {
+                        @Override
+                        public void onBitmapReady(Bitmap bitmap) {
+                            if (bitmap == null) {
+                                finish();
+                                return;
+                            }
+                            ResultHolder.dispose();
+                            ResultHolder.setBitmap(bitmap);
+                            Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            }
+        });
+        cameraView.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER);
+
+        SizeSelector ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0);
+        SizeSelector result = SizeSelectors.or(ratio, SizeSelectors.biggest());
+        cameraView.setPictureSize(result);
     }
 
     private void initialize() {
@@ -84,11 +128,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 onBackPressed();
                 break;
             case R.id.btn_flash:
-                if (cameraKitView.getFlash() == CameraKit.FLASH_OFF) {
-                    cameraKitView.setFlash(CameraKit.FLASH_ON);
-                } else {
-                    cameraKitView.setFlash(CameraKit.FLASH_OFF);
-                }
+                setFlashNext();
                 break;
             case R.id.btn_timer:
                 setCaptureDelayNext();
@@ -97,11 +137,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 capture();
                 break;
             case R.id.btn_change_camera:
-                if (cameraKitView.getFacing() == CameraKit.FACING_FRONT) {
-                    cameraKitView.setFacing(CameraKit.FACING_BACK);
-                } else {
-                    cameraKitView.setFacing(CameraKit.FACING_FRONT);
-                }
+                changeFacing();
                 break;
         }
     }
@@ -118,46 +154,37 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onStart() {
         super.onStart();
-        cameraKitView.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        cameraKitView.onResume();
+        cameraView.start();
     }
 
     @Override
     protected void onPause() {
-        cameraKitView.onPause();
+        super.onPause();
+        cameraView.stop();
         if (timerHandler.hasMessages(0)) {
             finishDelayCapture();
         }
-        super.onPause();
     }
 
     @Override
     protected void onStop() {
-        cameraKitView.onStop();
         super.onStop();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraView.destroy();
     }
 
     private void captureNow() {
-        cameraKitView.captureImage(new CameraKitView.ImageCallback() {
-            @Override
-            public void onImage(CameraKitView cameraKitView, byte[] bytes) {
-                ResultHolder.dispose();
-                ResultHolder.setImage(bytes);
-                Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
-                startActivity(intent);
-            }
-        });
+        cameraView.capturePicture();
+        startBlinkAnimation();
     }
 
     private void capture() {
@@ -232,5 +259,72 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         timerHandler.removeCallbacksAndMessages(null);
         timerMessageTextView.setVisibility(View.GONE);
         setControlButtonsVisibility(true);
+    }
+
+    private void setFlashNext() {
+        flashType = (flashType + 1) % Flash.values().length;
+        switch (flashType) {
+            case 0:
+                cameraView.setFlash(Flash.OFF);
+                updateFlashButton("");
+                break;
+            case 1:
+                cameraView.setFlash(Flash.ON);
+                updateFlashButton(Flash.ON.name());
+                break;
+            case 2:
+                cameraView.setFlash(Flash.AUTO);
+                updateFlashButton(Flash.AUTO.name());
+                break;
+            case 3:
+                cameraView.setFlash(Flash.TORCH);
+                updateFlashButton(Flash.TORCH.name());
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateFlashButton(String flashTypeString) {
+        String flashButtonTextFormat = getString(R.string.text_flash_button_text_format);
+        flashButton.setText(String.format(flashButtonTextFormat, flashTypeString));
+    }
+
+    private void changeFacing() {
+        if (cameraView.getFacing() == Facing.FRONT) {
+            cameraView.setFacing(Facing.BACK);
+            updateFacingButton(Facing.BACK.name());
+        } else {
+            cameraView.setFacing(Facing.FRONT);
+            updateFacingButton(Facing.FRONT.name());
+        }
+    }
+
+    private void updateFacingButton(String facingTypeString) {
+        String facingButtonTextFormat = getString(R.string.text_facing_button_text_format);
+        changeCameraButton.setText(String.format(facingButtonTextFormat, facingTypeString));
+    }
+
+    private void startBlinkAnimation() {
+        darkScreenFrame.setVisibility(View.VISIBLE);
+
+        Animation blinkAnimation = AnimationUtils.loadAnimation(CameraActivity.this, R.anim.blink);
+        blinkAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                darkScreenFrame.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        darkScreenFrame.startAnimation(blinkAnimation);
     }
 }
