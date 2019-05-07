@@ -8,6 +8,13 @@
     <string name="text_change">카메라 전환</string>
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
+
+    <string name="text_preview_back">뒤로</string>
+    <string name="text_edit">편집</string>
+
+
+
     <string name="text_flash_button_text_format">플래쉬 %s</string>
     <string name="text_facing_button_text_format">%s</string>
+
 </resources>

@@ -3,6 +3,7 @@ package kr.co.yogiyo.rookiephotoapp.camera.capture;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
+
 public class ResultHolder {
 
     private static Bitmap bitmap;
