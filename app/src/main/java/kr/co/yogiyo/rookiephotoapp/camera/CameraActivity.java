@@ -1,7 +1,9 @@
 package kr.co.yogiyo.rookiephotoapp.camera;
 
 import android.content.Intent;
+
 import android.graphics.Bitmap;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -204,7 +206,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void updateDelayButton() {
-        if (captureDelay==0) {
+        if (captureDelay == 0) {
             timerButton.setText(getString(R.string.text_timer));
         } else {
             String timerButtonTextFormat = getString(R.string.text_timer_button_text_format);

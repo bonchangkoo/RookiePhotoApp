@@ -12,25 +12,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+      
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".camera.CameraActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".camera.capture.PreviewActivity" />
-
-        <activity android:name=".edit.EditPhotoActivity"></activity>
+        <activity 
+            android:name=".BaseActivity" />
+        <activity 
+            android:name=".camera.capture.PreviewActivity"
+            android:exported="true"/>
+        <activity 
+            android:name=".edit.EditPhotoActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".BaseActivity" />
+        
     </application>
-
+  
 </manifest>
