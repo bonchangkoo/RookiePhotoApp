@@ -7,9 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
 
-public class PreviewActivity extends AppCompatActivity {
+public class PreviewActivity extends BaseActivity {
 
     private ImageView PreviewImageView;
 
@@ -25,9 +26,8 @@ public class PreviewActivity extends AppCompatActivity {
         PreviewImageView.setVisibility(View.VISIBLE);
         PreviewImageView.setImageBitmap(bitmap);
 
-        Toast.makeText(this, String.format("width: %d, height: %d \nsize : %f MB",
-                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)),
-                Toast.LENGTH_SHORT).show();
+        showToast(String.format("width: %d, height: %d \nsize : %f MB",
+                bitmap.getWidth(), bitmap.getHeight(), getApproximateFileMegabytes(bitmap)));
     }
 
     private static float getApproximateFileMegabytes(Bitmap bitmap) {
