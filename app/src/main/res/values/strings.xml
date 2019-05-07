@@ -21,4 +21,6 @@
     <string name="dont_load_captured_photo">사진을 로드할 수 없습니다</string>
     <string name="toast_unexpected_error">예상치못한 오류</string>
 
+    <string name="text_flash_button_text_format">플래쉬 %s</string>
+    <string name="text_facing_button_text_format">%s</string>
 </resources>
