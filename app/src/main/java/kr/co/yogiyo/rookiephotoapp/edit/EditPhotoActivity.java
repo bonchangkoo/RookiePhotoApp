@@ -9,18 +9,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
 
+import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
 
-public class EditPhotoActivity extends AppCompatActivity {
+public class EditPhotoActivity extends BaseActivity {
 
     private static final String TAG = EditPhotoActivity.class.getSimpleName();
 
@@ -37,8 +36,12 @@ public class EditPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_photo);
 
-        Intent intent = getIntent();
+        doSeparateIntent();
+    }
 
+    private void doSeparateIntent() {
+
+        Intent intent = getIntent();
         // 갤러리에서 가져온 사진과 찍은 사진을 구별하기 위한 Intent
         int photoCategoryNumber = intent.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
 
@@ -50,7 +53,7 @@ public class EditPhotoActivity extends AppCompatActivity {
             if (capturedPhotoUri != null) {
                 startCrop(capturedPhotoUri);
             } else {
-                Toast.makeText(this, getString(R.string.dont_load_captured_photo), Toast.LENGTH_LONG).show();
+                showToast(R.string.dont_load_captured_photo);
             }
         }
     }
@@ -59,21 +62,29 @@ public class EditPhotoActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_PICK_GALLERY) {
-                final Uri selectedUri = data.getData();
-                if (selectedUri != null) {
-                    startCrop(selectedUri);
-                } else {
-                    Toast.makeText(this, R.string.toast_cannot_retrieve_selected_image, Toast.LENGTH_SHORT).show();
+        switch (resultCode) {
+            case RESULT_OK:
+                if (requestCode == REQUEST_PICK_GALLERY && data != null) {
+                    final Uri selectedUri = data.getData();
+                    if (selectedUri != null) {
+                        startCrop(selectedUri);
+                    } else {
+                        showToast(R.string.toast_cannot_retrieve_selected_image);
+                    }
+                } else if (requestCode == UCrop.REQUEST_CROP) {
+                    // 편집 완료 후 이동할 화면
+                    // handleCropResult(data);
+                    finish();
                 }
-            } else if (requestCode == UCrop.REQUEST_CROP) {
-                // 편집 완료 후 이동할 화면
-                // handleCropResult(data);
-            }
-        }
-        if (resultCode == UCrop.RESULT_ERROR) {
-            handleCropError(data);
+                break;
+            case RESULT_CANCELED:
+                finish();
+                break;
+            case UCrop.RESULT_ERROR:
+                if (data != null) {
+                    handleCropError(data);
+                }
+                break;
         }
     }
 
@@ -82,9 +93,9 @@ public class EditPhotoActivity extends AppCompatActivity {
         final Throwable cropError = UCrop.getError(result);
         if (cropError != null) {
             Log.e(TAG, "handleCropError: ", cropError);
-            Toast.makeText(EditPhotoActivity.this, cropError.getMessage(), Toast.LENGTH_LONG).show();
+            showToast(cropError.getMessage());
         } else {
-            Toast.makeText(EditPhotoActivity.this, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();
+            showToast(R.string.toast_unexpected_error);
         }
     }
 
@@ -123,5 +134,6 @@ public class EditPhotoActivity extends AppCompatActivity {
 
         uCrop.start(EditPhotoActivity.this);
     }
+
 }
 
