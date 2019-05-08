@@ -28,6 +28,9 @@
     <!--menu_edit_result.xml-->
     <string name="menu_download">다운로드</string>
 
+    <!--EditResultActivity.java -->
+    <string name="notification_image_saved">이미지 저장됨</string>
+
     <string name="text_preview_back">뒤로</string>
     <string name="text_edit">편집</string>
 
