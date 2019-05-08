@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Calendar;
+import java.util.Locale;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
@@ -111,7 +112,7 @@ public class EditResultActivity extends BaseActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         } else {
-            if (getEditPhotoUri != null && getEditPhotoUri.getScheme().equals("file")) {
+            if (getEditPhotoUri != null && "file".equals(getEditPhotoUri.getScheme())) {
                 try {
                     copyFileToDownloads(getEditPhotoUri);
                 } catch (Exception e) {
@@ -133,7 +134,7 @@ public class EditResultActivity extends BaseActivity {
         }
 
         String downloadsDirectoryPath = YogiDiaryStorageDir.getPath() + "/";
-        String filename = String.format("%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
+        String filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
 
         File saveFile = new File(downloadsDirectoryPath, filename);
 
