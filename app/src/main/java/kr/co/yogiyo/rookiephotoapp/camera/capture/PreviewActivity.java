@@ -70,6 +70,12 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ResultHolder.dispose();
+    }
+
     private static float getApproximateFileMegabytes(Bitmap bitmap) {
         return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024 / 1024;
 

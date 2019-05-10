@@ -98,7 +98,6 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                                 finish();
                                 return;
                             }
-                            ResultHolder.dispose();
                             ResultHolder.setBitmap(bitmap);
                             Intent intent = new Intent(CameraActivity.this, PreviewActivity.class);
                             startActivity(intent);
