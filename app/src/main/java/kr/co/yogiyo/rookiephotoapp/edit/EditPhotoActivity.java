@@ -23,8 +23,12 @@ public class EditPhotoActivity extends BaseActivity {
 
     private static final String TAG = EditPhotoActivity.class.getSimpleName();
 
-    private static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+
+    public static final int EDIT_SELECTED_PHOTO = 0;
+    public static final int EDIT_CAPTURED_PHOTO = 1;
+
     private static final int REQUEST_PICK_GALLERY = 123;
+    private static final int REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION = 103;
 
     private static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
 
@@ -70,8 +74,13 @@ public class EditPhotoActivity extends BaseActivity {
                     }
                 } else if (requestCode == UCrop.REQUEST_CROP) {
                     // 편집 완료 후 이동할 화면
-                    // handleCropResult(data);
-                    finish();
+                    if (data != null) {
+                        handleCropResult(data);
+                        finish();
+                    }else{
+                        showToast(R.string.toast_unexpected_error);
+                    }
+
                 }
                 break;
             case RESULT_CANCELED:
@@ -82,6 +91,15 @@ public class EditPhotoActivity extends BaseActivity {
                     handleCropError(data);
                 }
                 break;
+        }
+    }
+
+    private void handleCropResult(@NonNull Intent result) {
+        final Uri resultUri = UCrop.getOutput(result);
+        if (resultUri != null) {
+            EditResultActivity.startWithUri(EditPhotoActivity.this, resultUri);
+        } else {
+            showToast(R.string.toast_cannot_retrieve_cropped_image);
         }
     }
 
@@ -99,11 +117,13 @@ public class EditPhotoActivity extends BaseActivity {
     // 갤러리에서 이미지 선택 : EDIT_SELECTED_PHOTO
     private void pickFromGallery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+                && ((ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)
+                || (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED))) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION);
         } else { // 권한 허용 후
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
                     .setType("image/*")

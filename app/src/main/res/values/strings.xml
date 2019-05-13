@@ -22,10 +22,23 @@
     <string name="dont_load_captured_photo">사진을 로드할 수 없습니다</string>
     <string name="toast_unexpected_error">예상치못한 오류</string>
 
+    <!--activity_edit_result.xml-->
+    <string name="format_crop_result_d_d">편집 결과</string>
+
+    <!--menu_edit_result.xml-->
+    <string name="menu_download">다운로드</string>
+
+    <!--EditResultActivity.java -->
+    <string name="notification_image_saved">이미지 저장됨</string>
+
     <string name="text_preview_back">뒤로</string>
     <string name="text_edit">편집</string>
 
     <string name="text_flash_button_text_format">플래쉬 %s</string>
     <string name="text_facing_button_text_format">%s</string>
+    <string name="text_mkdir_success">폴더 생성 성공</string>
+    <string name="text_mkdir_fail">폴더 생성 실패</string>
+    <string name="text_edited_photo">편집한 사진</string>
+
 
 </resources>
