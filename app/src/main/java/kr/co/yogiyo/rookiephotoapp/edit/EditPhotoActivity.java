@@ -23,11 +23,8 @@ public class EditPhotoActivity extends BaseActivity {
 
     private static final String TAG = EditPhotoActivity.class.getSimpleName();
 
-    public static final int EDIT_SELECTED_PHOTO = 0;
-    public static final int EDIT_CAPTURED_PHOTO = 1;
-
-    private static final int REQUEST_PICK_GALLERY = 123;
     private static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+    private static final int REQUEST_PICK_GALLERY = 123;
 
     private static final String SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage";
 
