@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.yalantis.ucrop.view.UCropView;
 
@@ -49,22 +50,18 @@ public class EditResultActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_result);
 
-        setUCropView();
+        setView();
         setSettingAndResultActionBar();
     }
 
     // UCropView setting
-    private void setUCropView() {
+    private void setView() {
         getEditPhotoUri = getIntent().getData();
         if (getEditPhotoUri != null) {
             try {
-                UCropView uCropView = findViewById(R.id.ucrop);
-                uCropView.getCropImageView().setImageUri(getEditPhotoUri, null);
-                uCropView.getCropImageView().setScaleEnabled(false);
-                uCropView.getCropImageView().setRotateEnabled(false);
-                uCropView.getOverlayView().setShowCropFrame(false);
-                uCropView.getOverlayView().setShowCropGrid(false);
-                uCropView.getOverlayView().setDimmedColor(Color.TRANSPARENT);
+                ImageView editedPhotoImageView = findViewById(R.id.iv_edited_photo);
+                editedPhotoImageView.setImageURI(getEditPhotoUri);
+
             } catch (Exception e) {
                 Log.e(TAG, "setImageUri", e);
                 showToast(e.getMessage());
@@ -73,17 +70,11 @@ public class EditResultActivity extends BaseActivity {
     }
 
     private void setSettingAndResultActionBar() {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeFile(new File(getEditPhotoUri.getPath()).getAbsolutePath(), options);
-
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36); // 왼쪽에 아이콘 배치(홈 아이콘 대체)
-            actionBar.setTitle(getString(R.string.format_crop_result_d_d, options.outWidth, options.outHeight));
         }
     }
 
@@ -127,13 +118,17 @@ public class EditResultActivity extends BaseActivity {
 
     private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
 
-        File YogiDiaryStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
+        File yogiDiaryStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
 
-        if (!YogiDiaryStorageDir.exists()) {
-            YogiDiaryStorageDir.mkdirs();
+        if (!yogiDiaryStorageDir.exists()) {
+            if (yogiDiaryStorageDir.mkdirs()) {
+                Log.d(TAG, getString(R.string.text_mkdir_success));
+            } else {
+                Log.d(TAG, getString(R.string.text_mkdir_fail));
+            }
         }
 
-        String downloadsDirectoryPath = YogiDiaryStorageDir.getPath() + "/";
+        String downloadsDirectoryPath = yogiDiaryStorageDir.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
 
         File saveFile = new File(downloadsDirectoryPath, filename);
