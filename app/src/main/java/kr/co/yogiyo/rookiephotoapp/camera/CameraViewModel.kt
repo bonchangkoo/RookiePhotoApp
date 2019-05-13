@@ -5,13 +5,21 @@ import android.databinding.BaseObservable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.os.Handler
+import android.support.annotation.NonNull
+import android.support.annotation.Nullable
 import android.util.Log
 import android.view.View
 import com.otaliastudios.cameraview.Flash
 import kr.co.yogiyo.rookiephotoapp.R
 
 class CameraViewModel(context: Context) : BaseObservable() {
-    private val DELAY_DURATIONS = mutableListOf(0, 2, 5, 10)
+
+    companion object {
+        val DELAY_DURATIONS = mutableListOf(0, 2, 5, 10)
+
+        // TODO: [Warning] ...Specify type explicitly as nullable or non-nullable...
+        val TAG = CameraViewModel::class.java.simpleName
+    }
 
     val facingButtonLabel: ObservableField<String> = ObservableField(context.getString(R.string.text_change))
 
@@ -87,7 +95,7 @@ class CameraViewModel(context: Context) : BaseObservable() {
 
         } else if (captureTimer > 0) {
             delayMessageLabel.set(captureTimer)
-            Log.d(CameraViewModel::class.java.simpleName, "$captureTimer")
+            Log.d(TAG, "$captureTimer")
             timerHandler.postDelayed(makeDecrementTimerFunction(captureID), 1000)
         }
     }

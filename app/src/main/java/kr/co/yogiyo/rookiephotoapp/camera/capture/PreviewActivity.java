@@ -55,6 +55,7 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
         if (capturedImageBitmap != null && !capturedImageBitmap.isRecycled()) {
             capturedImageBitmap.recycle();
         }
+        ResultHolder.dispose();
     }
 
     @Override
@@ -68,12 +69,6 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
                 break;
         }
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ResultHolder.dispose();
     }
 
     private static float getApproximateFileMegabytes(Bitmap bitmap) {

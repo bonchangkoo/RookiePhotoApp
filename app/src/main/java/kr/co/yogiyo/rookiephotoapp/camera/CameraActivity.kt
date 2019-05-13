@@ -99,26 +99,28 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initCameraView() {
-        camera.addCameraListener(object : CameraListener() {
-            override fun onPictureTaken(jpeg: ByteArray?) {
-                if (jpeg != null) {
-                    CameraUtils.decodeBitmap(jpeg, CameraUtils.BitmapCallback { bitmap ->
-                        if (bitmap == null) {
-                            finish()
-                            return@BitmapCallback
-                        }
-                        ResultHolder.setBitmap(bitmap)
-                        val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
-                        startActivity(intent)
-                    })
+        camera.run {
+            addCameraListener(object : CameraListener() {
+                override fun onPictureTaken(jpeg: ByteArray?) {
+                    if (jpeg != null) {
+                        CameraUtils.decodeBitmap(jpeg, CameraUtils.BitmapCallback { bitmap ->
+                            if (bitmap == null) {
+                                finish()
+                                return@BitmapCallback
+                            }
+                            ResultHolder.setBitmap(bitmap)
+                            val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
+                            startActivity(intent)
+                        })
+                    }
                 }
-            }
-        })
-        camera.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
+            })
+            mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
 
-        val ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0f)
-        val result = SizeSelectors.or(ratio, SizeSelectors.biggest())
-        camera.setPictureSize(result)
+            val ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0f)
+            val result = SizeSelectors.or(ratio, SizeSelectors.biggest())
+            setPictureSize(result)
+        }
     }
 
     private fun CameraViewModel.initViewModel() {
@@ -129,8 +131,6 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun startBlinkAnimation() {
-        frame_dark_screen.visibility = View.VISIBLE
-
         val blinkAnimation = AnimationUtils.loadAnimation(this@CameraActivity, R.anim.blink)
         blinkAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
@@ -145,6 +145,10 @@ class CameraActivity : AppCompatActivity() {
                 // Do nothing
             }
         })
-        frame_dark_screen.startAnimation(blinkAnimation)
+
+        frame_dark_screen.run {
+            visibility = View.VISIBLE
+            startAnimation(blinkAnimation)
+        }
     }
 }
