@@ -67,6 +67,7 @@ public class PreviewActivity extends BaseActivity implements View.OnClickListene
         if (capturedImageBitmap != null && !capturedImageBitmap.isRecycled()) {
             capturedImageBitmap.recycle();
         }
+        ResultHolder.dispose();
     }
 
     @Override

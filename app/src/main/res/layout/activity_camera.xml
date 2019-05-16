@@ -1,70 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".camera.CameraActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.otaliastudios.cameraview.CameraView
-        android:id="@+id/camera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:keepScreenOn="true" />
+    <data>
+
+        <variable
+            name="viewModel"
+            type="kr.co.yogiyo.rookiephotoapp.camera.CameraViewModel" />
+    </data>
 
     <FrameLayout
-        android:id="@+id/frame_control_buttons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".camera.CameraActivity">
 
-        <Button
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
+        <com.otaliastudios.cameraview.CameraView
+            android:id="@+id/camera"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_back" />
+            android:adjustViewBounds="true"
+            android:keepScreenOn="true" />
 
-        <Button
-            android:id="@+id/btn_flash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/text_flash" />
+        <FrameLayout
+            android:id="@+id/frame_control_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.frameControlButtonVisibility}">
 
-        <Button
-            android:id="@+id/btn_timer"
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_back" />
+
+            <Button
+                android:id="@+id/btn_flash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@{viewModel.flashButtonLabel}" />
+
+            <Button
+                android:id="@+id/btn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:text="@{viewModel.delayButtonLabel}" />
+
+            <Button
+                android:id="@+id/btn_capture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:onClick="@{viewModel::onClickCaptureButton}"
+                android:text="@string/text_capture" />
+
+            <Button
+                android:id="@+id/btn_change_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:text="@{viewModel.facingButtonLabel}" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_timer_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|end"
-            android:text="@string/text_timer" />
+            android:text="@{String.valueOf(viewModel.delayMessageLabel)}"
+            android:textColor="@color/color_FFFFFF"
+            android:textSize="40sp"
+            android:visibility="@{viewModel.delayVisibility}" />
 
-        <Button
-            android:id="@+id/btn_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="@string/text_capture" />
+        <FrameLayout
+            android:id="@+id/frame_dark_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_BF424242"
+            android:visibility="gone" />
 
-        <Button
-            android:id="@+id/btn_change_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:text="@string/text_change" />
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/text_timer_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
-        android:textColor="@color/color_FFFFFF"
-        android:textSize="40sp" />
-
-    <FrameLayout
-        android:id="@+id/frame_dark_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/color_BF424242"
-        android:visibility="gone" />
-
-</FrameLayout>
+</layout>
