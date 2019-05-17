@@ -41,23 +41,6 @@ class EditPhotoActivity : BaseActivity() {
                 }
             }
         } ?: finish()
-
-        /*
-        if (intent == null) finish()
-
-        val photoCategoryNumber = intent.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
-
-        when (photoCategoryNumber) {
-            EDIT_SELECTED_PHOTO -> pickFromGallery() // 갤러리에서 사진 선택
-            EDIT_CAPTURED_PHOTO -> {  // 찍은 사진을 편집
-                val capturedPhotoUri = intent.getParcelableExtra<Uri>(getString(R.string.capture_photo_uri))
-
-                capturedPhotoUri?.let {
-                    startCrop(capturedPhotoUri)
-                } ?: showToast(R.string.dont_load_captured_photo)
-            }
-        }
-        */
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
