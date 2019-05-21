@@ -15,12 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // 편집 화면으로 가기 위한 임시 버튼
     private Button editPhotoButton;
+    // 다이어리로 가기 위한 임시 버튼
+    private Button diaryButton;
+
+    private Button test1Button;
+    private Button test2Button;
+    private Button test3Button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +42,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         editPhotoButton = findViewById(R.id.btn_edit_photo);
+        diaryButton = findViewById(R.id.btn_diary);
+
         editPhotoButton.setOnClickListener(this);
+        diaryButton.setOnClickListener(this);
+
+        // 테스트용
+        test1Button = findViewById(R.id.btn_test1);
+        test2Button = findViewById(R.id.btn_test2);
+        test3Button = findViewById(R.id.btn_test3);
+
+        test1Button.setOnClickListener(this);
+        test2Button.setOnClickListener(this);
+        test3Button.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_edit_photo:
-                // 사진 선택
                 Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
                 doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
                 startActivity(doStartEditPhotoActivityIntent);
+                break;
+            case R.id.btn_diary:
+                Intent doStartDiaryEditActivityIntent = new Intent(this, DiaryEditActivity.class);
+                doStartDiaryEditActivityIntent.putExtra("DIARY_IDX", "NEW");
+                startActivity(doStartDiaryEditActivityIntent);
+                break;
+            case R.id.btn_test1:
+                Intent doStartTest1Intent = new Intent(this, DiaryDetailActivity.class);
+                doStartTest1Intent.putExtra("DIARY_IDX", "1");
+                startActivity(doStartTest1Intent);
+                break;
+            case R.id.btn_test2:
+                Intent doStartTest2Intent = new Intent(this, DiaryDetailActivity.class);
+                doStartTest2Intent.putExtra("DIARY_IDX", "2");
+                startActivity(doStartTest2Intent);
+                break;
+            case R.id.btn_test3:
+                Intent doStartTest3Intent = new Intent(this, DiaryDetailActivity.class);
+                doStartTest3Intent.putExtra("DIARY_IDX", "3");
+                startActivity(doStartTest3Intent);
                 break;
         }
     }

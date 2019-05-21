@@ -13,6 +13,7 @@ import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import java.io.File
 
 class EditPhotoActivity : BaseActivity() {
@@ -31,10 +32,12 @@ class EditPhotoActivity : BaseActivity() {
             val photoCategoryNumber = it.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
 
             when (photoCategoryNumber) {
-                EDIT_SELECTED_PHOTO -> pickFromGallery() // 갤러리에서 사진 선택
+                EDIT_SELECTED_PHOTO -> {
+                    startingPointActivity = it.getStringExtra("startingPointActivity")
+                    pickFromGallery()
+                } // 갤러리에서 사진 선택
                 EDIT_CAPTURED_PHOTO -> {  // 찍은 사진을 편집
                     val capturedPhotoUri = it.getParcelableExtra<Uri>(getString(R.string.capture_photo_uri))
-
                     capturedPhotoUri?.let {
                         startCrop(capturedPhotoUri)
                     } ?: showToast(R.string.dont_load_captured_photo)
@@ -54,10 +57,15 @@ class EditPhotoActivity : BaseActivity() {
                     } ?: showToast(R.string.toast_cannot_retrieve_selected_image)
 
                     UCrop.REQUEST_CROP -> // 편집 완료 후 이동할 화면
-                        it.let { result ->
-                            handleCropResult(result)
-                            finish()
-                        }
+                        handleCropResult(it)
+                }
+                RESULT_EDIT_PHOTO -> when (requestCode) {
+                    REQUEST_DIARY_PHOTO_SELECT -> it.data?.let { selectedUri ->
+                        val intent = Intent(this@EditPhotoActivity, DiaryEditActivity::class.java)
+                        intent.data = selectedUri
+                        setResult(Activity.RESULT_OK, intent)
+                        finish()
+                    } ?: finish()
                 }
                 Activity.RESULT_CANCELED -> finish()
                 UCrop.RESULT_ERROR -> handleCropError(data)
@@ -67,9 +75,14 @@ class EditPhotoActivity : BaseActivity() {
 
     private fun handleCropResult(result: Intent) {
         val resultUri = UCrop.getOutput(result)
-
-        resultUri?.let { EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri) }
-                ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
+        resultUri?.let {
+            startingPointActivity?.let {
+                val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java)
+                intent.data = resultUri
+                intent.putExtra("startingPointActivity", it)
+                startActivityForResult(intent, REQUEST_DIARY_PHOTO_SELECT)
+            } ?: EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+        } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
 
     private fun handleCropError(result: Intent) {
@@ -119,6 +132,8 @@ class EditPhotoActivity : BaseActivity() {
 
     companion object {
         private val TAG = EditPhotoActivity::class.java.simpleName
+
+        private var startingPointActivity: String? = null
 
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1

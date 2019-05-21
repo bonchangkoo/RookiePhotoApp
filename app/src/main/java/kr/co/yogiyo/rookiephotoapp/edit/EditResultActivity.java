@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.yalantis.ucrop.view.UCropView;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,6 +26,7 @@ import java.util.Locale;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity;
 
 public class EditResultActivity extends BaseActivity {
 
@@ -38,6 +35,9 @@ public class EditResultActivity extends BaseActivity {
     private static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
 
     private Uri getEditPhotoUri;
+
+    // 사진 편집 화면으로 오는 `시작 액티비티`를 구별하기 위한 스트링
+    private String startingPointActivity;
 
     public static void startWithUri(@NonNull Context context, @NonNull Uri uri) {
         Intent intent = new Intent(context, EditResultActivity.class);
@@ -50,6 +50,7 @@ public class EditResultActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_result);
 
+        startingPointActivity = getIntent().getStringExtra("startingPointActivity");
         setView();
         setSettingAndResultActionBar();
     }
@@ -73,22 +74,36 @@ public class EditResultActivity extends BaseActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36); // 왼쪽에 아이콘 배치(홈 아이콘 대체)
+            if (startingPointActivity!= null && !startingPointActivity.equals(DiaryEditActivity.class.getSimpleName())) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36); // 왼쪽에 아이콘 배치(홈 아이콘 대체)
+            }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit_result, menu);
+        MenuItem downloadItem = menu.findItem(R.id.menu_download);
+        if (startingPointActivity!=null && startingPointActivity.equals(DiaryEditActivity.class.getSimpleName())) {
+            downloadItem.setIcon(R.mipmap.diary_save);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_download) {
-            // 이미지 저장
-            saveCroppedImage();
+            if (startingPointActivity != null) {
+                if (startingPointActivity.equals(DiaryEditActivity.class.getSimpleName())) { // 시작 액티비티가 DiaryEditActivity
+                    Intent intent = new Intent(EditResultActivity.this, EditPhotoActivity.class);
+                    intent.setData(getEditPhotoUri);
+                    setResult(RESULT_EDIT_PHOTO, intent);
+                    finish();
+                }
+            } else {
+                saveCroppedImage(); // 이미지 저장
+            }
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed(); // 임시로 back 기능으로 대체
         }
@@ -129,7 +144,8 @@ public class EditResultActivity extends BaseActivity {
         }
 
         String downloadsDirectoryPath = yogiDiaryStorageDir.getPath() + "/";
-        String filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
+        String filename = String.format(Locale.getDefault(),
+                "%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
 
         File saveFile = new File(downloadsDirectoryPath, filename);
 
