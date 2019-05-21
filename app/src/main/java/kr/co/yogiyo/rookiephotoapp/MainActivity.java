@@ -15,12 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    // 편집 화면으로 가기 위한 임시 버튼
     private Button editPhotoButton;
+    private Button showDiariesMainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,21 +36,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initView() {
         editPhotoButton = findViewById(R.id.btn_edit_photo);
         editPhotoButton.setOnClickListener(this);
+        showDiariesMainButton = findViewById(R.id.btn_show_diaries_main);
+        showDiariesMainButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_edit_photo:
-                // 사진 선택
                 Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
                 doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
                 startActivity(doStartEditPhotoActivityIntent);
                 break;
+            case R.id.btn_show_diaries_main:
+                startActivity(new Intent(this, DiariesActivity.class));
+                break;
         }
     }
 
-    // Permission check
     private void setupCheckPermission() {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
@@ -63,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        // 기기 버전별 요청 권한 추가
         List<String> permissions = new ArrayList<>();
         permissions.add(Manifest.permission.CAMERA);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -71,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
 
-        // 권한 확인 및 요청 라이브러리
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간")
