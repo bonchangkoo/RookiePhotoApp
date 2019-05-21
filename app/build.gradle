@@ -44,4 +44,10 @@ dependencies {
 
     // request permission library
     implementation 'gun0912.ted:tedpermission:2.1.1'
+
+    // glide library
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+
+    // stetho library
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 }
