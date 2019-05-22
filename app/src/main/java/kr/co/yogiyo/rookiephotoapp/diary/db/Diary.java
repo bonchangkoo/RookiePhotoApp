@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity(tableName = "diaries")
 public class Diary {
@@ -27,28 +28,10 @@ public class Diary {
     @ColumnInfo(name = "description")
     private String description;
 
-    /**
-     * Use this constructor to create a new completed Diary.
-     * // 머지할 때 UUID.randomUUID().toString() 사용할 예정입니다
-     *
-     * @param description description of the diary
-     * @param image       image of the diary
-     * @param date        date of created diary
-     */
     @Ignore
-    public Diary(int idx, Date date, @Nullable String image, @Nullable String description) {
-        this(String.valueOf(idx), date, image, description);
+    public Diary(Date date, @Nullable String image, @Nullable String description) {
+        this(UUID.randomUUID().toString(), date, image, description);
     }
-
-    /**
-     * Use this constructor to specify a completed Task if the Task already has an id (copy of
-     * another Task).
-     *
-     * @param description description of the diary
-     * @param image       image of the diary
-     * @param idx         id of the diary
-     * @param date        date of created diary
-     */
 
     public Diary(@NonNull String idx, Date date, @Nullable String image, @Nullable String description) {
         this.idx = idx;
@@ -86,6 +69,5 @@ public class Diary {
     public String getDescription() {
         return description;
     }
-
 
 }

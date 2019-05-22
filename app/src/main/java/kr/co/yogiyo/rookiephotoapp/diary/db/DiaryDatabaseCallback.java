@@ -10,4 +10,5 @@ public interface DiaryDatabaseCallback {
 
     void onDiaryDeleted();
 
+
 }

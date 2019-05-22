@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
@@ -29,6 +30,7 @@ import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
 
 public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCallback {
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private DiaryDatabase diaryDatabase;
 
     private TextView detailDateTextView;
@@ -47,21 +49,10 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
             diaryDatabase = DiaryDatabase.getDatabase(DiaryDetailActivity.this);
         }
 
-        // 다이어리 인덱스
         diaryIdx = getIntent().getStringExtra("DIARY_IDX");
 
-        // View 초기화
-        doSetActionBar();
         initView();
         setViewData(diaryIdx);
-    }
-
-    private void doSetActionBar() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     @Override
@@ -72,9 +63,8 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_diary_delete) { // 다이어리 삭제(DB,UI)
+        if (item.getItemId() == R.id.menu_diary_delete) {
             AlertDialog.Builder builder = new AlertDialog.Builder(DiaryDetailActivity.this);
-            // Add the buttons
             builder.setPositiveButton(getString(R.string.text_dialog_ok), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     deleteDiary(diaryIdx);
@@ -94,33 +84,29 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
             diaryEditActivityIntent.putExtra("DIARY_IDX", diaryIdx);
             startActivity(diaryEditActivityIntent);
             finish();
-        } else if (item.getItemId() == android.R.id.home) { // 뒤로 가기
+        } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void initView() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         detailDateTextView = findViewById(R.id.tv_diary_detail_date);
         detailTimeTextView = findViewById(R.id.tv_diary_detail_time);
         detailPhotoImageView = findViewById(R.id.iv_diary_detail_photo);
         detailDescriptionTextView = findViewById(R.id.tv_diary_detail_description);
     }
 
-    /**
-     * 다이어리 인덱스로 DB - findDiaryById 실행
-     *
-     * @param diaryIndex 다이어리 인덱스
-     */
     private void setViewData(String diaryIndex) {
-        LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(DiaryDetailActivity.this, diaryIndex);
+        LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(compositeDisposable, DiaryDetailActivity.this, diaryIndex);
     }
 
-    /**
-     * Date타입 인자를 받아 뷰에 날짜와 시간을 설정합니다
-     *
-     * @param dateAndTime Date타입
-     */
     private void setDateAndTime(Date dateAndTime) {
 
         SimpleDateFormat monthFormat = new SimpleDateFormat("M", Locale.getDefault());
@@ -142,12 +128,10 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
         detailTimeTextView.setText(String.format("%s:%s%s", hour, minute, meridiem));
     }
 
-    /**
-     * @param idx 삭제할 다이어리 인덱스
-     */
     private void deleteDiary(String idx) {
-        diaryDatabase.diaryDao().findDiaryById(idx)
-                .subscribeOn(Schedulers.newThread())
+
+        compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(idx)
+                .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Diary>() {
                     @Override
@@ -156,23 +140,14 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
                             LocalDiaryManager.getInstance(DiaryDetailActivity.this).deleteDiary(DiaryDetailActivity.this, diary);
 
                     }
-                }).isDisposed();
+                }));
     }
-
-    /**
-     * 이후 부터 DataBaseCallBack 함수들입니다
-     */
 
     @Override
     public void onDiaryAdded() {
         // NO ACTION
     }
 
-    /**
-     * 해당 다이어리 인덱스에 맞는 Diary 모델을 로드하여 뷰에 적용
-     *
-     * @param diary 다이어리 인덱스로 조회된 Diary
-     */
     @Override
     public void onDiaryByIdFinded(Diary diary) {
         setDateAndTime(diary.getDate());
@@ -185,13 +160,17 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
         // NO ACTION
     }
 
-    /**
-     * 삭제 후 토스트 , 액티비티 종료
-     */
     @Override
     public void onDiaryDeleted() {
         showToast(R.string.text_diary_detail_deleted);
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
+            compositeDisposable.dispose();
+        }
+    }
 }
