@@ -13,7 +13,7 @@ public abstract class DiaryDatabase extends RoomDatabase {
 
     private static DiaryDatabase INSTANCE;
 
-    // TODO: database version 충돌 (기존 앱에서 수정하면)
+    // TODO: database version 충돌 (기존 앱에서 수정하면), 버전 업그레이드 방법 필요
     public static DiaryDatabase getInstance(final Context context) {
         synchronized (DiaryDatabase.class) {
             if (INSTANCE == null) {

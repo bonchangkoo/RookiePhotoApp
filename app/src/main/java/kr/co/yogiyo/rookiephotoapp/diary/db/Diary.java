@@ -15,75 +15,45 @@ public class Diary {
 
     @NonNull
     @PrimaryKey
-    private final String id;
+    private final String idx;
 
     @ColumnInfo(name = "date")
-    private final Date date;
-
-    @Nullable
-    @ColumnInfo(name = "description")
-    private final String description;
+    private Date date;
 
     @Nullable
     @ColumnInfo(name = "image")
-    private final String image;
+    private String image;
 
-    /**
-     * Use this constructor to create a new Diary.
-     *
-     * @param description description of the diary
-     * @param image       image url as string of the diary
-     */
+    @Nullable
+    @ColumnInfo(name = "description")
+    private String description;
+
     @Ignore
-    public Diary(@Nullable String description, @Nullable String image) {
-        this(description, image, UUID.randomUUID().toString(), new Date());
+    public Diary(Date date, @Nullable String image, @Nullable String description) {
+        this(UUID.randomUUID().toString(), date, image, description);
     }
 
-    /**
-     * Use this constructor to create an Diary if the Diary already has an id (copy of another
-     * Diary).
-     *
-     * @param description description of the diary
-     * @param image       image url as string of the diary
-     * @param id          id of the diary
-     */
-    @Ignore
-    public Diary(@Nullable String description, @Nullable String image, @NonNull String id) {
-        this(description, image, id, new Date());
-    }
-
-    /**
-     * Use this constructor to create a new completed Diary.
-     *
-     * @param description description of the diary
-     * @param image       image url as string of the diary
-     * @param date    date of created diary
-     */
-    @Ignore
-    public Diary(@Nullable String description, @Nullable String image, Date date) {
-        this(description, image, UUID.randomUUID().toString(), date);
-    }
-
-    /**
-     * Use this constructor to specify a completed Task if the Task already has an id (copy of
-     * another Task).
-     *
-     * @param description description of the diary
-     * @param image       image url as string of the diary
-     * @param id          id of the diary
-     * @param date    date of created diary
-     */
-    public Diary(@Nullable String description, @Nullable String image,
-                @NonNull String id, Date date) {
-        this.id = id;
+    public Diary(@NonNull String idx, Date date, @Nullable String image, @Nullable String description) {
+        this.idx = idx;
         this.date = date;
+        this.image = image;
         this.description = description;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setImage(@Nullable String image) {
         this.image = image;
     }
 
-    @NonNull
-    public String getId() {
-        return id;
+    public void setDescription(@Nullable String description) {
+        this.description = description;
+    }
+
+    public String getIdx() {
+        return idx;
     }
 
     public Date getDate() {
@@ -91,12 +61,12 @@ public class Diary {
     }
 
     @Nullable
-    public String getDescription() {
-        return description;
+    public String getImage() {
+        return image;
     }
 
     @Nullable
-    public String getImage() {
-        return image;
+    public String getDescription() {
+        return description;
     }
 }

@@ -41,11 +41,6 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
-    <!--menu_diary_main.xml-->
-    <string name="menu_create">생성</string>
-    <string name="menu_convert_layout">레이아웃 변경</string>
-    <string name="menu_settings">설정</string>
-
     <!--DiariesActivity.java-->
     <string name="text_date_now_page">%d.%d</string>
 

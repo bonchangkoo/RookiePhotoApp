@@ -6,9 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,14 +26,9 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
     public final static int FIRST_PAGE = PAGES * LOOPS / 2;
     public final static Date BASE_DATE = new Date();
 
-    private DiariesFragmentPagerAdapter diariesFragmentPagerAdapter;
-
     private Calendar calendar;
 
-    private Toolbar toolbar;
     private ViewPager viewPager;
-    private ImageView showPrePageImage;
-    private ImageView showNextPageImage;
     private TextView dateNowPageText;
 
     public static Calendar getCalendar(int position) {
@@ -52,44 +46,23 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
         initialize();
 
         initView();
-
-        setupActionBar();
-        setupPager();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_diary_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        return super.onContextItemSelected(item);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                startActivity(new Intent(DiariesActivity.this, CameraActivity.class));
-                break;
-            case R.id.menu_create:
-                // TODO: 다이어리 글 추가 화면으로 이동
-                break;
-            case R.id.menu_convert_layout:
-                // TODO: 달력 형태로 변경
-                break;
-            case R.id.menu_settings:
-                // TODO: 설정 화면으로 이동
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_start_camera:
+                startActivity(new Intent(DiariesActivity.this, CameraActivity.class));
+                break;
+            case R.id.btn_add_diary:
+                // TODO: 다이어리 글 추가 화면으로 이동
+                break;
+            case R.id.btn_convert_layout:
+                // TODO: 달력 형태로 변경
+                break;
+            case R.id.btn_start_settings:
+                // TODO: 설정 화면으로 이동
+                break;
             case R.id.image_show_pre_page:
                 viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
                 break;
@@ -105,19 +78,26 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
-        toolbar = findViewById(R.id.toolbar);
+        ImageButton startCameraButton = findViewById(R.id.btn_start_camera);
+        ImageButton addButton = findViewById(R.id.btn_add_diary);
+        ImageButton convertLayoutButton = findViewById(R.id.btn_convert_layout);
+        ImageButton settingsButton = findViewById(R.id.btn_start_settings);
+        ImageView showPrePageImage = findViewById(R.id.image_show_pre_page);
+        ImageView showNextPageImage = findViewById(R.id.image_show_next_page);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         viewPager = findViewById(R.id.viewpager);
-        showPrePageImage = findViewById(R.id.image_show_pre_page);
-        showPrePageImage.setOnClickListener(this);
-        showNextPageImage = findViewById(R.id.image_show_next_page);
-        showNextPageImage.setOnClickListener(this);
         dateNowPageText = findViewById(R.id.text_date_now_page);
+
+        startCameraButton.setOnClickListener(this);
+        addButton.setOnClickListener(this);
+        convertLayoutButton.setOnClickListener(this);
+        settingsButton.setOnClickListener(this);
+
+        showPrePageImage.setOnClickListener(this);
+        showNextPageImage.setOnClickListener(this);
 
         setDateNowPageText(calendar);
 
-    }
-
-    private void setupActionBar() {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -125,12 +105,7 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
             throw new NullPointerException();
         }
 
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.baseline_photo_camera_white_36);
-    }
-
-    private void setupPager() {
-        diariesFragmentPagerAdapter = new DiariesFragmentPagerAdapter(this, this.getSupportFragmentManager());
+        DiariesFragmentPagerAdapter diariesFragmentPagerAdapter = new DiariesFragmentPagerAdapter(this, this.getSupportFragmentManager());
         viewPager.setAdapter(diariesFragmentPagerAdapter);
         viewPager.setCurrentItem(FIRST_PAGE);
         viewPager.setOffscreenPageLimit(3);

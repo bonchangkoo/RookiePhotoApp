@@ -13,30 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase;
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
+import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
 
-public class DiariesFragment extends Fragment {
-
-    private boolean onResuming;
+public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
 
     private Context context;
 
-    private LinearLayoutManager linearLayoutManager;
     private DiariesAdapter diariesAdapter;
 
-    private RecyclerView diariesRecyclerView;
     private ProgressBar loadDiariesProgressBar;
 
     public static Fragment newInstance(DiariesActivity context, int position) {
@@ -47,18 +39,18 @@ public class DiariesFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isResumed() && isVisibleToUser) {
+            loadDiaries();
+        }
+        // TODO: 이전에 데이터베이스 접근 또는 API 호출 이력이 있으면 무시하도록 구현
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (onResuming && isVisibleToUser) {
-            loadDiaries(false);
-        }
-        // TODO: 이전에 데이터베이스 접근 또는 API 호출 이력이 있으면 무시하도록 구현
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Nullable
@@ -70,13 +62,14 @@ public class DiariesFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_diaries, container, false);
 
-        diariesRecyclerView = root.findViewById(R.id.recycler_diaries);
-        linearLayoutManager = new LinearLayoutManager(container.getContext());
+        RecyclerView diariesRecyclerView = root.findViewById(R.id.recycler_diaries);
+        loadDiariesProgressBar = root.findViewById(R.id.progressbar_load_diaries);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(container.getContext());
         diariesRecyclerView.setLayoutManager(linearLayoutManager);
-        diariesAdapter = new DiariesAdapter(context, Glide.with(this), new ArrayList<Diary>());
+        diariesAdapter = new DiariesAdapter(context, new ArrayList<Diary>());
         diariesRecyclerView.setAdapter(diariesAdapter);
         diariesRecyclerView.addItemDecoration(new DividerItemDecoration(context, linearLayoutManager.getOrientation()));
-        loadDiariesProgressBar = root.findViewById(R.id.progressbar_load_diaries);
 
         return root;
     }
@@ -84,23 +77,19 @@ public class DiariesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        onResuming = true;
         if (getUserVisibleHint()) {
-            loadDiaries(false);
+            loadDiaries();
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        onResuming = false;
+    public void onDiariesBetweenDatesFinded(List<Diary> diaries) {
+        diariesAdapter.setItems(diaries);
+        diariesAdapter.notifyDataSetChanged();
+        loadDiariesProgressBar.setVisibility(View.GONE);
     }
 
-    public void loadDiaries(boolean forceUpdate) {
-        loadDiaries(forceUpdate, true);
-    }
-
-    private void loadDiaries(boolean forceUpdate, boolean showLoadingUI) {
+    private void loadDiaries() {
         if (this.getArguments() == null) {
             throw new NullPointerException();
         }
@@ -127,18 +116,8 @@ public class DiariesFragment extends Fragment {
         toCalendar.add(Calendar.MONTH, 1);
         toCalendar.add(Calendar.MILLISECOND, -1);
 
-        if (showLoadingUI) {
-            loadDiariesProgressBar.setVisibility(View.VISIBLE);
-        }
+        loadDiariesProgressBar.setVisibility(View.VISIBLE);
 
-        DiaryDatabase.getInstance(context).diaryDao().findDiariesCreatedBetweenDates(fromCalendar.getTime(), toCalendar.getTime())
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<List<Diary>>() {
-            @Override
-            public void accept(List<Diary> diaries) throws Exception {
-                diariesAdapter.setItems(diaries);
-                diariesAdapter.notifyDataSetChanged();
-                loadDiariesProgressBar.setVisibility(View.GONE);
-            }
-        });
+        LocalDiaryManager.getInstance(context).findDiariesBetweenDates(this, fromCalendar.getTime(), toCalendar.getTime());
     }
 }

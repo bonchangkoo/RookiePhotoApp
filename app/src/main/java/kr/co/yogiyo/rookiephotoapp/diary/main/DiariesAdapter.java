@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.Calendar;
@@ -24,23 +24,18 @@ import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder> {
 
     private Context context;
-    private final RequestManager requestManager;
     private List<Diary> diaries;
 
-    public DiariesAdapter(Context context, RequestManager requestManager, List<Diary> diaries) {
+    public DiariesAdapter(Context context, List<Diary> diaries) {
         this.context = context;
-        this.requestManager = requestManager;
         this.diaries = diaries;
     }
 
     @NonNull
     @Override
     public DiariesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_diary, viewGroup, false);
-
-        // TODO: View 클릭시 해당 다이어리의 상세 화면으로 이동
 
         return new DiariesViewHolder(view);
     }
@@ -63,10 +58,9 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
         File yogiDiaryStorageDir = Environment.getExternalStoragePublicDirectory(String.format(context.getString(R.string.text_yogidiary_path),
                 Environment.DIRECTORY_PICTURES, "YogiDiary"));
 
-        String downloadsDirectoryPath = yogiDiaryStorageDir.getPath() + "/";
-        File loadFile = new File(downloadsDirectoryPath, diary.getImage());
-
-        requestManager.load(loadFile)
+        String imageAbsolutePath = String.format("%s/%s", yogiDiaryStorageDir.getAbsolutePath(), diary.getImage());
+        Glide.with(context)
+                .load(imageAbsolutePath)
                 .error(R.drawable.baseline_not_interested_black_36)
                 .into(diariesViewHolder.imageView);
     }
@@ -87,6 +81,7 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
         private TextView descriptionText;
         private ImageView imageView;
 
+        // TODO: View 클릭시 해당 다이어리의 상세 화면으로 이동
         public DiariesViewHolder(@NonNull View itemView) {
             super(itemView);
             dayText = itemView.findViewById(R.id.text_day);
