@@ -1,12 +1,10 @@
-package kr.co.yogiyo.rookiephotoapp.diary.data;
+package kr.co.yogiyo.rookiephotoapp.diary.db;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
-
-import kr.co.yogiyo.rookiephotoapp.diary.util.Converters;
 
 @Database(entities = {Diary.class}, version = 1)
 @TypeConverters({Converters.class})

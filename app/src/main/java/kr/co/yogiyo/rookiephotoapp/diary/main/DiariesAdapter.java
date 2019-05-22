@@ -19,7 +19,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.diary.data.Diary;
+import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 
 public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder> {
 

@@ -1,4 +1,4 @@
-package kr.co.yogiyo.rookiephotoapp.diary.data;
+package kr.co.yogiyo.rookiephotoapp.diary.db;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;

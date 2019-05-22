@@ -1,4 +1,4 @@
-package kr.co.yogiyo.rookiephotoapp.diary.util;
+package kr.co.yogiyo.rookiephotoapp.diary.db;
 
 import android.arch.persistence.room.TypeConverter;
 

@@ -24,8 +24,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.diary.data.Diary;
-import kr.co.yogiyo.rookiephotoapp.diary.data.DiaryDatabase;
+import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase;
 
 public class DiariesFragment extends Fragment {
 
