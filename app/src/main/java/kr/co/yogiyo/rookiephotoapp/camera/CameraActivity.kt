@@ -108,7 +108,7 @@ class CameraActivity : AppCompatActivity() {
                                 finish()
                                 return@BitmapCallback
                             }
-                            ResultHolder.setBitmap(bitmap)
+                            ResultHolder.bitmap = bitmap
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                             startActivity(intent)
                         })
