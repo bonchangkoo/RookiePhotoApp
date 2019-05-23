@@ -73,9 +73,9 @@ class PreviewActivity : BaseActivity() {
         } else {
             val uri = getImageUri(this@PreviewActivity, capturedImageBitmap)
 
-            val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).let {
-                it.putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
-                it.putExtra(getString(R.string.capture_photo_uri), uri)
+            val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
+                putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
+                putExtra(getString(R.string.capture_photo_uri), uri)
             }
             startActivity(doStartEditPhotoActivityIntent)
             finish()
