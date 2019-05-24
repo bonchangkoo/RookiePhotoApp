@@ -9,6 +9,6 @@ import kr.co.yogiyo.rookiephotoapp.R;
 public class LoginDialogPreference extends DialogPreference {
     public LoginDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setDialogLayoutResource(R.layout.dialog_fragment_login);
+        setDialogLayoutResource(R.layout.dialog_fragment_sign);
     }
 }

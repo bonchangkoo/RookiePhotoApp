@@ -20,7 +20,7 @@ public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmen
 
     private EditText emailEdit;
     private EditText passwordEdit;
-    private TextView showLoginFailText;
+    private TextView showSignFailText;
     private ProgressBar signProgress;
 
     @Override
@@ -38,7 +38,7 @@ public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmen
         TextView signupTextBtn = view.findViewById(R.id.text_signup);
         emailEdit = view.findViewById(R.id.edit_email);
         passwordEdit = view.findViewById(R.id.edit_password);
-        showLoginFailText = view.findViewById(R.id.text_show_login_fail);
+        showSignFailText = view.findViewById(R.id.text_show_sign_fail);
         signProgress = view.findViewById(R.id.progress_sign);
 
         signinBtn.setOnClickListener(this);
@@ -74,8 +74,8 @@ public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmen
 
                             @Override
                             public void onFail() {
-                                showLoginFailText.setText(getString(R.string.text_signin_fail));
-                                showLoginFailText.setVisibility(View.VISIBLE);
+                                showSignFailText.setText(getString(R.string.text_signin_fail));
+                                showSignFailText.setVisibility(View.VISIBLE);
                                 signProgress.setVisibility(View.GONE);
                             }
                         });
@@ -92,8 +92,8 @@ public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmen
 
                             @Override
                             public void onFail() {
-                                showLoginFailText.setText(getString(R.string.text_signup_fail));
-                                showLoginFailText.setVisibility(View.VISIBLE);
+                                showSignFailText.setText(getString(R.string.text_signup_fail));
+                                showSignFailText.setVisibility(View.VISIBLE);
                                 signProgress.setVisibility(View.GONE);
                             }
                         });

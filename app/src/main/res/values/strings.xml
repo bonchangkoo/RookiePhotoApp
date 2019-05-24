@@ -41,7 +41,7 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
-    <!--dialog_fragment_login.xml-->
+    <!--dialog_fragment_sign.xml-->
     <string name="text_input_email">이메일</string>
     <string name="text_input_password">패스워드</string>
     <string name="text_signin">로그인</string>
