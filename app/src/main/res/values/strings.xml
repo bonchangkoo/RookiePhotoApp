@@ -47,7 +47,6 @@
     <string name="text_signin">로그인</string>
     <string name="text_signup">가입</string>
     <string name="text_signin_success">로그인 성공</string>
-    <string name="text_signin_fail">로그인 실패</string>
     <string name="text_signup_success">가입 성공</string>
-    <string name="text_signup_fail">가입 실패</string>
+    <string name="text_sign_fail">사용자 정보를 확인하세요.</string>
 </resources>

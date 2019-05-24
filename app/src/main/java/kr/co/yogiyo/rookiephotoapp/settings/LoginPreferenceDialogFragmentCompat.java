@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import kr.co.yogiyo.rookiephotoapp.R;
 
 public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat
-        implements View.OnClickListener {
+        implements View.OnClickListener, LoginCallback {
 
     private AuthNavigator authNavigator;
 
@@ -64,46 +64,25 @@ public class LoginPreferenceDialogFragmentCompat extends PreferenceDialogFragmen
         switch (v.getId()) {
             case R.id.btn_signin:
                 signProgress.setVisibility(View.VISIBLE);
-                authNavigator.signInWithEmailAndPassword(emailEdit.getText().toString(), passwordEdit.getText().toString(),
-                        new LoginCallback() {
-                            @Override
-                            public void onSuccess(FirebaseUser user) {
-                                // TODO : 로그인 성공 후 코드
-                                dismiss();
-                            }
-
-                            @Override
-                            public void onFail() {
-                                showSignFailText.setText(getString(R.string.text_signin_fail));
-                                showSignFailText.setVisibility(View.VISIBLE);
-                                signProgress.setVisibility(View.GONE);
-                            }
-                        });
+                authNavigator.signInWithEmailAndPassword(emailEdit.getText().toString(), passwordEdit.getText().toString(), this);
                 break;
             case R.id.text_signup:
                 signProgress.setVisibility(View.VISIBLE);
-                authNavigator.createUserWithEmailAndPassword(emailEdit.getText().toString(), passwordEdit.getText().toString(),
-                        new LoginCallback() {
-                            @Override
-                            public void onSuccess(FirebaseUser user) {
-                                // TODO : 가입 성공 후 코드
-                                dismiss();
-                            }
-
-                            @Override
-                            public void onFail() {
-                                showSignFailText.setText(getString(R.string.text_signup_fail));
-                                showSignFailText.setVisibility(View.VISIBLE);
-                                signProgress.setVisibility(View.GONE);
-                            }
-                        });
+                authNavigator.createUserWithEmailAndPassword(emailEdit.getText().toString(), passwordEdit.getText().toString(), this);
                 break;
         }
     }
 
-    interface LoginCallback {
-        void onSuccess(FirebaseUser user);
+    @Override
+    public void onSuccess(FirebaseUser user) {
+        // TODO : 가입 성공 후 코드
+        dismiss();
+    }
 
-        void onFail();
+    @Override
+    public void onFail() {
+        showSignFailText.setText(getString(R.string.text_sign_fail));
+        showSignFailText.setVisibility(View.VISIBLE);
+        signProgress.setVisibility(View.GONE);
     }
 }

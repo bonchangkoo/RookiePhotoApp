@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/edit_password"
-        android:text="@string/text_signin_fail"
+        android:text="@string/text_sign_fail"
         android:textColor="@color/color_FF0000"
         android:visibility="gone" />
 

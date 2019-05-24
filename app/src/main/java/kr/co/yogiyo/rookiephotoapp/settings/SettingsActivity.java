@@ -31,7 +31,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
     @Override
     public void signInWithEmailAndPassword(final String email, final String password,
-                                           final LoginPreferenceDialogFragmentCompat.LoginCallback callback) {
+                                           final LoginCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
             return;
         }
@@ -44,7 +44,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             callback.onSuccess(user);
                         } else {
-                            showToast(getString(R.string.text_signin_fail));
+                            showToast(getString(R.string.text_sign_fail));
                             callback.onFail();
                         }
                     }
@@ -53,7 +53,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
     @Override
     public void createUserWithEmailAndPassword(final String email, final String password,
-                                               final LoginPreferenceDialogFragmentCompat.LoginCallback callback) {
+                                               final LoginCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
             return;
         }
@@ -66,7 +66,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             callback.onSuccess(user);
                         } else {
-                            showToast(getString(R.string.text_signup_fail));
+                            showToast(getString(R.string.text_sign_fail));
                             callback.onFail();
                         }
                     }
