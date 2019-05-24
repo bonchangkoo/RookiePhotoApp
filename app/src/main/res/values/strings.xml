@@ -12,6 +12,7 @@
 
     <!--activity_main.xml-->
     <string name="text_select_photo">사진 선택</string>
+    <string name="text_settings">설정</string>
 
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
@@ -40,5 +41,13 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
-
+    <!--dialog_fragment_login.xml-->
+    <string name="text_input_email">이메일</string>
+    <string name="text_input_password">패스워드</string>
+    <string name="text_signin">로그인</string>
+    <string name="text_signup">가입</string>
+    <string name="text_signin_success">로그인 성공</string>
+    <string name="text_signin_fail">로그인 실패</string>
+    <string name="text_signup_success">가입 성공</string>
+    <string name="text_signup_fail">가입 실패</string>
 </resources>

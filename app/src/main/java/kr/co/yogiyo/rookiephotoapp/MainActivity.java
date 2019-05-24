@@ -16,11 +16,13 @@ import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
+import kr.co.yogiyo.rookiephotoapp.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // 편집 화면으로 가기 위한 임시 버튼
     private Button editPhotoButton;
+    private Button settingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         editPhotoButton = findViewById(R.id.btn_edit_photo);
+        settingsButton = findViewById(R.id.btn_settings);
+
         editPhotoButton.setOnClickListener(this);
+        settingsButton.setOnClickListener(this);
     }
 
     @Override
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
                 doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
                 startActivity(doStartEditPhotoActivityIntent);
+                break;
+            case R.id.btn_settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
         }
     }

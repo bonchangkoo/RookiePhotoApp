@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="user_auth"
+        android:title="사용자">
+
+        <kr.co.yogiyo.rookiephotoapp.settings.LoginDialogPreference
+            android:key="dialog"
+            android:title="로그인" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="backup_restore"
+        android:title="백업 및 복원">
+
+        <Preference
+            android:key="backup"
+            android:summary="다이어리 및 사진 파일을 서버에 백업하여 앱 재설치할 때 복원할 수 있습니다."
+            android:title="백업하기" />
+
+        <Preference
+            android:key="restore"
+            android:summary="백업한 다이어리 및 사진 파일을 복원할 수 있습니다."
+            android:title="복원하기" />
+    </PreferenceCategory>
+</PreferenceScreen>
