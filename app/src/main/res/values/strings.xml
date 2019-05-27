@@ -10,7 +10,6 @@
     <string name="text_timer_button_text_format">%d 초</string>
 
     <!--activity_main.xml-->
-    <string name="text_select_photo">사진 선택</string>
     <string name="text_select_custom_gallery_photo">커스텀 갤러리 사진 선택</string>
 
     <!--EditPhotoActivity.java-->
@@ -43,4 +42,7 @@
     <!--GalleryActivity.java-->
     <string name="spinner_folder_name_count">"%s (%d)"</string>
     <string name="spinner_folder_all">All</string>
+
+    <!--menu_gallery_option.xml-->
+    <string name="text_select_photo">사진 선택</string>
 </resources>
