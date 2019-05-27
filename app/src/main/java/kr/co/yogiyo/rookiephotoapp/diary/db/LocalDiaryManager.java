@@ -1,6 +1,5 @@
 package kr.co.yogiyo.rookiephotoapp.diary.db;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 
 import java.util.Date;
@@ -13,10 +12,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.R;
 
-public class LocalDiaryManager {
+public class LocalDiaryManager extends BaseActivity {
 
-    private static final String DB_NAME = "Diaries.db";
     private Context context;
     private static LocalDiaryManager INSTANCE;
     private DiaryDatabase db;
@@ -30,7 +30,11 @@ public class LocalDiaryManager {
 
     public LocalDiaryManager(Context context) {
         this.context = context;
-        db = Room.databaseBuilder(context, DiaryDatabase.class, DB_NAME).build();
+
+        if (db == null) {
+            db = DiaryDatabase.getDatabase(context);
+        }
+
     }
 
     public void insertDiary(final DiaryDatabaseCallback databaseCallback, final Date date, final String image, final String description) {
@@ -45,6 +49,7 @@ public class LocalDiaryManager {
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        // Do nothing
                     }
 
                     @Override
@@ -54,11 +59,12 @@ public class LocalDiaryManager {
 
                     @Override
                     public void onError(Throwable e) {
+                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_add_diary));
                     }
                 });
     }
 
-    public void findDiaryById(CompositeDisposable compositeDisposable, final DiaryDatabaseCallback databaseCallback, final String diaryId) {
+    public void findDiaryById(final DiaryDatabaseCallback databaseCallback, final String diaryId) {
         compositeDisposable.add(db.diaryDao().findDiaryById(diaryId)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -85,6 +91,7 @@ public class LocalDiaryManager {
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        //do noting
                     }
 
                     @Override
@@ -94,6 +101,7 @@ public class LocalDiaryManager {
 
                     @Override
                     public void onError(Throwable e) {
+                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_update_diary));
                     }
                 });
     }
@@ -109,6 +117,7 @@ public class LocalDiaryManager {
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        //do noting
                     }
 
                     @Override
@@ -118,6 +127,7 @@ public class LocalDiaryManager {
 
                     @Override
                     public void onError(Throwable e) {
+                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_delete_diary));
                     }
                 });
     }

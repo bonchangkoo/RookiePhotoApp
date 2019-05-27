@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -133,17 +132,15 @@ public class EditResultActivity extends BaseActivity {
 
     private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
 
-        File yogiDiaryStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
-
-        if (!yogiDiaryStorageDir.exists()) {
-            if (yogiDiaryStorageDir.mkdirs()) {
+        if (!YOGIDIARY_PATH.exists()) {
+            if (YOGIDIARY_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = yogiDiaryStorageDir.getPath() + "/";
+        String downloadsDirectoryPath = YOGIDIARY_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(),
                 "%d_%s", Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
 

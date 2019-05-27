@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
@@ -30,7 +29,6 @@ import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
 
 public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCallback {
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private DiaryDatabase diaryDatabase;
 
     private TextView detailDateTextView;
@@ -104,7 +102,7 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     }
 
     private void setViewData(String diaryIndex) {
-        LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(compositeDisposable, DiaryDetailActivity.this, diaryIndex);
+        LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(DiaryDetailActivity.this, diaryIndex);
     }
 
     private void setDateAndTime(Date dateAndTime) {
@@ -151,7 +149,7 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     @Override
     public void onDiaryByIdFinded(Diary diary) {
         setDateAndTime(diary.getDate());
-        detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH + diary.getImage())));
+        detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, diary.getImage())));
         detailDescriptionTextView.setText(diary.getDescription());
     }
 
@@ -167,10 +165,13 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     }
 
     @Override
+    public void onDiaryError(String errorMessage) {
+        showToast(errorMessage);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-            compositeDisposable.dispose();
-        }
+        destroy();
     }
 }

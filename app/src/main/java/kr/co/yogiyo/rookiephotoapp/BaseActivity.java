@@ -1,7 +1,12 @@
 package kr.co.yogiyo.rookiephotoapp;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import java.io.File;
+
+import io.reactivex.disposables.CompositeDisposable;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -10,7 +15,16 @@ public class BaseActivity extends AppCompatActivity {
 
     protected static final String STARTING_POINT = "startingPoint";
 
-    protected static final String YOGIDIARY_PATH = "/storage/emulated/0/Pictures/YogiDiary/";
+    protected static final File YOGIDIARY_PATH =
+            new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
+
+    protected CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    protected void destroy() {
+        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
+            compositeDisposable.dispose();
+        }
+    }
 
     protected void showToast(String toastMessage) {
         Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();

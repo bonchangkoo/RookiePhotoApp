@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +29,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
@@ -49,7 +47,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private final static String DIARY_ADD = "NEW";
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private DiaryDatabase diaryDatabase;
 
     private TextView editDateTextView;
@@ -148,7 +145,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
         } else {
-            LocalDiaryManager.getInstance(DiaryEditActivity.this).findDiaryById(compositeDisposable, this, idx);
+            LocalDiaryManager.getInstance(this).findDiaryById(this, idx);
         }
     }
 
@@ -308,17 +305,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
-        File yogiDiaryStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
-
-        if (!yogiDiaryStorageDir.exists()) {
-            if (yogiDiaryStorageDir.mkdirs()) {
+        if (!YOGIDIARY_PATH.exists()) {
+            if (YOGIDIARY_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = yogiDiaryStorageDir.getPath() + "/";
+        String downloadsDirectoryPath = YOGIDIARY_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);
@@ -375,7 +370,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     public void onDiaryByIdFinded(Diary diary) {
         setDateAndTime(diary.getDate());
         photoFileName = diary.getImage();
-        editPhotoImageButton.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH + photoFileName)));
+        editPhotoImageButton.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, photoFileName)));
         editDescriptionTextView.setText(diary.getDescription());
     }
 
@@ -392,10 +387,13 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     }
 
     @Override
+    public void onDiaryError(String errorMessage) {
+        showToast(errorMessage);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-            compositeDisposable.dispose();
-        }
+        destroy();
     }
 }

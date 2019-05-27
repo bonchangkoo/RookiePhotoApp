@@ -57,5 +57,10 @@
     <string name="text_photo_description">photo</string>
     <string name="text_toolbar_detail">상세</string>
 
+    <!--LocalDiaryManager.java-->
+    <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
+    <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
+    <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
+
 
 </resources>
