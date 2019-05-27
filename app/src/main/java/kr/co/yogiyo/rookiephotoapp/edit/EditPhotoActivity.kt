@@ -66,10 +66,9 @@ class EditPhotoActivity : BaseActivity() {
     }
 
     private fun handleCropResult(result: Intent) {
-        val resultUri = UCrop.getOutput(result)
-
-        resultUri?.let { EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri) }
-                ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
+        UCrop.getOutput(result)?.let {
+            EditResultActivity.startWithUri(this@EditPhotoActivity, it)
+        } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
 
     private fun handleCropError(result: Intent) {
