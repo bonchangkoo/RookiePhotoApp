@@ -9,11 +9,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.R
@@ -24,7 +22,14 @@ import java.util.*
 
 class EditResultActivity : BaseActivity() {
 
-    private var getEditPhotoUri: Uri? = null
+    private var editPhotoUri: Uri? = null
+        get() {
+            field = intent.data
+            if (field == null) {
+                showToast(R.string.dont_load_captured_photo)
+            }
+            return field
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,16 +41,14 @@ class EditResultActivity : BaseActivity() {
 
     // UCropView setting
     private fun setView() {
-        getEditPhotoUri = intent.data
-        getEditPhotoUri?.let {
+        editPhotoUri?.let {
             iv_edited_photo.setImageURI(it)
-        } ?: showToast(R.string.dont_load_captured_photo)
+        }
     }
 
     private fun setSettingAndResultActionBar() {
-        setSupportActionBar(findViewById<View>(R.id.toolbar) as Toolbar)
-        val actionBar = supportActionBar
-        actionBar?.run {
+        setSupportActionBar(toolbar)
+        supportActionBar?.run {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
         }
@@ -57,9 +60,9 @@ class EditResultActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when {
-            item.itemId == R.id.menu_download -> saveCroppedImage() // 이미지 저장
-            item.itemId == android.R.id.home -> onBackPressed() // 임시로 back 기능으로 대체
+        when (item.itemId) {
+            R.id.menu_download -> saveCroppedImage() // 이미지 저장
+            android.R.id.home -> onBackPressed() // 임시로 back 기능으로 대체
         }
         return super.onOptionsItemSelected(item)
     }
@@ -70,7 +73,7 @@ class EditResultActivity : BaseActivity() {
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
         } else {
-            getEditPhotoUri?.let {
+            editPhotoUri?.let {
                 if ("file" == it.scheme) {
                     try {
                         copyFileToDownloads(it)
@@ -79,7 +82,7 @@ class EditResultActivity : BaseActivity() {
                         Log.e(TAG, it.toString(), e)
                     }
                 }
-            } ?: showToast(R.string.toast_unexpected_error)
+            }
         }
     }
 
@@ -89,10 +92,8 @@ class EditResultActivity : BaseActivity() {
         val yogiDiaryStorageDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary")
 
         if (!yogiDiaryStorageDir.exists()) {
-            if (yogiDiaryStorageDir.mkdirs()) {
-                Log.d(TAG, getString(R.string.text_mkdir_success))
-            } else {
-                Log.d(TAG, getString(R.string.text_mkdir_fail))
+            if (!yogiDiaryStorageDir.mkdirs()) {
+                return finish()
             }
         }
 
@@ -129,3 +130,4 @@ class EditResultActivity : BaseActivity() {
         }
     }
 }
+

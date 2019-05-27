@@ -19,8 +19,6 @@ import java.io.ByteArrayOutputStream
 
 class PreviewActivity : BaseActivity() {
 
-    private lateinit var capturedImageBitmap: Bitmap
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preview)
@@ -31,14 +29,14 @@ class PreviewActivity : BaseActivity() {
 
     private fun initImageView() {
 
-        capturedImageBitmap = ResultHolder.bitmap
-
-        preview_image.visibility = View.VISIBLE
-        preview_image.setImageBitmap(capturedImageBitmap)
+        preview_image.run {
+            visibility = View.VISIBLE
+            setImageBitmap(capturedImageBitmap)
+        }
 
         capturedImageBitmap.run {
             showToast(String.format("width: %d, height: %d \nsize : %f MB",
-                    capturedImageBitmap.width, capturedImageBitmap.height, getApproximateFileMegabytes(capturedImageBitmap)))
+                    this.width, this.height, getApproximateFileMegabytes(this)))
         }
     }
 
@@ -92,11 +90,11 @@ class PreviewActivity : BaseActivity() {
 
     companion object {
 
+        lateinit var capturedImageBitmap: Bitmap
+
         private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
 
-        private fun getApproximateFileMegabytes(bitmap: Bitmap): Float {
-            return (bitmap.rowBytes * bitmap.height / 1024 / 1024).toFloat()
-
-        }
+        private fun getApproximateFileMegabytes(bitmap: Bitmap) =
+                (bitmap.rowBytes * bitmap.height / 1024 / 1024).toFloat()
     }
 }
