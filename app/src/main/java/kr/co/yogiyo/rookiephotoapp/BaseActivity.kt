@@ -8,32 +8,28 @@ import java.io.File
 
 open class BaseActivity : AppCompatActivity() {
 
-    protected open fun destroy() {
-        compositeDisposable?.run {
-            if (!this.isDisposed) {
-                this.dispose()
-            }
-        }
+    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 
-    protected fun showToast(toastMessage: String?) {
+    fun showToast(toastMessage: String?) {
         Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
     }
 
-    protected fun showToast(stringId: Int) {
+    fun showToast(stringId: Int) {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
     }
 
     companion object {
+        const val EDIT_SELECTED_PHOTO = 0
 
-        @JvmField
-        val EDIT_SELECTED_PHOTO = 0
-        @JvmField
-        val EDIT_CAPTURED_PHOTO = 1
-        @JvmField
-        var compositeDisposable: CompositeDisposable? = CompositeDisposable()
-        @JvmField
-        val STARTING_POINT = "startingPoint"
+        const val EDIT_CAPTURED_PHOTO = 1
+
+        const val STARTING_POINT = "startingPoint"
+
         @JvmField
         val YOGIDIARY_PATH = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary")
 

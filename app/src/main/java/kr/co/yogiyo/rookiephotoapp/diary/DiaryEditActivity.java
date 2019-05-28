@@ -382,10 +382,4 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     public void onDiaryError(String errorMessage) {
         showToast(errorMessage);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        destroy();
-    }
 }

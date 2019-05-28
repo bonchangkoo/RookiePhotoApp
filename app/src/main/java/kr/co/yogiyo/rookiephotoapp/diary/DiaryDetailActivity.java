@@ -172,10 +172,4 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     public void onDiaryError(String errorMessage) {
         showToast(errorMessage);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        destroy();
-    }
 }
