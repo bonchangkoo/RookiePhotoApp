@@ -1,40 +1,33 @@
 package kr.co.yogiyo.rookiephotoapp.diary.db;
 
-import android.content.Context;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
+import android.support.annotation.NonNull;
 
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
 
-public class LocalDiaryManager extends BaseActivity {
+public class LocalDiaryViewModel extends AndroidViewModel {
 
-    private Context context;
-    private static LocalDiaryManager INSTANCE;
-    private DiaryDatabase db;
+    private CompositeDisposable compositeDisposable;
 
-    public static LocalDiaryManager getInstance(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = new LocalDiaryManager(context);
-        }
-        return INSTANCE;
-    }
+    private DiaryDatabase diaryDatabase;
 
-    public LocalDiaryManager(Context context) {
-        this.context = context;
-
-        if (db == null) {
-            db = DiaryDatabase.getDatabase(context);
-        }
-
+    public LocalDiaryViewModel(@NonNull Application application) {
+        super(application);
+        diaryDatabase = DiaryDatabase.getDatabase(application);
+        compositeDisposable = new CompositeDisposable();
     }
 
     public void insertDiary(final DiaryDatabaseCallback databaseCallback, final Date date, final String image, final String description) {
@@ -42,7 +35,7 @@ public class LocalDiaryManager extends BaseActivity {
             @Override
             public void run() {
                 Diary diary = new Diary(date, image, description);
-                db.diaryDao().insertDiary(diary);
+                diaryDatabase.diaryDao().insertDiary(diary);
             }
         }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,13 +52,13 @@ public class LocalDiaryManager extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_add_diary));
+                        databaseCallback.onDiaryError(getApplication().getString(R.string.text_cant_add_diary));
                     }
                 });
     }
 
     public void findDiaryById(final DiaryDatabaseCallback databaseCallback, final int diaryId) {
-        compositeDisposable.add(db.diaryDao().findDiaryById(diaryId)
+        compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(diaryId)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Diary>() {
@@ -75,12 +68,15 @@ public class LocalDiaryManager extends BaseActivity {
                     }
                 }));
     }
-  
+
+    public Flowable<Diary> findDiaryById(final int diaryId) {
+        return diaryDatabase.diaryDao().findDiaryById(diaryId);
+    }
+
     // TODO : 날짜 순으로 정렬
     // TODO : rxjava 조사 필요, compositeDisposable.add(안에 코드 구현), 사용해제(중요)
     public void findDiariesBetweenDates(final DiaryDatabaseCallback diaryDatabaseCallback, Date from, Date to) {
-        DiaryDatabase.getInstance(context)
-                .diaryDao()
+        compositeDisposable.add(diaryDatabase.diaryDao()
                 .findDiariesBetweenDates(from, to)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -89,7 +85,7 @@ public class LocalDiaryManager extends BaseActivity {
                     public void accept(List<Diary> diaries) {
                         diaryDatabaseCallback.onDiariesBetweenDatesFinded(diaries);
                     }
-                });
+                }));
     }
 
     public void updateDiary(final DiaryDatabaseCallback databaseCallback, final Diary diary, final Date date, final String image, final String description) {
@@ -100,14 +96,14 @@ public class LocalDiaryManager extends BaseActivity {
         Completable.fromAction(new Action() {
             @Override
             public void run() {
-                db.diaryDao().updateDiary(diary);
+                diaryDatabase.diaryDao().updateDiary(diary);
             }
         }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        //do noting
+                        // Do nothing
                     }
 
                     @Override
@@ -117,7 +113,7 @@ public class LocalDiaryManager extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_update_diary));
+                        databaseCallback.onDiaryError(getApplication().getString(R.string.text_cant_update_diary));
                     }
                 });
     }
@@ -126,14 +122,14 @@ public class LocalDiaryManager extends BaseActivity {
         Completable.fromAction(new Action() {
             @Override
             public void run() {
-                db.diaryDao().deleteDiary(diary);
+                diaryDatabase.diaryDao().deleteDiary(diary);
             }
         }).subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        //do noting
+                        // Do nothing
                     }
 
                     @Override
@@ -143,8 +139,15 @@ public class LocalDiaryManager extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        databaseCallback.onDiaryError(context.getString(R.string.text_cant_delete_diary));
+                        databaseCallback.onDiaryError(getApplication().getString(R.string.text_cant_delete_diary));
                     }
                 });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        compositeDisposable.dispose();
     }
 }
