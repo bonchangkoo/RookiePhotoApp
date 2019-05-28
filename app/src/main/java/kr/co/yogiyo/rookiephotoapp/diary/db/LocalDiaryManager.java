@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp.diary.db;
 
 import android.content.Context;
 
+import java.util.List;
 import java.util.Date;
 
 import io.reactivex.Completable;
@@ -73,6 +74,22 @@ public class LocalDiaryManager extends BaseActivity {
                         databaseCallback.onDiaryByIdFinded(diary);
                     }
                 }));
+    }
+  
+    // TODO : 날짜 순으로 정렬
+    // TODO : rxjava 조사 필요, compositeDisposable.add(안에 코드 구현), 사용해제(중요)
+    public void findDiariesBetweenDates(final DiaryDatabaseCallback diaryDatabaseCallback, Date from, Date to) {
+        DiaryDatabase.getInstance(context)
+                .diaryDao()
+                .findDiariesBetweenDates(from, to)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Diary>>() {
+                    @Override
+                    public void accept(List<Diary> diaries) {
+                        diaryDatabaseCallback.onDiariesBetweenDatesFinded(diaries);
+                    }
+                });
     }
 
     public void updateDiary(final DiaryDatabaseCallback databaseCallback, final Diary diary, final Date date, final String image, final String description) {

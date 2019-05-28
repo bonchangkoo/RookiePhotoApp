@@ -9,7 +9,6 @@ import android.content.Context;
 @Database(entities = {Diary.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class DiaryDatabase extends RoomDatabase {
-
     public abstract DiaryDao diaryDao();
 
     private static volatile DiaryDatabase INSTANCE;
@@ -26,5 +25,4 @@ public abstract class DiaryDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
 }

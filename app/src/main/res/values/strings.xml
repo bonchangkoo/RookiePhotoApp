@@ -9,6 +9,10 @@
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
 
+    <!--activity_main.xml-->
+    <string name="text_show_diaries_main">다이어리 메인</string>
+
+
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
     <string name="label_select_picture">사진 선택</string>
@@ -36,6 +40,7 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
+
     <!--activity_diary_detail.xml-->
     <string name="text_diary_date">5월 10일</string>
     <string name="text_diary_time">8:00PM</string>
@@ -62,5 +67,11 @@
     <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
     <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
 
+    <!--DiariesActivity.java-->
+    <string name="text_date_now_page">%d.%d</string>
 
+    <!--DiariesAdapter.java-->
+    <string name="text_day_now_diary">%d일</string>
+    <string name="text_time_now_diary">%d:%s</string>
+    <string name="text_yogidiary_path">%s/%s</string>
 </resources>

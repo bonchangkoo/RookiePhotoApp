@@ -13,8 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity;
+import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Button showDiariesMainButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +28,21 @@ public class MainActivity extends AppCompatActivity {
         setupCheckPermission();
     }
 
-    // Permission check
+
+    private void initView() {
+        showDiariesMainButton = findViewById(R.id.btn_show_diaries_main);
+        showDiariesMainButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_show_diaries_main:
+                startActivity(new Intent(this, DiariesActivity.class));
+                break;
+        }
+    }
+
     private void setupCheckPermission() {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
@@ -38,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // 기기 버전별 요청 권한 추가
         List<String> permissions = new ArrayList<>();
         permissions.add(Manifest.permission.CAMERA);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -46,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
 
-        // 권한 확인 및 요청 라이브러리
         TedPermission.with(this)
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간")
