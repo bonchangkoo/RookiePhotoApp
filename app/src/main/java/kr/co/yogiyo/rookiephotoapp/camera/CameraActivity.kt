@@ -11,7 +11,6 @@ import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
-import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
 
 class CameraActivity : AppCompatActivity() {
@@ -108,7 +107,7 @@ class CameraActivity : AppCompatActivity() {
                                 finish()
                                 return@BitmapCallback
                             }
-                            ResultHolder.setBitmap(bitmap)
+                            PreviewActivity.capturedImageBitmap = bitmap
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                             startActivity(intent)
                         })

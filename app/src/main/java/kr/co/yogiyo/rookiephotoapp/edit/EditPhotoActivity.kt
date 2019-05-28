@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.util.Log
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -74,8 +75,8 @@ class EditPhotoActivity : BaseActivity() {
     }
 
     private fun handleCropResult(result: Intent) {
-        val resultUri = UCrop.getOutput(result)
-        resultUri?.let {
+
+        UCrop.getOutput(result)?.let { resultUri ->
             startingPoint?.let {
                 val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
                     data = resultUri
