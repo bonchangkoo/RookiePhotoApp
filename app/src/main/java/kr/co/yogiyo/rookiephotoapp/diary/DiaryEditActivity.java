@@ -8,11 +8,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
@@ -45,9 +42,13 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private final static String TAG = DiaryEditActivity.class.getSimpleName();
 
-    private final static String DIARY_ADD = "NEW";
+    private final static int DIARY_ADD = -1;
 
     private DiaryDatabase diaryDatabase;
+
+    private ImageButton backImageButton;
+    private TextView toolbarNameTextView;
+    private ImageButton diarySaveImageButton;
 
     private TextView editDateTextView;
     private TextView editTimeTextView;
@@ -57,7 +58,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
 
-    private static String diaryIdx;
+    private static int diaryIdx;
 
     private Uri selectedUri;
     private int updateHour;
@@ -75,27 +76,74 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             diaryDatabase = DiaryDatabase.getDatabase(this);
         }
 
-        diaryIdx = getIntent().getStringExtra("DIARY_IDX");
+        diaryIdx = getIntent().getIntExtra("DIARY_IDX", -1);
 
         initView();
         setViewData(diaryIdx);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_diary_edit, menu);
-        return true;
+    private void initView() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        backImageButton = findViewById(R.id.ib_back);
+        toolbarNameTextView = findViewById(R.id.tv_subject);
+        if (diaryIdx == DIARY_ADD) {
+            toolbarNameTextView.setText(R.string.text_diary_add_title);
+        }
+        diarySaveImageButton = findViewById(R.id.ib_diary_save);
+
+        backImageButton.setOnClickListener(this);
+        diarySaveImageButton.setOnClickListener(this);
+
+        editDateTextView = findViewById(R.id.tv_diary_edit_date);
+        editTimeTextView = findViewById(R.id.tv_diary_edit_time);
+        editPhotoImageButton = findViewById(R.id.ib_diary_edit_photo);
+        editDescriptionTextView = findViewById(R.id.et_diary_edit_description);
+
+        editDateTextView.setOnClickListener(this);
+        editTimeTextView.setOnClickListener(this);
+        editPhotoImageButton.setOnClickListener(this);
+        editDescriptionTextView.setOnClickListener(this);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_diary_save) {
-            saveViewData();
-            finish();
-        } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
+                onBackPressed();
+                break;
+            case R.id.ib_diary_save:
+                saveViewData();
+                finish();
+                break;
+            case R.id.tv_diary_edit_date:
+                datePickerDialog.show();
+                break;
+            case R.id.tv_diary_edit_time:
+                timePickerDialog.show();
+                break;
+            case R.id.ib_diary_edit_photo:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(DiaryEditActivity.this);
+                alertDialog.setTitle("선택하시오");
+                String[] selectStr = {"사진 촬영", "사진 선택"};
+                alertDialog.setItems(selectStr, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            Intent photoCaptureIntent = new Intent(DiaryEditActivity.this, CameraActivity.class);
+                            startActivity(photoCaptureIntent);
+                        } else if (which == 1) {
+                            Intent doStartEditPhotoActivityIntent = new Intent(DiaryEditActivity.this, EditPhotoActivity.class);
+                            doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
+                            doStartEditPhotoActivityIntent.putExtra(STARTING_POINT, TAG);
+                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
+                        }
+                    }
+                });
+                AlertDialog dialog = alertDialog.create();
+                dialog.show();
+                break;
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -117,31 +165,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         dialog.show();
     }
 
-    private void initView() {
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (diaryIdx.equals(DIARY_ADD)) {
-            toolbar.setTitle(R.string.text_diary_add_title);
-        }
-        setSupportActionBar(toolbar);
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        editDateTextView = findViewById(R.id.tv_diary_edit_date);
-        editTimeTextView = findViewById(R.id.tv_diary_edit_time);
-        editPhotoImageButton = findViewById(R.id.ib_diary_edit_photo);
-        editDescriptionTextView = findViewById(R.id.et_diary_edit_description);
-
-        editDateTextView.setOnClickListener(this);
-        editTimeTextView.setOnClickListener(this);
-        editPhotoImageButton.setOnClickListener(this);
-        editDescriptionTextView.setOnClickListener(this);
-    }
-
-    private void setViewData(String idx) {
-        if (idx != null && idx.equals(DIARY_ADD)) {
+    private void setViewData(int idx) {
+        if (idx == DIARY_ADD) {
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
         } else {
@@ -204,39 +229,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_diary_edit_date:
-                datePickerDialog.show();
-                break;
-            case R.id.tv_diary_edit_time:
-                timePickerDialog.show();
-                break;
-            case R.id.ib_diary_edit_photo:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(DiaryEditActivity.this);
-                alertDialog.setTitle("선택하시오");
-                String[] selectStr = {"사진 촬영", "사진 선택"};
-                alertDialog.setItems(selectStr, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            Intent photoCaptureIntent = new Intent(DiaryEditActivity.this, CameraActivity.class);
-                            startActivity(photoCaptureIntent);
-                        } else if (which == 1) {
-                            Intent doStartEditPhotoActivityIntent = new Intent(DiaryEditActivity.this, EditPhotoActivity.class);
-                            doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
-                            doStartEditPhotoActivityIntent.putExtra(STARTING_POINT, TAG);
-                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
-                        }
-                    }
-                });
-                AlertDialog dialog = alertDialog.create();
-                dialog.show();
-                break;
-        }
-    }
-
     private Date getDateAndTime() {
         DatePicker datePicker = datePickerDialog.getDatePicker();
         int year = datePicker.getYear();
@@ -284,7 +276,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     };
 
     private void saveViewData() {
-        if (diaryIdx.equals(DIARY_ADD)) {
+        if (diaryIdx == DIARY_ADD) {
             String updateDescription = editDescriptionTextView.getText().toString();
 
             Date time = getDateAndTime();
@@ -330,7 +322,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         showToast(R.string.notification_image_saved);
     }
 
-    private void updateDiary(String idx) {
+    private void updateDiary(int idx) {
 
         compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(idx)
                 .subscribeOn(Schedulers.single())

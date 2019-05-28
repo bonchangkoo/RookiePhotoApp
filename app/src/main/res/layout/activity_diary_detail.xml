@@ -9,12 +9,54 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="?attr/actionBarSize"
         android:background="?colorAccent"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="@string/text_toolbar_detail"
-        app:titleTextColor="@android:color/white" />
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/ib_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@mipmap/back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_toRightOf="@id/ib_back"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="상세"
+                android:textColor="@android:color/white"
+                android:textSize="24sp" />
+
+            <ImageButton
+                android:id="@+id/ib_diary_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_toLeftOf="@id/ib_diary_edit"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@mipmap/diary_delete" />
+
+            <ImageButton
+                android:id="@+id/ib_diary_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_margin="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@mipmap/diary_edit" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"

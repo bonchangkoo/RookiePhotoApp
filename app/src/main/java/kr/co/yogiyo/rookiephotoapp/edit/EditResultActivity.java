@@ -75,7 +75,7 @@ public class EditResultActivity extends BaseActivity {
         if (actionBar != null) {
             if (startingPoint != null && !startingPoint.equals(DiaryEditActivity.class.getSimpleName())) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36); // 왼쪽에 아이콘 배치(홈 아이콘 대체)
+                actionBar.setHomeAsUpIndicator(R.mipmap.diary_add); // 왼쪽에 아이콘 배치(홈 아이콘 대체)
             }
         }
     }

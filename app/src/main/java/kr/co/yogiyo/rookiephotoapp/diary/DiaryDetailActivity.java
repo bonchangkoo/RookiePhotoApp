@@ -4,11 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,16 +26,20 @@ import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase;
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
 
-public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCallback {
+public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCallback, View.OnClickListener {
 
     private DiaryDatabase diaryDatabase;
+
+    private ImageButton backImageButton;
+    private ImageButton diaryDeleteImageButton;
+    private ImageButton diaryEditImageButton;
 
     private TextView detailDateTextView;
     private TextView detailTimeTextView;
     private ImageView detailPhotoImageView;
     private TextView detailDescriptionTextView;
 
-    private static String diaryIdx;
+    private static int diaryIdx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,53 +50,22 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
             diaryDatabase = DiaryDatabase.getDatabase(DiaryDetailActivity.this);
         }
 
-        diaryIdx = getIntent().getStringExtra("DIARY_IDX");
+        diaryIdx = getIntent().getIntExtra("DIARY_IDX", 0);
 
         initView();
         setViewData(diaryIdx);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_dairy_detail, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_diary_delete) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DiaryDetailActivity.this);
-            builder.setPositiveButton(getString(R.string.text_dialog_ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    deleteDiary(diaryIdx);
-                }
-            });
-            builder.setNegativeButton(getString(R.string.text_dialog_no), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.setTitle("다이어리 삭제");
-            dialog.setMessage("정말로 삭제하시겠습니까?");
-            dialog.show();
-        } else if (item.getItemId() == R.id.menu_diary_edit) {
-            Intent diaryEditActivityIntent = new Intent(this, DiaryEditActivity.class);
-            diaryEditActivityIntent.putExtra("DIARY_IDX", diaryIdx);
-            startActivity(diaryEditActivityIntent);
-            finish();
-        } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void initView() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+
+        backImageButton = findViewById(R.id.ib_back);
+        diaryDeleteImageButton = findViewById(R.id.ib_diary_delete);
+        diaryEditImageButton = findViewById(R.id.ib_diary_edit);
+
+        backImageButton.setOnClickListener(this);
+        diaryDeleteImageButton.setOnClickListener(this);
+        diaryEditImageButton.setOnClickListener(this);
 
         detailDateTextView = findViewById(R.id.tv_diary_detail_date);
         detailTimeTextView = findViewById(R.id.tv_diary_detail_time);
@@ -101,7 +73,39 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
         detailDescriptionTextView = findViewById(R.id.tv_diary_detail_description);
     }
 
-    private void setViewData(String diaryIndex) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
+                onBackPressed();
+                break;
+            case R.id.ib_diary_delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(DiaryDetailActivity.this);
+                builder.setPositiveButton(getString(R.string.text_dialog_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteDiary(diaryIdx);
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.text_dialog_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setTitle("다이어리 삭제");
+                dialog.setMessage("정말로 삭제하시겠습니까?");
+                dialog.show();
+                break;
+            case R.id.ib_diary_edit:
+                Intent diaryEditActivityIntent = new Intent(this, DiaryEditActivity.class);
+                diaryEditActivityIntent.putExtra("DIARY_IDX", diaryIdx);
+                startActivity(diaryEditActivityIntent);
+                finish();
+                break;
+        }
+    }
+
+    private void setViewData(int diaryIndex) {
         LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(DiaryDetailActivity.this, diaryIndex);
     }
 
@@ -126,7 +130,7 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
         detailTimeTextView.setText(String.format("%s:%s%s", hour, minute, meridiem));
     }
 
-    private void deleteDiary(String idx) {
+    private void deleteDiary(int idx) {
 
         compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(idx)
                 .subscribeOn(Schedulers.single())

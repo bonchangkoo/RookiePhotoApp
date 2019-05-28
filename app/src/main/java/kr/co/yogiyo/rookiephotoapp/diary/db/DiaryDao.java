@@ -16,7 +16,7 @@ public interface DiaryDao {
     void insertDiary(Diary diary);
 
     @Query("SELECT * FROM diaries WHERE idx = :diaryId")
-    Maybe<Diary> findDiaryById(String diaryId);
+    Maybe<Diary> findDiaryById(int diaryId);
 
     @Update
     void updateDiary(Diary diary);

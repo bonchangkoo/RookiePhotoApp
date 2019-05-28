@@ -7,7 +7,6 @@ import java.util.Date;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -64,7 +63,7 @@ public class LocalDiaryManager extends BaseActivity {
                 });
     }
 
-    public void findDiaryById(final DiaryDatabaseCallback databaseCallback, final String diaryId) {
+    public void findDiaryById(final DiaryDatabaseCallback databaseCallback, final int diaryId) {
         compositeDisposable.add(db.diaryDao().findDiaryById(diaryId)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
