@@ -3,6 +3,7 @@ package kr.co.yogiyo.rookiephotoapp.diary;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,9 +35,8 @@ import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase;
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
-import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
+import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
 public class DiaryEditActivity extends BaseActivity implements View.OnClickListener, DiaryDatabaseCallback {
@@ -43,8 +44,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     private final static String TAG = DiaryEditActivity.class.getSimpleName();
 
     private final static int DIARY_ADD = -1;
-
-    private DiaryDatabase diaryDatabase;
 
     private ImageButton backImageButton;
     private TextView toolbarNameTextView;
@@ -67,14 +66,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     private String photoFileName;
     private boolean isPhotoUpdate = false;
 
+    private LocalDiaryViewModel localDiaryViewModel;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_edit);
 
-        if (diaryDatabase == null) {
-            diaryDatabase = DiaryDatabase.getDatabase(this);
-        }
+        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
 
         diaryIdx = getIntent().getIntExtra("DIARY_IDX", -1);
 
@@ -170,7 +170,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
         } else {
-            LocalDiaryManager.getInstance(this).findDiaryById(this, idx);
+            localDiaryViewModel.findDiaryById(this, idx);
         }
     }
 
@@ -281,8 +281,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
             Date time = getDateAndTime();
 
-            LocalDiaryManager.getInstance(DiaryEditActivity.this)
-                    .insertDiary(DiaryEditActivity.this, time, time.getTime() + ".jpg", updateDescription);
+            localDiaryViewModel.insertDiary(DiaryEditActivity.this, time, time.getTime() + ".jpg", updateDescription);
 
             try {
                 copyFileToDownloads(selectedUri, time.getTime());
@@ -323,8 +322,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void updateDiary(int idx) {
-
-        compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(idx)
+        getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Diary>() {
@@ -334,18 +332,16 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             Date time = getDateAndTime();
                             String updatedDescription = editDescriptionTextView.getText().toString();
                             if (isPhotoUpdate) {
-                                LocalDiaryManager.getInstance(DiaryEditActivity.this)
-                                        .updateDiary(DiaryEditActivity.this,
-                                                diary, time, time.getTime() + ".jpg", updatedDescription);
+                                localDiaryViewModel.updateDiary(DiaryEditActivity.this,
+                                        diary, time, time.getTime() + ".jpg", updatedDescription);
                                 try {
                                     copyFileToDownloads(selectedUri, time.getTime());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else {
-                                LocalDiaryManager.getInstance(DiaryEditActivity.this)
-                                        .updateDiary(DiaryEditActivity.this,
-                                                diary, time, photoFileName, updatedDescription);
+                                localDiaryViewModel.updateDiary(DiaryEditActivity.this,
+                                        diary, time, photoFileName, updatedDescription);
                             }
                         }
                     }
@@ -364,6 +360,11 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         photoFileName = diary.getImage();
         editPhotoImageButton.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, photoFileName)));
         editDescriptionTextView.setText(diary.getDescription());
+    }
+
+    @Override
+    public void onDiariesBetweenDatesFinded(List<Diary> diaries) {
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package kr.co.yogiyo.rookiephotoapp.diary.main;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,7 +22,7 @@ import java.util.List;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
-import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
+import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 
 public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
 
@@ -30,6 +31,8 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
     private DiariesAdapter diariesAdapter;
 
     private ProgressBar loadDiariesProgressBar;
+
+    private LocalDiaryViewModel localDiaryViewModel;
 
     public static Fragment newInstance(DiariesActivity context, int position) {
         Bundle bundle = new Bundle();
@@ -51,6 +54,13 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
     }
 
     @Nullable
@@ -83,10 +93,35 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
     }
 
     @Override
+    public void onDiaryAdded() {
+
+    }
+
+    @Override
+    public void onDiaryByIdFinded(Diary diary) {
+
+    }
+
+    @Override
     public void onDiariesBetweenDatesFinded(List<Diary> diaries) {
         diariesAdapter.setItems(diaries);
         diariesAdapter.notifyDataSetChanged();
         loadDiariesProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDiaryUpdated() {
+
+    }
+
+    @Override
+    public void onDiaryDeleted() {
+
+    }
+
+    @Override
+    public void onDiaryError(String errorMessage) {
+
     }
 
     private void loadDiaries() {
@@ -118,6 +153,6 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
 
         loadDiariesProgressBar.setVisibility(View.VISIBLE);
 
-        LocalDiaryManager.getInstance(context).findDiariesBetweenDates(this, fromCalendar.getTime(), toCalendar.getTime());
+        localDiaryViewModel.findDiariesBetweenDates(this, fromCalendar.getTime(), toCalendar.getTime());
     }
 }
