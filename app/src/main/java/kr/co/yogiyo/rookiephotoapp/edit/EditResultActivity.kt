@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.view.Menu
@@ -34,6 +33,10 @@ class EditResultActivity : BaseActivity() {
         }
 
     private var startingPoint: String? = null   // `시작 액티비티`를 구별
+        get() {
+            field = intent.getStringExtra(STARTING_POINT)
+            return field
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +113,7 @@ class EditResultActivity : BaseActivity() {
 
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
-
+        Log.d(TAG,"save file")
         if (!YOGIDIARY_PATH.exists()) {
             if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
@@ -134,6 +137,11 @@ class EditResultActivity : BaseActivity() {
 
         showToast(R.string.notification_image_saved)
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        startingPoint = null
     }
 
     companion object {

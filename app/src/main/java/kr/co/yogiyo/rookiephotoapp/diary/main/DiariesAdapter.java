@@ -1,9 +1,11 @@
 package kr.co.yogiyo.rookiephotoapp.diary.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.util.Calendar;
@@ -19,6 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 
 public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder> {
@@ -42,7 +46,6 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
 
     @Override
     public void onBindViewHolder(@NonNull DiariesViewHolder diariesViewHolder, int i) {
-
         Diary diary = diaries.get(i);
         Date date = diary.getDate();
         Calendar calendar = new GregorianCalendar();
@@ -61,6 +64,7 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
         String imageAbsolutePath = String.format("%s/%s", yogiDiaryStorageDir.getAbsolutePath(), diary.getImage());
         Glide.with(context)
                 .load(imageAbsolutePath)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.baseline_not_interested_black_36)
                 .into(diariesViewHolder.imageView);
     }
@@ -88,6 +92,16 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
             timeText = itemView.findViewById(R.id.text_time);
             descriptionText = itemView.findViewById(R.id.text_description);
             imageView = itemView.findViewById(R.id.image_view);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(DiariesAdapter.class.getSimpleName(), diaries.get(getAdapterPosition()).getIdx() + "");
+                    Intent intent = new Intent(context, DiaryDetailActivity.class);
+                    intent.putExtra("DIARY_IDX", diaries.get(getAdapterPosition()).getIdx());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

@@ -1,11 +1,14 @@
 package kr.co.yogiyo.rookiephotoapp.diary;
 
+
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,19 +19,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase;
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
-import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
+import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 
-public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCallback, View.OnClickListener {
+public class DiaryDetailActivity extends BaseActivity implements View.OnClickListener {
 
-    private DiaryDatabase diaryDatabase;
+    private LocalDiaryViewModel localDiaryViewModel;
 
     private ImageButton backImageButton;
     private ImageButton diaryDeleteImageButton;
@@ -46,11 +49,10 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_detail);
 
-        if (diaryDatabase == null) {
-            diaryDatabase = DiaryDatabase.getDatabase(DiaryDetailActivity.this);
-        }
+        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
 
         diaryIdx = getIntent().getIntExtra("DIARY_IDX", 0);
+        Log.d(DiaryDetailActivity.class.getSimpleName(), String.valueOf(diaryIdx));
 
         initView();
         setViewData(diaryIdx);
@@ -106,7 +108,17 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     }
 
     private void setViewData(int diaryIndex) {
-        LocalDiaryManager.getInstance(DiaryDetailActivity.this).findDiaryById(DiaryDetailActivity.this, diaryIndex);
+        getCompositeDisposable().add(localDiaryViewModel.findDiaryById(diaryIndex)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Diary>() {
+                    @Override
+                    public void accept(Diary diary) {
+                        setDateAndTime(diary.getDate());
+                        detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, diary.getImage())));
+                        detailDescriptionTextView.setText(diary.getDescription());
+                    }
+                }));
     }
 
     private void setDateAndTime(Date dateAndTime) {
@@ -131,51 +143,34 @@ public class DiaryDetailActivity extends BaseActivity implements DiaryDatabaseCa
     }
 
     private void deleteDiary(int idx) {
-
-        compositeDisposable.add(diaryDatabase.diaryDao().findDiaryById(idx)
+        getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Diary>() {
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull Diary diary) {
                         if (diary != null)
-                            LocalDiaryManager.getInstance(DiaryDetailActivity.this).deleteDiary(DiaryDetailActivity.this, diary);
+                            localDiaryViewModel.deleteDiary(diary)
+                                    .subscribeOn(Schedulers.single())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new CompletableObserver() {
+                                        @Override
+                                        public void onSubscribe(Disposable d) {
+                                            //Do noting
+                                        }
 
+                                        @Override
+                                        public void onComplete() {
+                                            showToast(R.string.text_diary_detail_deleted);
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            showToast(getString(R.string.text_cant_delete_diary));
+                                        }
+                                    });
                     }
                 }));
-    }
-
-    @Override
-    public void onDiaryAdded() {
-        // NO ACTION
-    }
-
-    @Override
-    public void onDiaryByIdFinded(Diary diary) {
-        setDateAndTime(diary.getDate());
-        detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, diary.getImage())));
-        detailDescriptionTextView.setText(diary.getDescription());
-    }
-
-    @Override
-    public void onDiaryUpdated() {
-        // NO ACTION
-    }
-
-    @Override
-    public void onDiaryDeleted() {
-        showToast(R.string.text_diary_detail_deleted);
-        finish();
-    }
-
-    @Override
-    public void onDiaryError(String errorMessage) {
-        showToast(errorMessage);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        destroy();
     }
 }
