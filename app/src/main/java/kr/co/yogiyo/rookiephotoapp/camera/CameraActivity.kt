@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
+import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 
 class CameraActivity : AppCompatActivity() {
 
@@ -50,8 +51,9 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        btn_back.setOnClickListener {
-            onBackPressed()
+        btn_go_diary.setOnClickListener {
+            val intent = Intent(this, DiariesActivity::class.java)
+            startActivity(intent)
         }
 
         btn_flash.setOnClickListener {

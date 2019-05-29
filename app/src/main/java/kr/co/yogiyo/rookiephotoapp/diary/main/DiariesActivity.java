@@ -17,6 +17,7 @@ import java.util.GregorianCalendar;
 
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity;
 
 public class DiariesActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -56,6 +57,9 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btn_add_diary:
                 // TODO: 다이어리 글 추가 화면으로 이동
+                Intent intent = new Intent(this, DiaryEditActivity.class);
+                intent.putExtra("DIARY_IDX", -1);
+                startActivity(intent);
                 break;
             case R.id.btn_convert_layout:
                 // TODO: 달력 형태로 변경

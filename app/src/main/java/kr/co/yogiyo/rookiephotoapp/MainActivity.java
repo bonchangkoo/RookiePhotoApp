@@ -13,12 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
-import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity;
-import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private Button showDiariesMainButton;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,21 +22,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         setupCheckPermission();
-    }
-
-
-    private void initView() {
-        showDiariesMainButton = findViewById(R.id.btn_show_diaries_main);
-        showDiariesMainButton.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_show_diaries_main:
-                startActivity(new Intent(this, DiariesActivity.class));
-                break;
-        }
     }
 
     private void setupCheckPermission() {

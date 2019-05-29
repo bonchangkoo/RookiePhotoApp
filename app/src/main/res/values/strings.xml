@@ -12,6 +12,8 @@
     <!--activity_main.xml-->
     <string name="text_show_diaries_main">다이어리 메인</string>
 
+    <!--activity_camera.xml-->
+    <string name="text_diary">다이어리</string>
 
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
@@ -74,4 +76,5 @@
     <string name="text_day_now_diary">%d일</string>
     <string name="text_time_now_diary">%d:%s</string>
     <string name="text_yogidiary_path">%s/%s</string>
+
 </resources>
