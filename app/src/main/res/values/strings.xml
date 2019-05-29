@@ -44,6 +44,8 @@
     <!--dialog_fragment_sign.xml-->
     <string name="text_input_email">이메일</string>
     <string name="text_input_password">패스워드</string>
+    <string name="text_hint_email">abc@example.com</string>
+    <string name="text_hint_password">6자리 이상</string>
     <string name="text_signin">로그인</string>
     <string name="text_signup">가입</string>
     <string name="text_signin_success">로그인 성공</string>

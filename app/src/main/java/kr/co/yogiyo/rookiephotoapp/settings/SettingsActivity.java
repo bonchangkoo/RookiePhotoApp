@@ -33,6 +33,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     public void signInWithEmailAndPassword(final String email, final String password,
                                            final LoginCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
+            callback.onFail();
             return;
         }
         firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -55,6 +56,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     public void createUserWithEmailAndPassword(final String email, final String password,
                                                final LoginCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
+            callback.onFail();
             return;
         }
         firebaseAuth.createUserWithEmailAndPassword(email, password)

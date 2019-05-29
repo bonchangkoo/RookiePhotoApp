@@ -20,7 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_email"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="4dp"
+        android:hint="@string/text_hint_email" />
 
     <TextView
         android:id="@+id/text_password"
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_password"
         android:layout_marginTop="4dp"
+        android:hint="@string/text_hint_password"
         android:inputType="textPassword" />
 
     <TextView
