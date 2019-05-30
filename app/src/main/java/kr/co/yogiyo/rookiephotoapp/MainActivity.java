@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -15,43 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
-import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity;
-import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private Button editPhotoButton;
-    private Button showDiariesMainButton;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initView();
-
         setupCheckPermission();
-    }
-
-    private void initView() {
-        editPhotoButton = findViewById(R.id.btn_edit_photo);
-        editPhotoButton.setOnClickListener(this);
-        showDiariesMainButton = findViewById(R.id.btn_show_diaries_main);
-        showDiariesMainButton.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_edit_photo:
-                Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
-                doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
-                startActivity(doStartEditPhotoActivityIntent);
-                break;
-            case R.id.btn_show_diaries_main:
-                startActivity(new Intent(this, DiariesActivity.class));
-                break;
-        }
     }
 
     private void setupCheckPermission() {

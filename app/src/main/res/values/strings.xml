@@ -9,10 +9,11 @@
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
 
-
     <!--activity_main.xml-->
-    <string name="text_select_photo">사진 선택</string>
     <string name="text_show_diaries_main">다이어리 메인</string>
+
+    <!--activity_camera.xml-->
+    <string name="text_diary">다이어리</string>
 
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
@@ -41,6 +42,33 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
+
+    <!--activity_diary_detail.xml-->
+    <string name="text_diary_date">5월 10일</string>
+    <string name="text_diary_time">8:00PM</string>
+    <string name="text_diary_test_image">테스트 이미지입니다</string>
+    <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
+    <string name="text_diary_content_hint">내용</string>
+
+    <!--DiaryEditActivity.java-->
+    <string name="text_diary_add_title">추가</string>
+    <string name="text_diary_added">다이어리가 추가되었습니다</string>
+    <string name="text_diary_updated">다이어리가 변경되었습니다</string>
+    <string name="text_diary_deleted">다이어리가 삭제되었습니다</string>
+
+    <!--DiaryDetailActivity.java-->
+    <string name="text_diary_detail_deleted">삭제되었습니다</string>
+    <string name="text_dialog_ok">네</string>
+    <string name="text_dialog_no">아니오</string>
+    <string name="text_toolbar_edit">편집</string>
+    <string name="text_photo_description">photo</string>
+    <string name="text_toolbar_detail">상세</string>
+
+    <!--LocalDiaryViewModel.java-->
+    <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
+    <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
+    <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
+
     <!--DiariesActivity.java-->
     <string name="text_date_now_page">%d.%d</string>
 
@@ -48,4 +76,5 @@
     <string name="text_day_now_diary">%d일</string>
     <string name="text_time_now_diary">%d:%s</string>
     <string name="text_yogidiary_path">%s/%s</string>
+
 </resources>

@@ -11,17 +11,18 @@ import android.content.Context;
 public abstract class DiaryDatabase extends RoomDatabase {
     public abstract DiaryDao diaryDao();
 
-    private static DiaryDatabase INSTANCE;
+    private static volatile DiaryDatabase INSTANCE;
 
-    // TODO: database version 충돌 (기존 앱에서 수정하면), 버전 업그레이드 방법 필요
-    public static DiaryDatabase getInstance(final Context context) {
-        synchronized (DiaryDatabase.class) {
-            if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                        DiaryDatabase.class, "Diaries.db")
-                        .build();
+    public static DiaryDatabase getDatabase(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (DiaryDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            DiaryDatabase.class, "Diaries.db")
+                            .build();
+                }
             }
-            return INSTANCE;
         }
+        return INSTANCE;
     }
 }

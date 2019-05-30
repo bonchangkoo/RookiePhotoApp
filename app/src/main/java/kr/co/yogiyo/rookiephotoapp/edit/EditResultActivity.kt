@@ -7,14 +7,15 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -28,6 +29,12 @@ class EditResultActivity : BaseActivity() {
             if (field == null) {
                 showToast(R.string.dont_load_captured_photo)
             }
+            return field
+        }
+
+    private var startingPoint: String? = null   // `시작 액티비티`를 구별
+        get() {
+            field = intent.getStringExtra(STARTING_POINT)
             return field
         }
 
@@ -49,19 +56,37 @@ class EditResultActivity : BaseActivity() {
     private fun setSettingAndResultActionBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.run {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.baseline_note_add_white_36) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
+            if (startingPoint != DiaryEditActivity::class.java.simpleName) {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
+            }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_edit_result, menu)
+        val downloadItem = menu.findItem(R.id.menu_download)
+        startingPoint?.run {
+            if (startingPoint != DiaryEditActivity::class.java.simpleName) {
+                downloadItem.setIcon(R.mipmap.diary_save)
+            }
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_download -> saveCroppedImage() // 이미지 저장
+            R.id.menu_download -> {
+                if (startingPoint == DiaryEditActivity::class.java.simpleName) {
+                    Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
+                        data = editPhotoUri
+                        setResult(Constants.RESULT_EDIT_PHOTO, this)
+                        finish()
+                    }
+                } else {
+                    saveCroppedImage()
+                }
+            } // 이미지 저장
             android.R.id.home -> onBackPressed() // 임시로 back 기능으로 대체
         }
         return super.onOptionsItemSelected(item)
@@ -88,16 +113,14 @@ class EditResultActivity : BaseActivity() {
 
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
-
-        val yogiDiaryStorageDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary")
-
-        if (!yogiDiaryStorageDir.exists()) {
-            if (!yogiDiaryStorageDir.mkdirs()) {
+        Log.d(TAG,"save file")
+        if (!YOGIDIARY_PATH.exists()) {
+            if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
             }
         }
 
-        val downloadsDirectoryPath = yogiDiaryStorageDir.path + "/"
+        val downloadsDirectoryPath = YOGIDIARY_PATH.path + "/"
         val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
 
         val saveFile = File(downloadsDirectoryPath, filename)
@@ -114,6 +137,11 @@ class EditResultActivity : BaseActivity() {
 
         showToast(R.string.notification_image_saved)
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        startingPoint = null
     }
 
     companion object {

@@ -8,14 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Entity(tableName = "diaries")
 public class Diary {
 
     @NonNull
-    @PrimaryKey
-    private final String idx;
+    @PrimaryKey(autoGenerate = true)
+    private final int idx;
 
     @ColumnInfo(name = "date")
     private Date date;
@@ -30,10 +29,10 @@ public class Diary {
 
     @Ignore
     public Diary(Date date, @Nullable String image, @Nullable String description) {
-        this(UUID.randomUUID().toString(), date, image, description);
+        this(0, date, image, description);
     }
 
-    public Diary(@NonNull String idx, Date date, @Nullable String image, @Nullable String description) {
+    public Diary(@NonNull int idx, Date date, @Nullable String image, @Nullable String description) {
         this.idx = idx;
         this.date = date;
         this.image = image;
@@ -52,7 +51,7 @@ public class Diary {
         this.description = description;
     }
 
-    public String getIdx() {
+    public int getIdx() {
         return idx;
     }
 
@@ -69,4 +68,5 @@ public class Diary {
     public String getDescription() {
         return description;
     }
+
 }

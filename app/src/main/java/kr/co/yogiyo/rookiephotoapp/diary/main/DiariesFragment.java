@@ -1,5 +1,6 @@
 package kr.co.yogiyo.rookiephotoapp.diary.main;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,18 +19,25 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
-import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryManager;
+import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 
-public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
+public class DiariesFragment extends Fragment {
+
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Context context;
 
     private DiariesAdapter diariesAdapter;
 
     private ProgressBar loadDiariesProgressBar;
+
+    private LocalDiaryViewModel localDiaryViewModel;
 
     public static Fragment newInstance(DiariesActivity context, int position) {
         Bundle bundle = new Bundle();
@@ -62,6 +70,8 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
 
         View root = inflater.inflate(R.layout.fragment_diaries, container, false);
 
+        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
+
         RecyclerView diariesRecyclerView = root.findViewById(R.id.recycler_diaries);
         loadDiariesProgressBar = root.findViewById(R.id.progressbar_load_diaries);
 
@@ -83,10 +93,9 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
     }
 
     @Override
-    public void onDiariesBetweenDatesFinded(List<Diary> diaries) {
-        diariesAdapter.setItems(diaries);
-        diariesAdapter.notifyDataSetChanged();
-        loadDiariesProgressBar.setVisibility(View.GONE);
+    public void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.clear();
     }
 
     private void loadDiaries() {
@@ -118,6 +127,17 @@ public class DiariesFragment extends Fragment implements DiaryDatabaseCallback {
 
         loadDiariesProgressBar.setVisibility(View.VISIBLE);
 
-        LocalDiaryManager.getInstance(context).findDiariesBetweenDates(this, fromCalendar.getTime(), toCalendar.getTime());
+        compositeDisposable.add(localDiaryViewModel.findDiariesBetweenDates(fromCalendar.getTime(), toCalendar.getTime())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Diary>>() {
+                    @Override
+                    public void accept(List<Diary> diaries) {
+                        diariesAdapter.setItems(diaries);
+                        diariesAdapter.notifyDataSetChanged();
+                        loadDiariesProgressBar.setVisibility(View.GONE);
+                    }
+                }));
     }
+
 }
