@@ -37,6 +37,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btn_add_diary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
@@ -51,6 +52,7 @@
             android:textStyle="bold" />
 
         <Button
+            android:id="@+id/btn_save_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="60dp"

@@ -6,6 +6,8 @@ import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -62,11 +64,13 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     private static int diaryIdx;
 
     private Uri selectedUri;
+    private Bitmap selectedBitmap;
     private int updateHour;
     private int updateMinute;
 
     private String photoFileName;
     private boolean isPhotoUpdate = false;
+    private boolean isFromDiary = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         editPhotoImageButton.setOnClickListener(this);
         editDescriptionTextView.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
@@ -168,6 +173,17 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         if (idx == DIARY_ADD) {
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
+
+            if (getIntent().getData() != null) {
+                Uri uri = getIntent().getData();
+                selectedUri = uri;
+                editPhotoImageButton.setImageURI(uri);
+            } else if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
+                byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
+                selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+                editPhotoImageButton.setImageBitmap(selectedBitmap);
+                isFromDiary = true;
+            }
         } else {
             getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
                     .subscribeOn(Schedulers.io())
@@ -313,7 +329,11 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     });
 
             try {
-                copyFileToDownloads(selectedUri, time.getTime());
+                if (!isFromDiary) {
+                    copyFileToDownloads(selectedUri, time.getTime());
+                } else {
+                    FileToDownloads(selectedBitmap, time.getTime());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -349,6 +369,31 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)));
         showToast(R.string.notification_image_saved);
     }
+
+    private void FileToDownloads(Bitmap bitmap, long time) throws Exception {
+
+        if (!YOGIDIARY_PATH.exists()) {
+            if (YOGIDIARY_PATH.mkdirs()) {
+                Log.d(TAG, getString(R.string.text_mkdir_success));
+            } else {
+                Log.d(TAG, getString(R.string.text_mkdir_fail));
+            }
+        }
+
+        String downloadsDirectoryPath = YOGIDIARY_PATH.getPath() + "/";
+        String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
+
+        File saveFile = new File(downloadsDirectoryPath, filename);
+
+        FileOutputStream outStream = new FileOutputStream(saveFile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+        outStream.flush();
+        outStream.close();
+
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)));
+        showToast(R.string.notification_image_saved);
+    }
+
 
     private void updateDiary(int idx) {
         getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)

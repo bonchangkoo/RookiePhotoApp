@@ -113,7 +113,6 @@ class EditResultActivity : BaseActivity() {
 
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
-        Log.d(TAG,"save file")
         if (!YOGIDIARY_PATH.exists()) {
             if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
