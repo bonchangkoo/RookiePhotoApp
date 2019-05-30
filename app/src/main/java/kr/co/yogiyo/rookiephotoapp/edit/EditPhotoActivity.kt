@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.util.Log
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -68,9 +67,10 @@ class EditPhotoActivity : BaseActivity() {
                         finish()
                     } ?: finish()
                 }
-                Activity.RESULT_CANCELED -> finish()
                 UCrop.RESULT_ERROR -> handleCropError(data)
             }
+        } ?: when (resultCode) {
+            Activity.RESULT_CANCELED -> finish()
         }
     }
 
