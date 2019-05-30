@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="kr.co.yogiyo.rookiephotoapp">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -28,7 +27,8 @@
         <activity android:name=".BaseActivity" />
         <activity
             android:name=".camera.capture.PreviewActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".edit.EditPhotoActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
