@@ -76,6 +76,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
         private ImageView imageView;
         private FrameLayout selectedFrame;
 
+        // TODO : 카메라에서 갤러리를 열었을 때 UI 수정 필요
         public GalleryViewHolder(final Context context, @NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_view);
@@ -88,16 +89,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
                         if (getSelectedViewHolder() == null) {
                             setSelectedViewHolder(GalleryViewHolder.this);
                             selectedFrame.setVisibility(View.VISIBLE);
-                            ((GalleryActivity) context).setControlButton(true);
+                            ((GalleryActivity) context).setControlButtonEnabled(true);
                         } else if (getSelectedViewHolder() == GalleryViewHolder.this) {
                             selectedFrame.setVisibility(View.GONE);
                             setSelectedViewHolder(null);
-                            ((GalleryActivity) context).setControlButton(false);
+                            ((GalleryActivity) context).setControlButtonEnabled(false);
                         } else {
                             getSelectedViewHolder().selectedFrame.setVisibility(View.GONE);
                             setSelectedViewHolder(GalleryViewHolder.this);
                             selectedFrame.setVisibility(View.VISIBLE);
-                            ((GalleryActivity) context).setControlButton(true);
+                            ((GalleryActivity) context).setControlButtonEnabled(true);
                         }
                     }
                 }

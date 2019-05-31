@@ -68,7 +68,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                 if (nowFragment instanceof GalleryFragment) {
                     Uri uriForEdit = ((GalleryFragment) nowFragment).getSelectedImageUri();
                     if (uriForEdit != null) {
-                        setControlButton(false);
+                        setControlButtonEnabled(false);
                         // TODO: 현재 EDIT_SELECTED_PHOTO 코드일 경우 gallery를 요청하기 때문에 EDIT_CAPTURED_PHOTO 코드를 저장 (수정 필요)
                         Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
                         doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO);
@@ -136,7 +136,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         return listOfAllImageFolders;
     }
 
-    public void setControlButton(boolean selectedImage) {
+    public void setControlButtonEnabled(boolean selectedImage) {
         if (selectedImage) {
             editButton.setEnabled(true);
             editButton.setAlpha(255);
@@ -177,7 +177,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         gallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setControlButton(false);
+                setControlButtonEnabled(false);
 
                 String item = parent.getItemAtPosition(position).toString().substring(0, parent.getItemAtPosition(position).toString().lastIndexOf(" "));
 
