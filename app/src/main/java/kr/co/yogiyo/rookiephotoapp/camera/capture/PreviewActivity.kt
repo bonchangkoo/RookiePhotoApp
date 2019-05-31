@@ -72,7 +72,7 @@ class PreviewActivity : BaseActivity() {
 
         btn_save_photo.setOnClickListener {
             captrueImageUri?.run {
-                FileToDownloads(capturedImageBitmap)
+                bitmapToDownloads(capturedImageBitmap)
             }
         }
 
@@ -112,7 +112,7 @@ class PreviewActivity : BaseActivity() {
     }
 
     @Throws(Exception::class)
-    private fun FileToDownloads(bitmap: Bitmap) {
+    private fun bitmapToDownloads(bitmap: Bitmap) {
         if (!YOGIDIARY_PATH.exists()) {
             if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
@@ -132,9 +132,7 @@ class PreviewActivity : BaseActivity() {
 
         sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)))
 
-
         showToast(R.string.notification_image_saved)
-        finish()
     }
 
     // Bitmap을 Uri로 변환하는 함수

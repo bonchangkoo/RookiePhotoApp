@@ -332,7 +332,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 if (!isFromDiary) {
                     copyFileToDownloads(selectedUri, time.getTime());
                 } else {
-                    FileToDownloads(selectedBitmap, time.getTime());
+                    bitmapToDownloads(selectedBitmap, time.getTime());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -370,7 +370,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         showToast(R.string.notification_image_saved);
     }
 
-    private void FileToDownloads(Bitmap bitmap, long time) throws Exception {
+    private void bitmapToDownloads(Bitmap bitmap, long time) throws Exception {
 
         if (!YOGIDIARY_PATH.exists()) {
             if (YOGIDIARY_PATH.mkdirs()) {
