@@ -174,11 +174,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getData() != null) {
-                Uri uri = getIntent().getData();
-                selectedUri = uri;
-                editPhotoImageButton.setImageURI(uri);
-            } else if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
+            if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
                 byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
                 selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
