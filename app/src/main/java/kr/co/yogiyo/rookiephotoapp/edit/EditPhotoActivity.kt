@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.util.Log
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -15,7 +16,6 @@ import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants.*
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
-import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 import java.io.File
 
 class EditPhotoActivity : BaseActivity() {
@@ -56,7 +56,8 @@ class EditPhotoActivity : BaseActivity() {
                         startCrop(uri)
                     } ?: showToast(R.string.toast_cannot_retrieve_selected_image)
 
-                    UCrop.REQUEST_CROP -> handleCropResult(it)
+                    UCrop.REQUEST_CROP ->
+                        handleCropResult(it)
                 }
                 RESULT_EDIT_PHOTO -> when (requestCode) {
                     REQUEST_DIARY_PICK_GALLERY -> it.data?.let { selectedUri ->
@@ -67,22 +68,14 @@ class EditPhotoActivity : BaseActivity() {
                         finish()
                     } ?: finish()
                 }
-                RESULT_ORIGINAL_PHOTO -> when (requestCode) {
-                    REQUEST_PICK_GALLERY -> it.data?.let { selectedUri ->
-                        val intent = Intent().apply {
-                            this.data = selectedUri
-                        }
-                        setResult(Activity.RESULT_OK, intent)
-                        finish()
-                    } ?: finish()
-                }
-                RESULT_CANCELED -> finish()
+                Activity.RESULT_CANCELED -> finish()
                 UCrop.RESULT_ERROR -> handleCropError(data)
             }
-        } ?: finish()
+        }
     }
 
     private fun handleCropResult(result: Intent) {
+
         UCrop.getOutput(result)?.let { resultUri ->
             startingPoint?.let {
                 val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
@@ -111,7 +104,16 @@ class EditPhotoActivity : BaseActivity() {
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION)
         } else {
-            startActivityForResult(Intent(this@EditPhotoActivity, GalleryActivity::class.java), REQUEST_PICK_GALLERY)
+            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "image/*"
+                addCategory(Intent.CATEGORY_OPENABLE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    val mimeTypes = arrayOf("image/jpeg", "image/png")
+                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                }
+            }
+
+            startActivityForResult(Intent.createChooser(intent, getString(R.string.label_select_picture)), REQUEST_PICK_GALLERY)
         }
     }
 

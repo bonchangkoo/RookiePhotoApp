@@ -223,7 +223,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (resultCode) {
             case RESULT_OK:
                 if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY && data != null) {
