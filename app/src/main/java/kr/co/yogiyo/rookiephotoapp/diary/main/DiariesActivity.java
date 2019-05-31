@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity;
 
 public class DiariesActivity extends AppCompatActivity implements View.OnClickListener {
@@ -53,7 +52,7 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start_camera:
-                startActivity(new Intent(DiariesActivity.this, CameraActivity.class));
+                finish();
                 break;
             case R.id.btn_add_diary:
                 // TODO: 다이어리 글 추가 화면으로 이동

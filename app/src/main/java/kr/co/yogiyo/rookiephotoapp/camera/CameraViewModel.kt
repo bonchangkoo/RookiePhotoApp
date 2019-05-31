@@ -5,8 +5,6 @@ import android.databinding.BaseObservable
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.os.Handler
-import android.support.annotation.NonNull
-import android.support.annotation.Nullable
 import android.util.Log
 import android.view.View
 import com.otaliastudios.cameraview.Flash
@@ -17,8 +15,7 @@ class CameraViewModel(context: Context) : BaseObservable() {
     companion object {
         val DELAY_DURATIONS = mutableListOf(0, 2, 5, 10)
 
-        // TODO: [Warning] ...Specify type explicitly as nullable or non-nullable...
-        val TAG = CameraViewModel::class.java.simpleName
+        val TAG = CameraViewModel::class.java.simpleName as String
     }
 
     val facingButtonLabel: ObservableField<String> = ObservableField(context.getString(R.string.text_change))
