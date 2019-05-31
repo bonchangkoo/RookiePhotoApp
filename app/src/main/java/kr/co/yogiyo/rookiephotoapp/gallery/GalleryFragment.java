@@ -19,7 +19,6 @@ import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.R;
 
-
 public class GalleryFragment extends Fragment {
 
     private static final String FOLDER_NAME = "folderName";
@@ -54,6 +53,11 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         galleryRecycler = view.findViewById(R.id.recycler_gallery);
+        galleryAdapter = new GalleryAdapter(context, new ArrayList<String>());
+        gridLayoutManager = new GridLayoutManager(context, 3);
+        galleryRecycler.setHasFixedSize(true);
+        galleryRecycler.setAdapter(galleryAdapter);
+        galleryRecycler.setLayoutManager(gridLayoutManager);
 
         return view;
     }
@@ -61,7 +65,6 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setupRecyclerView();
     }
 
     @Override
@@ -104,14 +107,6 @@ public class GalleryFragment extends Fragment {
 
     public Uri getSelectedImageUri() {
         return galleryAdapter.getSelectedImageUri();
-    }
-
-    private void setupRecyclerView() {
-        galleryAdapter = new GalleryAdapter(context, new ArrayList<String>());
-        gridLayoutManager = new GridLayoutManager(context, 3);
-        galleryRecycler.setHasFixedSize(true);
-        galleryRecycler.setAdapter(galleryAdapter);
-        galleryRecycler.setLayoutManager(gridLayoutManager);
     }
 
     private void loadGallery(String folderName) {

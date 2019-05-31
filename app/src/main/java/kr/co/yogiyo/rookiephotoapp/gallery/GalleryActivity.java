@@ -28,11 +28,17 @@ import java.util.Map;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
+
+import static kr.co.yogiyo.rookiephotoapp.Constants.RESULT_ORIGINAL_PHOTO;
 
 public class GalleryActivity extends BaseActivity implements View.OnClickListener {
 
+    private static final String TAG = GalleryActivity.class.getSimpleName();
     private static final int EDIT_SELECTED_GALLERY_PHOTO = 11111;
+
+    private String startingPointTAG;
 
     private ImageButton editButton;
     private ImageButton doneButton;
@@ -41,6 +47,8 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
+
+        startingPointTAG = getIntent().getStringExtra(STARTING_POINT);
 
         initView();
 
@@ -68,7 +76,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                 if (nowFragment instanceof GalleryFragment) {
                     Uri uriForEdit = ((GalleryFragment) nowFragment).getSelectedImageUri();
                     if (uriForEdit != null) {
-                        setControlButton(false);
+                        setControlButtonEnabled(false);
                         // TODO: 현재 EDIT_SELECTED_PHOTO 코드일 경우 gallery를 요청하기 때문에 EDIT_CAPTURED_PHOTO 코드를 저장 (수정 필요)
                         Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
                         doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO);
@@ -85,7 +93,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                     if (originalUri != null) {
                         Intent originalUriIntent = new Intent();
                         originalUriIntent.setData(originalUri);
-                        setResult(RESULT_OK, originalUriIntent);
+                        setResult(RESULT_ORIGINAL_PHOTO, originalUriIntent);
                         finish();
                     } else {
                         showToast(R.string.toast_cannot_retrieve_selected_image);
@@ -136,7 +144,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         return listOfAllImageFolders;
     }
 
-    public void setControlButton(boolean selectedImage) {
+    public void setControlButtonEnabled(boolean selectedImage) {
         if (selectedImage) {
             editButton.setEnabled(true);
             editButton.setAlpha(255);
@@ -150,12 +158,25 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
+    public String getStartingPointTag() {
+        if (startingPointTAG != null) {
+            return startingPointTAG;
+        } else {
+            return TAG;
+        }
+    }
+
     private void initView() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         ImageButton closeButton = findViewById(R.id.btn_close);
         Spinner gallerySpinner = findViewById(R.id.spinner_gallery);
         editButton = findViewById(R.id.btn_edit);
         doneButton = findViewById(R.id.btn_done);
+
+        if (startingPointTAG != null && startingPointTAG.equals(CameraActivity.class.getSimpleName())) {
+            editButton.setVisibility(View.GONE);
+            doneButton.setVisibility(View.GONE);
+        }
 
         closeButton.setOnClickListener(this);
         editButton.setOnClickListener(this);
@@ -169,7 +190,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
 
         List<String> folderNames = getFolderNames(this);
 
-        // TODO : Spinner 목록 색 변경 필요
+        // TODO : Spinner 목록 배경색 변경 필요할지 (흰색으로)
         // TODO : Spinner 에 보여지는 텍스트 2가지로 구분하는게 좋을 것 같음 -> 폴더명... (이미지 수)
         ArrayAdapter<String> gallerySpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, folderNames);
         gallerySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -177,7 +198,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         gallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setControlButton(false);
+                setControlButtonEnabled(false);
 
                 String item = parent.getItemAtPosition(position).toString().substring(0, parent.getItemAtPosition(position).toString().lastIndexOf(" "));
 

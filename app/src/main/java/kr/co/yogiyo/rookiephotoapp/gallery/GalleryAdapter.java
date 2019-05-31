@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder> {
 
@@ -85,19 +86,23 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
                 @Override
                 public void onClick(View v) {
                     if (context instanceof GalleryActivity) {
-                        if (getSelectedViewHolder() == null) {
-                            setSelectedViewHolder(GalleryViewHolder.this);
-                            selectedFrame.setVisibility(View.VISIBLE);
-                            ((GalleryActivity) context).setControlButton(true);
-                        } else if (getSelectedViewHolder() == GalleryViewHolder.this) {
-                            selectedFrame.setVisibility(View.GONE);
-                            setSelectedViewHolder(null);
-                            ((GalleryActivity) context).setControlButton(false);
+                        if (((GalleryActivity) context).getStartingPointTag().equals(CameraActivity.class.getSimpleName())) {
+                            // TODO : 카메라에서 열었을 때는 체크가 아닌 이미지 확대로 처리
                         } else {
-                            getSelectedViewHolder().selectedFrame.setVisibility(View.GONE);
-                            setSelectedViewHolder(GalleryViewHolder.this);
-                            selectedFrame.setVisibility(View.VISIBLE);
-                            ((GalleryActivity) context).setControlButton(true);
+                            if (getSelectedViewHolder() == null) {
+                                setSelectedViewHolder(GalleryViewHolder.this);
+                                selectedFrame.setVisibility(View.VISIBLE);
+                                ((GalleryActivity) context).setControlButtonEnabled(true);
+                            } else if (getSelectedViewHolder() == GalleryViewHolder.this) {
+                                selectedFrame.setVisibility(View.GONE);
+                                setSelectedViewHolder(null);
+                                ((GalleryActivity) context).setControlButtonEnabled(false);
+                            } else {
+                                getSelectedViewHolder().selectedFrame.setVisibility(View.GONE);
+                                setSelectedViewHolder(GalleryViewHolder.this);
+                                selectedFrame.setVisibility(View.VISIBLE);
+                                ((GalleryActivity) context).setControlButtonEnabled(true);
+                            }
                         }
                     }
                 }
