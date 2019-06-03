@@ -6,6 +6,7 @@
         android:title="사용자">
 
         <kr.co.yogiyo.rookiephotoapp.settings.LoginDialogPreference
+            android:icon="@drawable/baseline_account_circle_black_36"
             android:key="dialog"
             android:title="로그인" />
     </PreferenceCategory>
@@ -15,11 +16,13 @@
         android:title="백업 및 복원">
 
         <Preference
+            android:icon="@drawable/baseline_cloud_upload_black_36"
             android:key="backup"
             android:summary="다이어리 및 사진 파일을 서버에 백업하여 앱 재설치할 때 복원할 수 있습니다."
             android:title="백업하기" />
 
         <Preference
+            android:icon="@drawable/baseline_cloud_download_black_36"
             android:key="restore"
             android:summary="백업한 다이어리 및 사진 파일을 복원할 수 있습니다."
             android:title="복원하기" />
