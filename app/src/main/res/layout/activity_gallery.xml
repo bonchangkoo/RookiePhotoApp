@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_close_white_24" />
 
             <Spinner
@@ -46,7 +46,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_toStartOf="@+id/btn_done"
                 android:layout_toLeftOf="@+id/btn_done"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_edit_white_24" />
 
             <ImageButton
@@ -59,7 +59,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_done_white_24" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
