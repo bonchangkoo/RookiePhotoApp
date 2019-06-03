@@ -9,6 +9,9 @@
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
 
+    <!--activity_main.xml-->
+    <string name="text_show_diaries_main">다이어리 메인</string>
+
     <!--activity_camera.xml-->
     <string name="text_diary">다이어리</string>
     <string name="text_gallery">갤러리</string>

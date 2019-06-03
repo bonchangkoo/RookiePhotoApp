@@ -2,8 +2,10 @@ package kr.co.yogiyo.rookiephotoapp.diary.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -21,8 +24,6 @@ import java.util.List;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
-
-import static kr.co.yogiyo.rookiephotoapp.BaseActivity.YOGIDIARY_PATH;
 
 public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder> {
 
@@ -57,7 +58,10 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
                         "0" + calendar.get(Calendar.MINUTE) : String.valueOf(calendar.get(Calendar.MINUTE))));
         diariesViewHolder.descriptionText.setText(diary.getDescription());
 
-        String imageAbsolutePath = String.format("%s/%s", YOGIDIARY_PATH.getAbsolutePath(), diary.getImage());
+        File yogiDiaryStorageDir = Environment.getExternalStoragePublicDirectory(String.format(context.getString(R.string.text_yogidiary_path),
+                Environment.DIRECTORY_PICTURES, "YogiDiary"));
+
+        String imageAbsolutePath = String.format("%s/%s", yogiDiaryStorageDir.getAbsolutePath(), diary.getImage());
         Glide.with(context)
                 .load(imageAbsolutePath)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -92,6 +96,7 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d(DiariesAdapter.class.getSimpleName(), diaries.get(getAdapterPosition()).getIdx() + "");
                     Intent intent = new Intent(context, DiaryDetailActivity.class);
                     intent.putExtra("DIARY_IDX", diaries.get(getAdapterPosition()).getIdx());
                     context.startActivity(intent);

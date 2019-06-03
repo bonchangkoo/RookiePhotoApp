@@ -28,17 +28,11 @@ import java.util.Map;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
-
-import static kr.co.yogiyo.rookiephotoapp.Constants.RESULT_ORIGINAL_PHOTO;
 
 public class GalleryActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String TAG = GalleryActivity.class.getSimpleName();
     private static final int EDIT_SELECTED_GALLERY_PHOTO = 11111;
-
-    private String startingPointTAG;
 
     private ImageButton editButton;
     private ImageButton doneButton;
@@ -47,8 +41,6 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-
-        startingPointTAG = getIntent().getStringExtra(STARTING_POINT);
 
         initView();
 
@@ -93,7 +85,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                     if (originalUri != null) {
                         Intent originalUriIntent = new Intent();
                         originalUriIntent.setData(originalUri);
-                        setResult(RESULT_ORIGINAL_PHOTO, originalUriIntent);
+                        setResult(RESULT_OK, originalUriIntent);
                         finish();
                     } else {
                         showToast(R.string.toast_cannot_retrieve_selected_image);
@@ -158,25 +150,12 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         }
     }
 
-    public String getStartingPointTag() {
-        if (startingPointTAG != null) {
-            return startingPointTAG;
-        } else {
-            return TAG;
-        }
-    }
-
     private void initView() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         ImageButton closeButton = findViewById(R.id.btn_close);
         Spinner gallerySpinner = findViewById(R.id.spinner_gallery);
         editButton = findViewById(R.id.btn_edit);
         doneButton = findViewById(R.id.btn_done);
-
-        if (startingPointTAG != null && startingPointTAG.equals(CameraActivity.class.getSimpleName())) {
-            editButton.setVisibility(View.GONE);
-            doneButton.setVisibility(View.GONE);
-        }
 
         closeButton.setOnClickListener(this);
         editButton.setOnClickListener(this);
@@ -190,7 +169,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
 
         List<String> folderNames = getFolderNames(this);
 
-        // TODO : Spinner 목록 배경색 변경 필요할지 (흰색으로)
+        // TODO : Spinner 목록 색 변경 필요
         // TODO : Spinner 에 보여지는 텍스트 2가지로 구분하는게 좋을 것 같음 -> 폴더명... (이미지 수)
         ArrayAdapter<String> gallerySpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, folderNames);
         gallerySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

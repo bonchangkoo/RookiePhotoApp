@@ -10,5 +10,4 @@ public class Constants {
 
     // RESULT
     public static final int RESULT_EDIT_PHOTO = 201;
-    public static final int RESULT_ORIGINAL_PHOTO = 202;
 }
