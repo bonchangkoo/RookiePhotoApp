@@ -49,4 +49,13 @@
     <string name="text_signin_success">로그인 성공</string>
     <string name="text_signup_success">가입 성공</string>
     <string name="text_sign_fail">사용자 정보를 확인하세요.</string>
+
+    <!--preference_settings.xml-->
+    <string name="text_user">사용자</string>
+    <string name="text_need_to_login">로그인이 필요합니다.</string>
+    <string name="text_backup_restore">백업 및 복원</string>
+    <string name="text_summary_backup">다이어리 및 사진 파일을 서버에 백업하여 앱 재설치할 때 복원할 수 있습니다.</string>
+    <string name="text_summary_restore">백업한 다이어리 및 사진 파일을 복원할 수 있습니다.</string>
+    <string name="text_do_backup">백업하기</string>
+    <string name="text_do_restore">복원하기</string>
 </resources>

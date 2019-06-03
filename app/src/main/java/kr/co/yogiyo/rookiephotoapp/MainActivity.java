@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
-import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
+import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabaseCallback;
 import kr.co.yogiyo.rookiephotoapp.settings.SettingsActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DiaryDatabaseCallback {
 
     // 편집 화면으로 가기 위한 임시 버튼
-    private Button editPhotoButton;
-    private Button settingsButton;
+    private Button testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,25 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        editPhotoButton = findViewById(R.id.btn_edit_photo);
-        settingsButton = findViewById(R.id.btn_settings);
-
-        editPhotoButton.setOnClickListener(this);
-        settingsButton.setOnClickListener(this);
+        testButton = findViewById(R.id.btn_test);
+        testButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_edit_photo:
-                // 사진 선택
-                Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
-                doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EditPhotoActivity.EDIT_SELECTED_PHOTO);
-                startActivity(doStartEditPhotoActivityIntent);
-                break;
-            case R.id.btn_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                break;
+        if (v.getId() == R.id.btn_test) {
+            startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 
@@ -88,6 +77,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setPermissions(permissions.toArray(new String[0]))
                 .check();
     }
+
+    @Override
+    public void onDiaryAdded() {
+        // Do nothing
+    }
+
+    @Override
+    public void onDiaryByIdFinded(Diary diary) {
+        // Do nothing
+    }
+
+    @Override
+    public void onDiaryUpdated() {
+        // Do nothing
+    }
+
+    @Override
+    public void onDiaryDeleted() {
+        // Do nothing
+    }
+
+    @Override
+    public void onDiariesFinded(List<Diary> diaries) {
+        for (Diary diary : diaries) {
+//            diaryBackupRestore.executePostDiary(diary);
+        }
+    }
 }
-
-
