@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".gallery.GalleryActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".diary.main.DiariesActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
