@@ -168,6 +168,12 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         if (idx == DIARY_ADD) {
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
+
+            if (getIntent().getData() != null) {
+                Uri uri = getIntent().getData();
+                selectedUri = uri;
+                editPhotoImageButton.setImageURI(uri);
+            }
         } else {
             getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
                     .subscribeOn(Schedulers.io())

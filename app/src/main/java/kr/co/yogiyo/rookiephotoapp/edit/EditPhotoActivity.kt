@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.util.Log
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -49,6 +48,10 @@ class EditPhotoActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        when (resultCode) {
+            Activity.RESULT_CANCELED -> finish()
+        }
+
         data?.let {
             when (resultCode) {
                 Activity.RESULT_OK -> when (requestCode) {
@@ -68,7 +71,6 @@ class EditPhotoActivity : BaseActivity() {
                         finish()
                     } ?: finish()
                 }
-                Activity.RESULT_CANCELED -> finish()
                 UCrop.RESULT_ERROR -> handleCropError(data)
             }
         }
@@ -83,7 +85,10 @@ class EditPhotoActivity : BaseActivity() {
                     putExtra(STARTING_POINT, it)
                 }
                 startActivityForResult(intent, REQUEST_DIARY_PICK_GALLERY)
-            } ?: EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+            } ?: apply {
+                EditResultActivity.startWithUri(this, resultUri)
+                finish()
+            }
         } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
 
