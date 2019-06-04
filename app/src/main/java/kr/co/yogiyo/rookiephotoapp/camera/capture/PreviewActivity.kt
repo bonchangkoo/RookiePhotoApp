@@ -1,6 +1,7 @@
 package kr.co.yogiyo.rookiephotoapp.camera.capture
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,7 +14,9 @@ import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
@@ -22,9 +25,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
-class PreviewActivity : BaseActivity() {
 
-    var captrueImageUri: Uri? = null
+class PreviewActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,14 +47,16 @@ class PreviewActivity : BaseActivity() {
             showToast(String.format("width: %d, height: %d \nsize : %f MB",
                     this.width, this.height, getApproximateFileMegabytes(this)))
         }
-
-        captrueImageUri = getImageUri(this@PreviewActivity, capturedImageBitmap)
     }
 
     private fun initView() {
 
         btn_back_capture.setOnClickListener {
             onBackPressed()
+        }
+
+        if (globalApp.fromDiary) {
+            btn_add_diary.visibility = View.INVISIBLE
         }
 
         btn_add_diary.setOnClickListener {
@@ -71,13 +75,36 @@ class PreviewActivity : BaseActivity() {
         }
 
         btn_save_photo.setOnClickListener {
-            captrueImageUri?.run {
-                bitmapToDownloads(capturedImageBitmap)
+            if (globalApp.fromDiary) {
+                val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
+                saveBitmapToInternalStorage(applicationContext, capturedImageBitmap)
+                setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
+                finish()
+            } else {
+                capturedImageBitmap?.run {
+                    bitmapToDownloads(this)
+                }
             }
         }
 
         btn_edit.setOnClickListener {
             editCapturedPhoto()
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                data?.let {
+                    val intent = Intent(this@PreviewActivity, CameraActivity::class.java).apply {
+                        this.data = it.data
+                    }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+            }
         }
     }
 
@@ -106,8 +133,24 @@ class PreviewActivity : BaseActivity() {
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
-            startActivity(doStartEditPhotoActivityIntent)
-            finish()
+
+            if (globalApp.fromDiary) {
+                startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
+            } else {
+                startActivity(doStartEditPhotoActivityIntent)
+                finish()
+            }
+        }
+    }
+
+    private fun saveBitmapToInternalStorage(context: Context, bitmap: Bitmap) {
+        var fileOutputStream: FileOutputStream?
+        try {
+            fileOutputStream = context.openFileOutput("temp.jpg", Context.MODE_PRIVATE)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream)
+            fileOutputStream?.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

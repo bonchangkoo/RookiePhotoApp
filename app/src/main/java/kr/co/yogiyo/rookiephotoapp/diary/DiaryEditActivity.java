@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -64,13 +65,12 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     private static int diaryIdx;
 
     private Uri selectedUri;
-    private Bitmap selectedBitmap;
+    private static Bitmap selectedBitmap;
     private int updateHour;
     private int updateMinute;
 
     private String photoFileName;
     private boolean isPhotoUpdate = false;
-    private boolean isFromDiary = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,13 +133,13 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 alertDialog.setItems(selectStr, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        globalApp.setFromDiary(true);
                         if (which == 0) {
                             Intent photoCaptureIntent = new Intent(DiaryEditActivity.this, CameraActivity.class);
-                            startActivity(photoCaptureIntent);
+                            startActivityForResult(photoCaptureIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO);
                         } else if (which == 1) {
                             Intent doStartEditPhotoActivityIntent = new Intent(DiaryEditActivity.this, EditPhotoActivity.class);
                             doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
-                            doStartEditPhotoActivityIntent.putExtra(STARTING_POINT, TAG);
                             startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
                         }
                     }
@@ -178,13 +178,11 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
                 selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
-                isFromDiary = true;
-
+                globalApp.setFromDiary(true);
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
                 editPhotoImageButton.setImageURI(uri);
-
             }
         } else {
             getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
@@ -200,7 +198,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                         }
                     }));
         }
-
     }
 
     private void setDateAndTime(Date dateAndTime) {
@@ -239,12 +236,25 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         updateMinute = Integer.valueOf(minute);
     }
 
+    public Bitmap loadBitmapFromInternalStorage(Context context) {
+        FileInputStream fileInputStream;
+        Bitmap bitmap = null;
+        try {
+            fileInputStream = context.openFileInput("temp.jpg");
+            bitmap = BitmapFactory.decodeStream(fileInputStream);
+            fileInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case RESULT_OK:
-                if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY && data != null) {
+                if ((requestCode == Constants.REQUEST_DIARY_PICK_GALLERY || requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     selectedUri = data.getData();
                     if (selectedUri != null) {
                         editPhotoImageButton.setImageURI(null);
@@ -255,8 +265,16 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
                 break;
+            case Constants.RESULT_CAPTURED_PHOTO:
+                if ((requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
+                    selectedBitmap = loadBitmapFromInternalStorage(getApplicationContext());
+                    editPhotoImageButton.setImageBitmap(selectedBitmap);
+                    isPhotoUpdate = true;
+                }
+                break;
         }
     }
+
 
     private Date getDateAndTime() {
         DatePicker datePicker = datePickerDialog.getDatePicker();
@@ -332,9 +350,9 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     });
 
             try {
-                if (!isFromDiary) {
+                if (!globalApp.getFromDiary()) {
                     copyFileToDownloads(selectedUri, time.getTime());
-                } else {
+                } else { // 촬영한 사진을 다이어리 추가 시
                     bitmapToDownloads(selectedBitmap, time.getTime());
                 }
             } catch (Exception e) {
@@ -345,6 +363,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             updateDiary(diaryIdx);
         }
     }
+
 
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
@@ -413,7 +432,11 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             if (isPhotoUpdate) {
                                 image = time.getTime() + ".jpg";
                                 try {
-                                    copyFileToDownloads(selectedUri, time.getTime());
+                                    if (!globalApp.getFromDiary()) {
+                                        copyFileToDownloads(selectedUri, time.getTime());
+                                    } else { // 촬영한 사진을 다이어리 추가 시
+                                        bitmapToDownloads(selectedBitmap, time.getTime());
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -445,5 +468,12 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 }));
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        globalApp.setFromDiary(false);
+        if (!selectedBitmap.isRecycled()) {
+            selectedBitmap.recycle();
+        }
+    }
 }
