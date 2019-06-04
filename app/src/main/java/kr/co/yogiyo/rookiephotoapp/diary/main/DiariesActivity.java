@@ -53,7 +53,9 @@ public class DiariesActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start_camera:
-                startActivity(new Intent(DiariesActivity.this, CameraActivity.class));
+                Intent cameraIntent = new Intent(DiariesActivity.this, CameraActivity.class);
+                cameraIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(cameraIntent);
                 break;
             case R.id.btn_add_diary:
                 // TODO: 다이어리 글 추가 화면으로 이동

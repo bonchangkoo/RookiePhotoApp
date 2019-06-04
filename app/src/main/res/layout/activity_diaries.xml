@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_photo_camera_white_24" />
 
             <ImageButton
@@ -38,7 +38,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_toStartOf="@+id/btn_convert_layout"
                 android:layout_toLeftOf="@+id/btn_convert_layout"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_add_white_24" />
 
             <ImageButton
@@ -49,7 +49,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_toStartOf="@+id/btn_start_settings"
                 android:layout_toLeftOf="@+id/btn_start_settings"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_date_range_white_24" />
 
             <ImageButton
@@ -62,7 +62,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                android:background="@color/color_00000000"
+                android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_settings_white_24" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
