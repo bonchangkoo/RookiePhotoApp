@@ -48,6 +48,10 @@ class EditPhotoActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        when (resultCode) {
+            Activity.RESULT_CANCELED -> finish()
+        }
+
         data?.let {
             when (resultCode) {
                 Activity.RESULT_OK -> when (requestCode) {
@@ -69,8 +73,6 @@ class EditPhotoActivity : BaseActivity() {
                 }
                 UCrop.RESULT_ERROR -> handleCropError(data)
             }
-        } ?: when (resultCode) {
-            Activity.RESULT_CANCELED -> finish()
         }
     }
 
@@ -83,7 +85,10 @@ class EditPhotoActivity : BaseActivity() {
                     putExtra(STARTING_POINT, it)
                 }
                 startActivityForResult(intent, REQUEST_DIARY_PICK_GALLERY)
-            } ?: EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+            } ?: apply {
+                EditResultActivity.startWithUri(this, resultUri)
+                finish()
+            }
         } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
 
