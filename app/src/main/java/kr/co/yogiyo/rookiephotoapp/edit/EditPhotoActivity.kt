@@ -13,7 +13,9 @@ import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants.*
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import java.io.File
 
@@ -32,7 +34,6 @@ class EditPhotoActivity : BaseActivity() {
 
             when (photoCategoryNumber) {
                 EDIT_SELECTED_PHOTO -> {
-                    startingPoint = it.getStringExtra(STARTING_POINT)
                     pickFromGallery()
                 }
                 EDIT_CAPTURED_PHOTO -> {
@@ -70,6 +71,14 @@ class EditPhotoActivity : BaseActivity() {
                         setResult(Activity.RESULT_OK, intent)
                         finish()
                     } ?: finish()
+                    // TODO : REQUEST_DIARY_CAPTURE_PHOTO
+                    REQUEST_DIARY_CAPTURE_PHOTO -> it.data?.let { selectedUri ->
+                        val intent = Intent(this@EditPhotoActivity, PreviewActivity::class.java).apply {
+                            this.data = selectedUri
+                        }
+                        setResult(Activity.RESULT_OK, intent)
+                        finish()
+                    } ?: finish()
                 }
                 UCrop.RESULT_ERROR -> handleCropError(data)
             }
@@ -79,15 +88,17 @@ class EditPhotoActivity : BaseActivity() {
     private fun handleCropResult(result: Intent) {
 
         UCrop.getOutput(result)?.let { resultUri ->
-            startingPoint?.let {
-                val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
-                    data = resultUri
-                    putExtra(STARTING_POINT, it)
+
+            globalApp.fromDiary?.run {
+                if (this) {
+                    val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
+                        data = resultUri
+                    }
+                    startActivityForResult(intent, REQUEST_DIARY_CAPTURE_PHOTO) // TODO : 분기 처리
+                } else {
+                    EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+                    finish()
                 }
-                startActivityForResult(intent, REQUEST_DIARY_PICK_GALLERY)
-            } ?: apply {
-                EditResultActivity.startWithUri(this, resultUri)
-                finish()
             }
         } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
@@ -137,8 +148,6 @@ class EditPhotoActivity : BaseActivity() {
 
     companion object {
         private val TAG = EditPhotoActivity::class.java.simpleName
-
-        private var startingPoint: String? = null
 
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1

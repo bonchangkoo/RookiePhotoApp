@@ -48,10 +48,11 @@ open class BaseActivity : AppCompatActivity() {
 
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1
-        const val STARTING_POINT = "startingPoint"
+
+        @JvmField
+        var globalApp = GlobalApplication()
 
         @JvmField
         val YOGIDIARY_PATH = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary")
-
     }
 }
