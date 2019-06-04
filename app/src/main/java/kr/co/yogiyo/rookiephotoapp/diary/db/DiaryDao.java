@@ -7,10 +7,10 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 @Dao
@@ -20,7 +20,7 @@ public interface DiaryDao {
     void insertDiary(Diary diary);
 
     @Query("SELECT * FROM diaries WHERE idx = :diaryId")
-    Maybe<Diary> findDiaryById(int diaryId);
+    Single<Diary> findDiaryById(int diaryId);
 
     @Update
     void updateDiary(Diary diary);
@@ -30,4 +30,7 @@ public interface DiaryDao {
 
     @Query("SELECT * FROM diaries")
     Single<List<Diary>> findDiaries();
+
+    @Query("SELECT * FROM diaries WHERE date BETWEEN :from AND :to")
+    Flowable<List<Diary>> findDiariesBetweenDates(Date from, Date to);
 }

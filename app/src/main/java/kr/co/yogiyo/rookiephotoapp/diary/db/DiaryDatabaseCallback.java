@@ -8,9 +8,12 @@ public interface DiaryDatabaseCallback {
 
     void onDiaryByIdFinded(Diary diary);
 
+    void onDiariesBetweenDatesFinded(List<Diary> diaries);
+
     void onDiaryUpdated();
 
     void onDiaryDeleted();
 
-    void onDiariesFinded(List<Diary> diaries);
+    void onDiaryError(String errorMessage);
+
 }

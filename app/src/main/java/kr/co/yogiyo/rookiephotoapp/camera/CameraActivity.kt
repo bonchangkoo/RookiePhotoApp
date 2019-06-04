@@ -11,8 +11,9 @@ import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
-import kr.co.yogiyo.rookiephotoapp.camera.capture.ResultHolder
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
+import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
+import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 
 class CameraActivity : AppCompatActivity() {
 
@@ -51,8 +52,9 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        btn_back.setOnClickListener {
-            onBackPressed()
+        btn_go_diary.setOnClickListener {
+            val intent = Intent(this, DiariesActivity::class.java)
+            startActivity(intent)
         }
 
         btn_flash.setOnClickListener {
@@ -96,6 +98,11 @@ class CameraActivity : AppCompatActivity() {
                 }
             }
         }
+
+        btn_go_gallery.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initCameraView() {
@@ -108,7 +115,7 @@ class CameraActivity : AppCompatActivity() {
                                 finish()
                                 return@BitmapCallback
                             }
-                            ResultHolder.setBitmap(bitmap)
+                            PreviewActivity.capturedImageBitmap = bitmap
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                             startActivity(intent)
                         })

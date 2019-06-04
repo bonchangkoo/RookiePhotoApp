@@ -9,10 +9,9 @@
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
 
-
-    <!--activity_main.xml-->
-    <string name="text_select_photo">사진 선택</string>
-    <string name="text_settings">설정</string>
+    <!--activity_camera.xml-->
+    <string name="text_diary">다이어리</string>
+    <string name="text_gallery">갤러리</string>
 
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
@@ -41,21 +40,72 @@
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
 
-    <!--dialog_fragment_sign.xml-->
+    <!--dialog_fragment_sign.xmlml-->
     <string name="text_input_email">이메일</string>
     <string name="text_input_password">패스워드</string>
+    <string name="text_hint_email">abc@example.com</string>
+    <string name="text_hint_password">6자리 이상</string>
     <string name="text_signin">로그인</string>
-    <string name="text_signup">가입</string>
+    <string name="text_ask_signup">혹시 처음이신가요?</string>
+    <string name="text_signup">회원가입</string>
     <string name="text_signin_success">로그인 성공</string>
     <string name="text_signup_success">가입 성공</string>
     <string name="text_sign_fail">사용자 정보를 확인하세요.</string>
 
+    <!--dialog_fragment_signout.xml-->
+    <string name="text_ask_signout">로그아웃 하시겠습니까?</string>
+
+    <!--dialog_fragment_backup_restore.xml-->
+    <string name="text_ask_backup">백업 하시겠습니까?</string>
+    <string name="text_ask_restore">복구 하시겠습니까?</string>
+
+    <!--BackupRestoreDialogFragment.java-->
+    <string name="text_please_wait">잠시만 기다려주세요.</string>
+
     <!--preference_settings.xml-->
     <string name="text_user">사용자</string>
-    <string name="text_need_to_login">로그인이 필요합니다.</string>
+    <string name="text_need_to_signin">로그인이 필요합니다.</string>
     <string name="text_backup_restore">백업 및 복원</string>
     <string name="text_summary_backup">다이어리 및 사진 파일을 서버에 백업하여 앱 재설치할 때 복원할 수 있습니다.</string>
     <string name="text_summary_restore">백업한 다이어리 및 사진 파일을 복원할 수 있습니다.</string>
     <string name="text_do_backup">백업하기</string>
     <string name="text_do_restore">복원하기</string>
+
+    <!--GalleryActivity.java-->
+    <string name="spinner_folder_name_count">"%s (%d)"</string>
+    <string name="spinner_folder_all">All</string>
+
+    <!--activity_diary_detail.xml-->
+    <string name="text_diary_date">5월 10일</string>
+    <string name="text_diary_time">8:00PM</string>
+    <string name="text_diary_test_image">테스트 이미지입니다</string>
+    <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
+    <string name="text_diary_content_hint">내용</string>
+
+    <!--DiaryEditActivity.java-->
+    <string name="text_diary_add_title">추가</string>
+    <string name="text_diary_added">다이어리가 추가되었습니다</string>
+    <string name="text_diary_updated">다이어리가 변경되었습니다</string>
+    <string name="text_diary_deleted">다이어리가 삭제되었습니다</string>
+
+    <!--DiaryDetailActivity.java-->
+    <string name="text_diary_detail_deleted">삭제되었습니다</string>
+    <string name="text_dialog_ok">네</string>
+    <string name="text_dialog_no">아니오</string>
+    <string name="text_toolbar_edit">편집</string>
+    <string name="text_photo_description">photo</string>
+    <string name="text_toolbar_detail">상세</string>
+
+    <!--LocalDiaryViewModel.java-->
+    <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
+    <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
+    <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
+
+    <!--DiariesActivity.java-->
+    <string name="text_date_now_page">%d.%d</string>
+
+    <!--DiariesAdapter.java-->
+    <string name="text_day_now_diary">%d일</string>
+    <string name="text_time_now_diary">%d:%s</string>
+    <string name="text_yogidiary_path">%s/%s</string>
 </resources>

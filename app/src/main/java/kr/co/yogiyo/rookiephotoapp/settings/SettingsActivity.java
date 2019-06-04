@@ -2,6 +2,8 @@ package kr.co.yogiyo.rookiephotoapp.settings;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,20 +21,30 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
         // TODO : global application에 구현하면 어떨지 고민
         firebaseAuth = FirebaseAuth.getInstance();
 
+        ImageButton backspaceButton = findViewById(R.id.btn_backspace);
+        backspaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, SettingsFragment.newInstance())
+                .replace(R.id.list_container, SettingsFragment.newInstance())
                 .commit();
     }
 
     @Override
     public void signInWithEmailAndPassword(final String email, final String password,
-                                           final LoginCallback callback) {
+                                           final SignCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
+            callback.onFail();
             return;
         }
         firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -53,16 +65,18 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
     @Override
     public void createUserWithEmailAndPassword(final String email, final String password,
-                                               final LoginCallback callback) {
+                                               final SignCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
+            callback.onFail();
             return;
         }
+
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            showToast(getString(R.string.text_signin_success));
+                            showToast(getString(R.string.text_signup_success));
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             callback.onSuccess(user);
                         } else {
@@ -71,5 +85,17 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void signOut(final SignCallback callback) {
+        try {
+            firebaseAuth.signOut();
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            callback.onSuccess(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onFail();
+        }
     }
 }
