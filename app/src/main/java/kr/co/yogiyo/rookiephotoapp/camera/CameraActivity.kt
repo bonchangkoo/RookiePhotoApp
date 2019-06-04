@@ -13,6 +13,7 @@ import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
+import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 
 class CameraActivity : AppCompatActivity() {
 
@@ -96,6 +97,11 @@ class CameraActivity : AppCompatActivity() {
                     viewModel.updateFacingButton(Facing.FRONT.name)
                 }
             }
+        }
+
+        btn_go_gallery.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
         }
     }
 
