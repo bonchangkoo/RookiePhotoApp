@@ -179,6 +179,12 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
                 isFromDiary = true;
+
+            } else if (getIntent().getData() != null) {
+                Uri uri = getIntent().getData();
+                selectedUri = uri;
+                editPhotoImageButton.setImageURI(uri);
+
             }
         } else {
             getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
@@ -194,6 +200,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                         }
                     }));
         }
+
     }
 
     private void setDateAndTime(Date dateAndTime) {

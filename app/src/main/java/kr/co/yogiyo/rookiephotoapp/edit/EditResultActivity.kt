@@ -16,6 +16,7 @@ import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
+import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -87,7 +88,16 @@ class EditResultActivity : BaseActivity() {
                     saveCroppedImage()
                 }
             } // 이미지 저장
-            android.R.id.home -> onBackPressed() // 임시로 back 기능으로 대체
+            android.R.id.home -> {
+                startActivity(Intent(this@EditResultActivity, DiariesActivity::class.java))
+
+                val startDiaryEditActivityIntent = Intent(this@EditResultActivity, DiaryEditActivity::class.java).apply {
+                    putExtra("DIARY_IDX", -1)
+                    data = editPhotoUri
+                }
+                startActivity(startDiaryEditActivityIntent)
+                finish()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -113,6 +123,7 @@ class EditResultActivity : BaseActivity() {
 
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
+
         if (!YOGIDIARY_PATH.exists()) {
             if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
