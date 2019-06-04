@@ -3,28 +3,27 @@
 
     <PreferenceCategory
         android:key="user_auth"
-        android:title="사용자">
+        android:title="@string/text_user">
 
-        <kr.co.yogiyo.rookiephotoapp.settings.LoginDialogPreference
+        <kr.co.yogiyo.rookiephotoapp.settings.SignDialogPreference
             android:icon="@drawable/baseline_account_circle_black_36"
-            android:key="dialog"
-            android:title="로그인" />
+            android:key="sign_dialog" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="backup_restore"
-        android:title="백업 및 복원">
+        android:title="@string/text_backup_restore">
 
         <Preference
             android:icon="@drawable/baseline_cloud_upload_black_36"
             android:key="backup"
-            android:summary="다이어리 및 사진 파일을 서버에 백업하여 앱 재설치할 때 복원할 수 있습니다."
-            android:title="백업하기" />
+            android:summary="@string/text_summary_backup"
+            android:title="@string/text_do_backup" />
 
         <Preference
             android:icon="@drawable/baseline_cloud_download_black_36"
             android:key="restore"
-            android:summary="백업한 다이어리 및 사진 파일을 복원할 수 있습니다."
-            android:title="복원하기" />
+            android:summary="@string/text_summary_restore"
+            android:title="@string/text_do_restore" />
     </PreferenceCategory>
 </PreferenceScreen>

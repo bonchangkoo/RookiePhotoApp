@@ -31,7 +31,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
     @Override
     public void signInWithEmailAndPassword(final String email, final String password,
-                                           final LoginCallback callback) {
+                                           final SignCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
             callback.onFail();
             return;
@@ -54,7 +54,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
     @Override
     public void createUserWithEmailAndPassword(final String email, final String password,
-                                               final LoginCallback callback) {
+                                               final SignCallback callback) {
         if (email.length() == 0 || password.length() == 0) {
             callback.onFail();
             return;
@@ -64,7 +64,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            showToast(getString(R.string.text_signin_success));
+                            showToast(getString(R.string.text_signup_success));
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             callback.onSuccess(user);
                         } else {
@@ -73,5 +73,17 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void signOut(final SignCallback callback) {
+        try {
+            firebaseAuth.signOut();
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            callback.onSuccess(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            callback.onFail();
+        }
     }
 }

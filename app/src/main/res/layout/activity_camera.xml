@@ -28,10 +28,10 @@
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
             <Button
-                android:id="@+id/btn_back"
+                android:id="@+id/btn_go_diary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_back" />
+                android:text="@string/text_diary" />
 
             <Button
                 android:id="@+id/btn_flash"
@@ -61,6 +61,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:text="@{viewModel.facingButtonLabel}" />
+
+            <Button
+                android:id="@+id/btn_go_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:text="@string/text_gallery" />
         </FrameLayout>
 
         <TextView
