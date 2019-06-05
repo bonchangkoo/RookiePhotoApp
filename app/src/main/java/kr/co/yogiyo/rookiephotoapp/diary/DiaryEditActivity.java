@@ -472,8 +472,5 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         globalApp.setFromDiary(false);
-        if (!selectedBitmap.isRecycled()) {
-            selectedBitmap.recycle();
-        }
     }
 }
