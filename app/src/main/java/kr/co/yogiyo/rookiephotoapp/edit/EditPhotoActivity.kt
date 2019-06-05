@@ -13,7 +13,6 @@ import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants.*
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -71,7 +70,6 @@ class EditPhotoActivity : BaseActivity() {
                         setResult(Activity.RESULT_OK, intent)
                         finish()
                     } ?: finish()
-                    // TODO : REQUEST_DIARY_CAPTURE_PHOTO
                     REQUEST_DIARY_CAPTURE_PHOTO -> it.data?.let { selectedUri ->
                         val intent = Intent(this@EditPhotoActivity, PreviewActivity::class.java).apply {
                             this.data = selectedUri
@@ -94,7 +92,7 @@ class EditPhotoActivity : BaseActivity() {
                     val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
                         data = resultUri
                     }
-                    startActivityForResult(intent, REQUEST_DIARY_CAPTURE_PHOTO) // TODO : 분기 처리
+                    startActivityForResult(intent, REQUEST_DIARY_CAPTURE_PHOTO)
                 } else {
                     EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
                     finish()
