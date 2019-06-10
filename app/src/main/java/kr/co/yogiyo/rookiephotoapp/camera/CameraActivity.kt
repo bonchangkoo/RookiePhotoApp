@@ -1,21 +1,25 @@
 package kr.co.yogiyo.rookiephotoapp.camera
 
+import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
+import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 
-class CameraActivity : AppCompatActivity() {
+class CameraActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCameraBinding
 
@@ -52,6 +56,12 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+
+        if (GlobalApplication.globalApplicationContext.fromDiary) {
+            btn_go_diary.visibility = View.INVISIBLE
+            btn_go_gallery.visibility = View.INVISIBLE
+        }
+
         btn_go_diary.setOnClickListener {
             val intent = Intent(this, DiariesActivity::class.java)
             startActivity(intent)
@@ -115,18 +125,45 @@ class CameraActivity : AppCompatActivity() {
                                 finish()
                                 return@BitmapCallback
                             }
-                            PreviewActivity.capturedImageBitmap = bitmap
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
-                            startActivity(intent)
+                            PreviewActivity.capturedImageBitmap = bitmap
+                            if (GlobalApplication.globalApplicationContext.fromDiary) {
+                                startActivityForResult(intent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
+                            } else {
+                                startActivity(intent)
+                            }
                         })
                     }
                 }
+
             })
+
             mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
 
             val ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0f)
             val result = SizeSelectors.or(ratio, SizeSelectors.biggest())
             setPictureSize(result)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        data?.let {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val intent = Intent(this@CameraActivity, DiaryEditActivity::class.java).apply {
+                        this.data = it.data
+                    }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+                Constants.RESULT_CAPTURED_PHOTO -> {
+                    val intent = Intent(this@CameraActivity, DiaryEditActivity::class.java)
+                    setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
+                    finish()
+                }
+            }
         }
     }
 

@@ -1,13 +1,11 @@
 package kr.co.yogiyo.rookiephotoapp
 
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
 import io.reactivex.disposables.CompositeDisposable
-import java.io.File
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -48,10 +46,5 @@ open class BaseActivity : AppCompatActivity() {
 
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1
-        const val STARTING_POINT = "startingPoint"
-
-        @JvmField
-        val YOGIDIARY_PATH = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary")
-
     }
 }
