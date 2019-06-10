@@ -13,6 +13,7 @@ import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants.*
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -87,7 +88,7 @@ class EditPhotoActivity : BaseActivity() {
 
         UCrop.getOutput(result)?.let { resultUri ->
 
-            globalApp.fromDiary?.run {
+            GlobalApplication.globalApplicationContext.fromDiary?.run {
                 if (this) {
                     val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
                         data = resultUri
