@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "378873115441",
+    "firebase_url": "https://rookiephotoappauth.firebaseio.com",
+    "project_id": "rookiephotoappauth",
+    "storage_bucket": "rookiephotoappauth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378873115441:android:c4266eb22a46ac4e",
+        "android_client_info": {
+          "package_name": "kr.co.yogiyo.rookiephotoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378873115441-bh5scl8mf64kjcn5h8lqs5i1rluo00dn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.co.yogiyo.rookiephotoapp",
+            "certificate_hash": "cf913c8304eb08aca2441f36120d88427db6860d"
+          }
+        },
+        {
+          "client_id": "378873115441-81a8mhrb08be638h0qlpm847mpo2736c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJIV-n--zo471Qo11z__GcEOJ1EzQCLhM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378873115441-81a8mhrb08be638h0qlpm847mpo2736c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

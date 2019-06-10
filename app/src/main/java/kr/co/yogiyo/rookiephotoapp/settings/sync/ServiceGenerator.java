@@ -10,8 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
 
-    // TODO : IP 주소 github에 올리는 코드에 작성해도 괜찮은지
-    public static final String BASE_URL = "http://45.32.46.136:8001";
+    private static final String BASE_URL = "http://45.32.46.136:8001";
 
     private static Retrofit retrofit;
 
