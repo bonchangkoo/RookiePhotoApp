@@ -32,13 +32,12 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
-
-import static kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_DIARY_PICK_GALLERY;
 
 public class DiaryEditActivity extends BaseActivity implements View.OnClickListener {
 
@@ -136,7 +135,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             Intent doStartEditPhotoActivityIntent = new Intent(DiaryEditActivity.this, EditPhotoActivity.class);
                             doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
                             doStartEditPhotoActivityIntent.putExtra(STARTING_POINT, TAG);
-                            startActivityForResult(doStartEditPhotoActivityIntent, REQUEST_DIARY_PICK_GALLERY);
+                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
                         }
                     }
                 });
@@ -232,7 +231,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case RESULT_OK:
-                if (requestCode == REQUEST_DIARY_PICK_GALLERY && data != null) {
+                if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY && data != null) {
                     selectedUri = data.getData();
                     if (selectedUri != null) {
                         editPhotoImageButton.setImageURI(null);

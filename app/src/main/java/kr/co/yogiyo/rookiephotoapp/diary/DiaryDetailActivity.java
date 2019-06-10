@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -117,7 +115,7 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void accept(Diary diary) {
                         setDateAndTime(diary.getDate());
-                        if(diary.getImage() != null){
+                        if (diary.getImage() != null) {
                             detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, diary.getImage())));
                         }
                         detailDescriptionTextView.setText(diary.getDescription());
