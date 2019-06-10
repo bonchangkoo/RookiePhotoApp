@@ -36,6 +36,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.Constants;
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
@@ -133,7 +134,9 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 alertDialog.setItems(selectStr, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        globalApp.setFromDiary(true);
+
+                        GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
+
                         if (which == 0) {
                             Intent photoCaptureIntent = new Intent(DiaryEditActivity.this, CameraActivity.class);
                             startActivityForResult(photoCaptureIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO);
@@ -178,7 +181,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
                 selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
-                globalApp.setFromDiary(true);
+                GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
@@ -193,7 +196,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                         public void accept(Diary diary) {
                             setDateAndTime(diary.getDate());
                             photoFileName = diary.getImage();
-                            editPhotoImageButton.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, photoFileName)));
+                            editPhotoImageButton.setImageURI(Uri.fromFile(new File(Constants.YOGIDIARY_PATH, photoFileName)));
                             editDescriptionTextView.setText(diary.getDescription());
                         }
                     }));
@@ -350,7 +353,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     });
 
             try {
-                if (!globalApp.getFromDiary()) {
+                if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
                     copyFileToDownloads(selectedUri, time.getTime());
                 } else { // 촬영한 사진을 다이어리 추가 시
                     bitmapToDownloads(selectedBitmap, time.getTime());
@@ -367,15 +370,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
-        if (!YOGIDIARY_PATH.exists()) {
-            if (YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.YOGIDIARY_PATH.exists()) {
+            if (Constants.YOGIDIARY_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);
@@ -394,15 +397,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void bitmapToDownloads(Bitmap bitmap, long time) throws Exception {
 
-        if (!YOGIDIARY_PATH.exists()) {
-            if (YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.YOGIDIARY_PATH.exists()) {
+            if (Constants.YOGIDIARY_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);
@@ -432,7 +435,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             if (isPhotoUpdate) {
                                 image = time.getTime() + ".jpg";
                                 try {
-                                    if (!globalApp.getFromDiary()) {
+                                    if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
                                         copyFileToDownloads(selectedUri, time.getTime());
                                     } else { // 촬영한 사진을 다이어리 추가 시
                                         bitmapToDownloads(selectedBitmap, time.getTime());
@@ -471,6 +474,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        globalApp.setFromDiary(false);
+        GlobalApplication.getGlobalApplicationContext().setFromDiary(false);
     }
 }

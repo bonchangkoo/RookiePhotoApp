@@ -11,6 +11,7 @@ import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
@@ -31,10 +32,6 @@ class CameraActivity : BaseActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_camera)
         binding.viewModel = viewModel
-
-        if (globalApp.fromDiary == null) {
-            globalApp.fromDiary = false
-        }
 
         initView()
 
@@ -60,9 +57,9 @@ class CameraActivity : BaseActivity() {
 
     private fun initView() {
 
-        if (globalApp.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.fromDiary) {
             btn_go_diary.visibility = View.INVISIBLE
-            btn_go_diary.visibility = View.INVISIBLE
+            btn_go_gallery.visibility = View.INVISIBLE
         }
 
         btn_go_diary.setOnClickListener {
@@ -130,7 +127,7 @@ class CameraActivity : BaseActivity() {
                             }
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                             PreviewActivity.capturedImageBitmap = bitmap
-                            if (globalApp.fromDiary) {
+                            if (GlobalApplication.globalApplicationContext.fromDiary) {
                                 startActivityForResult(intent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
                             } else {
                                 startActivity(intent)

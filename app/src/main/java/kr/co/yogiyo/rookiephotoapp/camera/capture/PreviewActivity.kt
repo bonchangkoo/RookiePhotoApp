@@ -15,6 +15,8 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -55,7 +57,7 @@ class PreviewActivity : BaseActivity() {
             onBackPressed()
         }
 
-        if (globalApp.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.fromDiary) {
             btn_add_diary.visibility = View.INVISIBLE
         }
 
@@ -75,7 +77,7 @@ class PreviewActivity : BaseActivity() {
         }
 
         btn_save_photo.setOnClickListener {
-            if (globalApp.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.fromDiary) {
                 val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
                 saveBitmapToInternalStorage(applicationContext, capturedImageBitmap)
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
@@ -134,7 +136,7 @@ class PreviewActivity : BaseActivity() {
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
 
-            if (globalApp.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.fromDiary) {
                 startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
             } else {
                 startActivity(doStartEditPhotoActivityIntent)
@@ -144,11 +146,13 @@ class PreviewActivity : BaseActivity() {
     }
 
     private fun saveBitmapToInternalStorage(context: Context, bitmap: Bitmap) {
+
         var fileOutputStream: FileOutputStream?
         try {
             fileOutputStream = context.openFileOutput("temp.jpg", Context.MODE_PRIVATE)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream)
-            fileOutputStream?.close()
+            fileOutputStream.use {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -167,11 +171,10 @@ class PreviewActivity : BaseActivity() {
 
         val file = File(downloadsDirectoryPath, filename)
 
-        val outStream = FileOutputStream(file)
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream)
-        outStream.flush()
-        outStream.close()
+        FileOutputStream(file).use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            it.flush()
+        }
 
         sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)))
 

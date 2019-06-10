@@ -14,6 +14,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -52,7 +53,7 @@ class EditResultActivity : BaseActivity() {
     private fun setSettingAndResultActionBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.run {
-            if (!globalApp.fromDiary) {
+            if (!GlobalApplication.globalApplicationContext.fromDiary) {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
             }
@@ -63,7 +64,7 @@ class EditResultActivity : BaseActivity() {
         menuInflater.inflate(R.menu.menu_edit_result, menu)
         val downloadItem = menu.findItem(R.id.menu_download)
 
-        if (globalApp.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.fromDiary) {
             downloadItem.setIcon(R.mipmap.diary_save)
         }
         return true
@@ -72,11 +73,11 @@ class EditResultActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> {
-                if (globalApp.fromDiary) {
+                if (GlobalApplication.globalApplicationContext.fromDiary) {
                     Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
                         data = editPhotoUri
                         setResult(Constants.RESULT_EDIT_PHOTO, this)
-                        globalApp.fromDiary = false
+                        GlobalApplication.globalApplicationContext.fromDiary = false
                         finish()
                     }
                 } else {
