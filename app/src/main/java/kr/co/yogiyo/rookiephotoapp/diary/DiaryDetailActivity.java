@@ -25,6 +25,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
@@ -116,7 +117,7 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
                     public void accept(Diary diary) {
                         setDateAndTime(diary.getDate());
                         if (diary.getImage() != null) {
-                            detailPhotoImageView.setImageURI(Uri.fromFile(new File(YOGIDIARY_PATH, diary.getImage())));
+                            detailPhotoImageView.setImageURI(Uri.fromFile(new File(Constants.YOGIDIARY_PATH, diary.getImage())));
                         }
                         detailDescriptionTextView.setText(diary.getDescription());
                     }

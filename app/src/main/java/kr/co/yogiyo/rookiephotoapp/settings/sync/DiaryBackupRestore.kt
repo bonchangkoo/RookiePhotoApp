@@ -3,9 +3,7 @@ package kr.co.yogiyo.rookiephotoapp.settings.sync
 import android.util.Pair
 import com.google.firebase.auth.FirebaseUser
 import io.reactivex.Flowable
-import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants.COMPRESSED_FOLDER_NAME
-import kr.co.yogiyo.rookiephotoapp.Constants.serverDateFormat
+import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -30,9 +28,9 @@ class DiaryBackupRestore {
         val builder = MultipartBody.Builder().apply {
             setType(MEDIA_TYPE_MULTIPART!!)
             addFormDataPart("diary_id", diary.idx.toString())
-            addFormDataPart("date", serverDateFormat.format(diary.date))
+            addFormDataPart("date", Constants.serverDateFormat.format(diary.date))
             diary.image?.let { diaryImage ->
-                File(BaseActivity.YOGIDIARY_PATH, COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
+                File(Constants.YOGIDIARY_PATH, Constants.COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
                     if (imageFile.isFile) {
                         addFormDataPart("image", imageFile.name, RequestBody.create(MEDIA_TYPE_IMAGE, imageFile))
                     }

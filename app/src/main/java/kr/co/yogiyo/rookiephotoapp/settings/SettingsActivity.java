@@ -1,20 +1,13 @@
 package kr.co.yogiyo.rookiephotoapp.settings;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.view.View;
 import android.widget.ImageButton;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
-
-import static kr.co.yogiyo.rookiephotoapp.Constants.firebaseAuth;
 
 public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
@@ -39,11 +32,11 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
             callback.onFail();
             return;
         }
-        firebaseAuth.signInWithEmailAndPassword(email, password)
+        Constants.firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         showToast(getString(R.string.text_signin_success));
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        FirebaseUser user = Constants.firebaseAuth.getCurrentUser();
                         callback.onSuccess(user);
                     } else {
                         showToast(getString(R.string.text_sign_fail));
@@ -60,11 +53,11 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
             return;
         }
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
+        Constants.firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         showToast(getString(R.string.text_signup_success));
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        FirebaseUser user = Constants.firebaseAuth.getCurrentUser();
                         callback.onSuccess(user);
                     } else {
                         showToast(getString(R.string.text_sign_fail));
@@ -76,8 +69,8 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     @Override
     public void signOut(final SignCallback callback) {
         try {
-            firebaseAuth.signOut();
-            FirebaseUser user = firebaseAuth.getCurrentUser();
+            Constants.firebaseAuth.signOut();
+            FirebaseUser user = Constants.firebaseAuth.getCurrentUser();
             callback.onSuccess(user);
         } catch (Exception e) {
             e.printStackTrace();

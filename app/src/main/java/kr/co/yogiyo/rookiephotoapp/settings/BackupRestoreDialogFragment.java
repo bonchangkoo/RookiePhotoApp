@@ -27,23 +27,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.settings.sync.DiaryBackupRestore;
 import kr.co.yogiyo.rookiephotoapp.settings.sync.RestoredDiary;
 import okhttp3.ResponseBody;
-
-import static kr.co.yogiyo.rookiephotoapp.Constants.BACKUP_DIALOG_KEY;
-import static kr.co.yogiyo.rookiephotoapp.Constants.COMPRESSED_FOLDER_NAME;
-import static kr.co.yogiyo.rookiephotoapp.Constants.ERROR_MESSAGE;
-import static kr.co.yogiyo.rookiephotoapp.Constants.FAILED_TO_CONNECT;
-import static kr.co.yogiyo.rookiephotoapp.Constants.NO_DATA;
-import static kr.co.yogiyo.rookiephotoapp.Constants.PREFERENCE_KEY;
-import static kr.co.yogiyo.rookiephotoapp.Constants.RESTORE_DIALOG_KEY;
-import static kr.co.yogiyo.rookiephotoapp.Constants.firebaseAuth;
-import static kr.co.yogiyo.rookiephotoapp.Constants.serverDateFormat;
 
 public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat implements View.OnClickListener {
 
@@ -95,12 +85,12 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
         okText = view.findViewById(R.id.text_ok);
         ((SettingsActivity) context).addProgressBarInto(backupRestoreDialogRelative);
 
-        String preferenceKey = getArguments().getString(PREFERENCE_KEY);
+        String preferenceKey = getArguments().getString(Constants.PREFERENCE_KEY);
         switch (preferenceKey) {
-            case BACKUP_DIALOG_KEY:
+            case Constants.BACKUP_DIALOG_KEY:
                 askBackupRestoreText.setText(getString(R.string.text_ask_backup));
                 break;
-            case RESTORE_DIALOG_KEY:
+            case Constants.RESTORE_DIALOG_KEY:
                 askBackupRestoreText.setText(getString(R.string.text_ask_restore));
                 break;
         }
@@ -112,12 +102,12 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        String preferenceKey = getArguments().getString(PREFERENCE_KEY);
+        String preferenceKey = getArguments().getString(Constants.PREFERENCE_KEY);
         switch (preferenceKey) {
-            case BACKUP_DIALOG_KEY:
+            case Constants.BACKUP_DIALOG_KEY:
                 builder.setTitle(getString(R.string.text_do_backup));
                 break;
-            case RESTORE_DIALOG_KEY:
+            case Constants.RESTORE_DIALOG_KEY:
                 builder.setTitle(getString(R.string.text_do_restore));
                 break;
         }
@@ -143,12 +133,12 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                     dismiss();
                 }
                 setLoadingDialog();
-                String preferenceKey = getArguments().getString(PREFERENCE_KEY);
+                String preferenceKey = getArguments().getString(Constants.PREFERENCE_KEY);
                 switch (preferenceKey) {
-                    case BACKUP_DIALOG_KEY:
+                    case Constants.BACKUP_DIALOG_KEY:
                         executeBackup();
                         break;
-                    case RESTORE_DIALOG_KEY:
+                    case Constants.RESTORE_DIALOG_KEY:
                         executeRestore();
                         break;
                 }
@@ -164,10 +154,10 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                 .observeOn(Schedulers.io())
                 .map(diaries -> {
                     if (diaries.isEmpty()) {
-                        throw new Exception(NO_DATA);
+                        throw new Exception(Constants.NO_DATA);
                     }
 
-                    compositeDisposable.add(diaryBackupRestore.executePostClearDiary(firebaseAuth.getCurrentUser())
+                    compositeDisposable.add(diaryBackupRestore.executePostClearDiary(Constants.firebaseAuth.getCurrentUser())
                             .subscribe(responseBody -> {
                                 // Do nothing
                             }, throwable -> {
@@ -180,29 +170,29 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                 .flatMapIterable(diaries -> diaries)
                 .flatMap((Function<Diary, Publisher<ResponseBody>>) diary -> {
                     if (diary.getImage() != null) {
-                        File imageFile = new File(BaseActivity.YOGIDIARY_PATH, diary.getImage());
+                        File imageFile = new File(Constants.YOGIDIARY_PATH, diary.getImage());
                         if (imageFile.isFile()) {
                             imageCompressor.setDestinationDirectoryPath(
-                                    BaseActivity.YOGIDIARY_PATH.getAbsolutePath() + File.separator + COMPRESSED_FOLDER_NAME)
+                                    Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + Constants.COMPRESSED_FOLDER_NAME)
                                     .compressToFile(imageFile);
                         }
                     }
 
-                    return diaryBackupRestore.executePostDiary(firebaseAuth.getCurrentUser(), diary);
+                    return diaryBackupRestore.executePostDiary(Constants.firebaseAuth.getCurrentUser(), diary);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(responseDiariesBody -> {
                     Log.d(TAG, "body string " + responseDiariesBody.string());
-                    if (responseDiariesBody.string().contains(ERROR_MESSAGE)) {
+                    if (responseDiariesBody.string().contains(Constants.ERROR_MESSAGE)) {
                         throw new Exception();
                     }
                 }, throwable -> {
                     ((SettingsActivity) context).hideLoading();
                     BackupRestoreDialogFragment.this.getDialog().dismiss();
 
-                    if (NO_DATA.equals(throwable.getMessage())) {
+                    if (Constants.NO_DATA.equals(throwable.getMessage())) {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_no_backup_data)).create().show();
-                    } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
+                    } else if (throwable.getMessage().contains(Constants.FAILED_TO_CONNECT)) {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_network_error)).create().show();
                     } else {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_backup_fail)).create().show();
@@ -218,18 +208,18 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
     }
 
     private void executeRestore() {
-        compositeDisposable.add(diaryBackupRestore.executeGetDiaries(firebaseAuth.getCurrentUser())
+        compositeDisposable.add(diaryBackupRestore.executeGetDiaries(Constants.firebaseAuth.getCurrentUser())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .flatMapIterable(restoredDiaries -> {
                     if (restoredDiaries.isEmpty()) {
-                        throw new Exception(NO_DATA);
+                        throw new Exception(Constants.NO_DATA);
                     }
 
                     return restoredDiaries;
                 })
                 .map(restoredDiary -> {
-                    Date date = serverDateFormat.parse(restoredDiary.getDatetime());
+                    Date date = Constants.serverDateFormat.parse(restoredDiary.getDatetime());
 
                     String image = null;
                     if (restoredDiary.getImage() != null) {
@@ -255,9 +245,9 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                     ((SettingsActivity) context).hideLoading();
                     BackupRestoreDialogFragment.this.getDialog().dismiss();
 
-                    if (throwable.getMessage().equals(NO_DATA)) {
+                    if (throwable.getMessage().equals(Constants.NO_DATA)) {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_no_restore_data)).create().show();
-                    } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
+                    } else if (throwable.getMessage().contains(Constants.FAILED_TO_CONNECT)) {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_network_error)).create().show();
                     } else {
                         ((SettingsActivity) context).buildAlertDialog(context, getString(R.string.text_restore_fail)).create().show();
@@ -274,7 +264,7 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
 
     private boolean writeResponseBodyToDisk(String imageFileName, ResponseBody body) {
         try {
-            File restoredImageFile = new File(BaseActivity.YOGIDIARY_PATH, imageFileName);
+            File restoredImageFile = new File(Constants.YOGIDIARY_PATH, imageFileName);
 
             InputStream inputStream = null;
             OutputStream outputStream = null;

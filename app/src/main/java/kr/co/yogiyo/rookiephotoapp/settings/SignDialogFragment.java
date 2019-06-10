@@ -12,10 +12,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
-
-import static kr.co.yogiyo.rookiephotoapp.Constants.PREFERENCE_KEY;
-import static kr.co.yogiyo.rookiephotoapp.Constants.SIGN_DIALOG_KEY;
 
 public class SignDialogFragment extends PreferenceDialogFragmentCompat
         implements View.OnClickListener, SignCallback {
@@ -95,8 +93,8 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
 
     @Override
     public void onSuccess(FirebaseUser user) {
-        String preferenceKey = getArguments().getString(PREFERENCE_KEY);
-        if (preferenceKey.equals(SIGN_DIALOG_KEY)) {
+        String preferenceKey = getArguments().getString(Constants.PREFERENCE_KEY);
+        if (preferenceKey.equals(Constants.SIGN_DIALOG_KEY)) {
             Preference preference = getPreference();
             preference.setTitle(user.getEmail());
         }
