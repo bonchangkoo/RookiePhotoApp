@@ -229,7 +229,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         int applyMerdiemHour = Integer.valueOf(hour);
 
-        if (meridiem.equals("PM")) {
+        if (meridiem.equals("PM") && applyMerdiemHour < 12) {
             applyMerdiemHour = applyMerdiemHour + 12;
         }
 
@@ -310,6 +310,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
             if (hourOfDay > 12) {
                 hourOfDay = hourOfDay - 12;
+                meridiem = "PM";
+            } else if (hourOfDay == 12) {
                 meridiem = "PM";
             } else {
                 meridiem = "AM";
