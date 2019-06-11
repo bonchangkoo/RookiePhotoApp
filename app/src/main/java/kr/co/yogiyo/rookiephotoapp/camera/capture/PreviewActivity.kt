@@ -39,6 +39,8 @@ class PreviewActivity : BaseActivity() {
 
         initImageView()
         initView()
+
+        viewModel.initViewModel()
     }
 
     private fun initImageView() {
@@ -94,6 +96,11 @@ class PreviewActivity : BaseActivity() {
         }
     }
 
+    private fun PreviewViewModel.initViewModel() {
+        finishActivity = {
+            finish()
+        }
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -143,6 +150,7 @@ class PreviewActivity : BaseActivity() {
             }
         }
     }
+
 
     companion object {
 

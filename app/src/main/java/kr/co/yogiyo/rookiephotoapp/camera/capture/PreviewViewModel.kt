@@ -14,11 +14,13 @@ import java.util.*
 
 class PreviewViewModel : BaseObservable() {
 
+    lateinit var finishActivity: () -> Unit
+
     @Throws(Exception::class)
-     fun bitmapToDownloads(context: Context, bitmap: Bitmap) {
+    fun bitmapToDownloads(context: Context, bitmap: Bitmap) {
         if (!Constants.YOGIDIARY_PATH.exists()) {
             if (!Constants.YOGIDIARY_PATH.mkdirs()) {
-                //return finish()
+                finishActivity()
             }
         }
 
