@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.Constants;
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
 
 public class GalleryActivity extends BaseActivity implements View.OnClickListener {
@@ -51,8 +54,11 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == EDIT_SELECTED_GALLERY_PHOTO) {
-                // TODO: EditPhotoActivity로부터 편집 완료한 이미지 Uri를 전달받으면 이전 액티비티에 Uri 반환하는 코드 구현
+            if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY) {
+                Intent intent = new Intent(GalleryActivity.this, DiaryEditActivity.class);
+                intent.setData(data.getData());
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         }
     }
@@ -69,11 +75,16 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                     Uri uriForEdit = ((GalleryFragment) nowFragment).getSelectedImageUri();
                     if (uriForEdit != null) {
                         setControlButtonEnabled(false);
-                        // TODO: 현재 EDIT_SELECTED_PHOTO 코드일 경우 gallery를 요청하기 때문에 EDIT_CAPTURED_PHOTO 코드를 저장 (수정 필요)
-                        Intent doStartEditPhotoActivityIntent = new Intent(this, EditPhotoActivity.class);
-                        doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO);
-                        doStartEditPhotoActivityIntent.putExtra(getString(R.string.capture_photo_uri), uriForEdit);
-                        startActivityForResult(doStartEditPhotoActivityIntent, EDIT_SELECTED_GALLERY_PHOTO);
+                        Intent doStartEditPhotoActivityIntent = new Intent(GalleryActivity.this, EditPhotoActivity.class);
+                        doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
+                        doStartEditPhotoActivityIntent.setData(uriForEdit);
+                        if (GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
+                        } else {
+                            startActivity(doStartEditPhotoActivityIntent);
+                            finish();
+                        }
+
                     } else {
                         showToast(R.string.toast_cannot_retrieve_selected_image);
                     }
@@ -83,9 +94,9 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                 if (nowFragment instanceof GalleryFragment) {
                     Uri originalUri = ((GalleryFragment) nowFragment).getSelectedImageUri();
                     if (originalUri != null) {
-                        Intent originalUriIntent = new Intent();
+                        Intent originalUriIntent = new Intent(GalleryActivity.this, DiaryEditActivity.class);
                         originalUriIntent.setData(originalUri);
-                        setResult(RESULT_OK, originalUriIntent);
+                        setResult(Activity.RESULT_OK, originalUriIntent);
                         finish();
                     } else {
                         showToast(R.string.toast_cannot_retrieve_selected_image);
@@ -124,14 +135,24 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
 
         cursor.close();
 
-        listOfAllImageFolders.add(String.format(getString(R.string.spinner_folder_name_count),
-                getString(R.string.spinner_folder_all), countOfAllImages)
-        );
+        if (mapOfAllImageFolders.containsKey("YogiDiary")) {
+            listOfAllImageFolders.add("");
+        }
+
         for (String key : mapOfAllImageFolders.keySet()) {
+
+            if (key.equals("YogiDiary")) {
+                listOfAllImageFolders.set(0, String.format(getString(R.string.spinner_folder_name_count),
+                        key, mapOfAllImageFolders.get(key)));
+                continue;
+            }
             listOfAllImageFolders.add(String.format(getString(R.string.spinner_folder_name_count),
                     key, mapOfAllImageFolders.get(key))
             );
         }
+
+        listOfAllImageFolders.add(String.format(getString(R.string.spinner_folder_name_count),
+                getString(R.string.spinner_folder_all), countOfAllImages));
 
         return listOfAllImageFolders;
     }
@@ -156,6 +177,10 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         Spinner gallerySpinner = findViewById(R.id.spinner_gallery);
         editButton = findViewById(R.id.btn_edit);
         doneButton = findViewById(R.id.btn_done);
+
+        if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+            doneButton.setVisibility(View.GONE);
+        }
 
         closeButton.setOnClickListener(this);
         editButton.setOnClickListener(this);
