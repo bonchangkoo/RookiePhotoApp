@@ -16,6 +16,7 @@
     <string name="text_grid_three_by_three">3X3</string>
     <string name="text_grid_phi">PHI</string>
     <string name="text_grid_four_by_four">4X4</string>
+    <string name="text_finish_snackbar">\'뒤로\' 버튼을 한 번 더 누르면 종료합니다.</string>
 
     <string name="text_denied_permission">단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간</string>
     <string name="text_settings">설정</string>

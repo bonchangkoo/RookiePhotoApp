@@ -1,5 +1,6 @@
 package kr.co.yogiyo.rookiephotoapp
 
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ProgressBar
@@ -24,6 +25,14 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showToast(stringId: Int) {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
+    }
+
+    fun showSnackbar(view: View, toastMessage: String?){
+        Snackbar.make(view, toastMessage.toString(), Snackbar.LENGTH_SHORT).show()
+    }
+
+    fun showSnackbar(view: View, stringId: Int){
+        Snackbar.make(view, stringId, Snackbar.LENGTH_SHORT).show()
     }
 
     fun addProgressBarInto(layout: RelativeLayout) {

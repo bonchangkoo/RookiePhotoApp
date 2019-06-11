@@ -40,7 +40,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     @Override
     public void onBindViewHolder(@NonNull final GalleryViewHolder galleryViewHolder, int i) {
         Glide.with(context)
-                .load(loadImages.get(i))
+                .load(loadImages.get(i).getPathOfImage())
                 .into(galleryViewHolder.imageView);
         FrameLayout selectedFrame = galleryViewHolder.selectedFrame;
 

@@ -23,10 +23,13 @@ import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryFragment
+import java.util.*
 
 class CameraActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCameraBinding
+
+    private var backPressedStartTime = 0L
 
     private val viewModel: CameraViewModel by lazy {
         CameraViewModel(this)
@@ -68,14 +71,22 @@ class CameraActivity : BaseActivity() {
             viewModel.timerCancel() -> return
             btn_show_more.hasFocus() -> btn_show_more.clearFocus()
             btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
-            else -> super.onBackPressed()
+            else -> {
+                backPressedStartTime = Calendar.getInstance().timeInMillis.also {
+                    if(it - backPressedStartTime < 2000){
+                        super.onBackPressed()
+                    } else {
+                        showSnackbar(relative_root, getString(R.string.text_finish_snackbar))
+                    }
+                }
+            }
         }
     }
 
     private fun initView() {
         if (GlobalApplication.globalApplicationContext.fromDiary) {
             btn_go_diary.visibility = View.INVISIBLE
-            btn_go_gallery.visibility = View.INVISIBLE
+            relative_go_gallery.visibility = View.INVISIBLE
         }
 
         btn_go_diary.setOnClickListener {
@@ -83,7 +94,7 @@ class CameraActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        btn_flash.setOnClickListener {
+        relative_flash.setOnClickListener {
 
             when (viewModel.getNextFlashType()) {
                 0 -> {
@@ -118,7 +129,7 @@ class CameraActivity : BaseActivity() {
             }
         }
 
-        btn_go_gallery.run {
+        relative_go_gallery.run {
             setOnClickListener {
                 val intent = Intent(this@CameraActivity, GalleryActivity::class.java)
                 startActivity(intent)
@@ -140,7 +151,7 @@ class CameraActivity : BaseActivity() {
             setCaptureSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 9, 16)
         }
 
-        btn_grid.setOnClickListener {
+        relative_grid.setOnClickListener {
             camera.run {
                 grid = when (viewModel.getNextGridType()) {
                     0 -> {

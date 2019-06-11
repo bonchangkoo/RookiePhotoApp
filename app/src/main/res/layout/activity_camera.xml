@@ -83,6 +83,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginLeft="32dp"
             android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
             <ImageButton
@@ -91,6 +93,7 @@
                 android:layout_height="36dp"
                 android:layout_centerHorizontal="true"
                 android:background="?selectableItemBackgroundBorderless"
+                android:clickable="false"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -125,6 +128,8 @@
             android:layout_marginEnd="32dp"
             android:layout_marginRight="32dp"
             android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
             <ImageButton
@@ -134,6 +139,7 @@
                 android:layout_centerHorizontal="true"
                 android:alpha="@{viewModel.alphaByCaptureSize}"
                 android:background="?selectableItemBackgroundBorderless"
+                android:clickable="false"
                 android:src="@{viewModel.gridButtonSrc}" />
 
             <TextView
@@ -157,12 +163,17 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="@color/color_BF424242"
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="@{viewModel.showMoreLayoutVisibility}">
 
             <RelativeLayout
                 android:id="@+id/relative_timer"
                 android:layout_width="?attr/actionBarSize"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{viewModel::onClickTimerButton}">
 
                 <ImageButton
                     android:id="@+id/btn_timer"
@@ -171,7 +182,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:onClick="@{viewModel::onClickTimerButton}"
+                    android:clickable="false"
                     android:src="@{viewModel.timerButtonSrc}" />
 
                 <TextView
@@ -185,10 +196,13 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/relative_flash"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/relative_timer"
-                android:layout_toRightOf="@id/relative_timer">
+                android:layout_toRightOf="@id/relative_timer"
+                android:clickable="true"
+                android:focusable="true">
 
                 <ImageButton
                     android:id="@+id/btn_flash"
@@ -196,6 +210,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:layout_centerHorizontal="true"
                     android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="false"
                     android:src="@{viewModel.flashButtonSrc}" />
 
                 <TextView
@@ -229,6 +244,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="@color/color_BF424242"
+            android:clickable="true"
+            android:focusable="true"
             android:visibility="@{viewModel.showCaptureSizeLayoutVisibility}">
 
             <Button
