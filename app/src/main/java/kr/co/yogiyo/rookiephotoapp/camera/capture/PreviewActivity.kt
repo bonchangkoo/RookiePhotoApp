@@ -12,10 +12,7 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
-import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
-import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -26,21 +23,14 @@ import java.io.ByteArrayOutputStream
 
 class PreviewActivity : BaseActivity() {
 
-    private lateinit var binding: ActivityPreviewBinding
-    private val viewModel: PreviewViewModel by lazy {
-        PreviewViewModel()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_preview)
-        binding.viewModel = viewModel
+        setContentView(R.layout.activity_preview)
 
         initImageView()
         initView()
 
-        viewModel.initViewModel()
     }
 
     private fun initImageView() {
@@ -80,12 +70,13 @@ class PreviewActivity : BaseActivity() {
         btn_save_photo.setOnClickListener {
             if (GlobalApplication.globalApplicationContext.fromDiary) {
                 val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
-                viewModel.saveBitmapToInternalStorage(applicationContext, capturedImageBitmap)
+                applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
+
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
                 finish()
             } else {
                 capturedImageBitmap?.run {
-                    viewModel.bitmapToDownloads(this@PreviewActivity, this)
+                    applicationContext.bitmapToDownloads(this)
                     showToast(R.string.notification_image_saved)
                 }
             }
@@ -93,12 +84,6 @@ class PreviewActivity : BaseActivity() {
 
         btn_edit.setOnClickListener {
             editCapturedPhoto()
-        }
-    }
-
-    private fun PreviewViewModel.initViewModel() {
-        finishActivity = {
-            finish()
         }
     }
 
@@ -137,7 +122,7 @@ class PreviewActivity : BaseActivity() {
         } else {
 
             val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
-                var uri: Uri = viewModel.getImageUri(this@PreviewActivity, capturedImageBitmap)
+                var uri: Uri = applicationContext.getImageUri(capturedImageBitmap)
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
@@ -150,7 +135,6 @@ class PreviewActivity : BaseActivity() {
             }
         }
     }
-
 
     companion object {
 
