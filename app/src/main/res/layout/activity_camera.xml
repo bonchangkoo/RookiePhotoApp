@@ -19,24 +19,26 @@
         android:focusableInTouchMode="true"
         tools:context=".camera.CameraActivity">
 
-        <RelativeLayout
-            android:id="@+id/relative_top_space"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:visibility="@{viewModel.topSpaceVisibilityByCaptureSize}" />
+            android:layout_height="match_parent">
 
-        <com.otaliastudios.cameraview.CameraView
-            android:id="@+id/camera"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/relative_top_space"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:focusable="true"
-            android:keepScreenOn="true"
-            app:cameraGesturePinch="zoom"
-            app:cameraGestureTap="focusWithMarker"
-            app:cameraPictureSizeAspectRatio="1:1" />
+            <com.otaliastudios.cameraview.CameraView
+                android:id="@+id/camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:focusable="true"
+                android:keepScreenOn="true"
+                app:cameraGesturePinch="zoom"
+                app:cameraGestureTap="focusWithMarker"
+                app:cameraPictureSizeAspectRatio="1:1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintDimensionRatio="H,3:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
         <ImageButton
             android:id="@+id/btn_show_more"
