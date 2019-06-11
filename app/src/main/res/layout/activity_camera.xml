@@ -62,7 +62,7 @@
             android:src="@{viewModel.captureSizeButtonSrc}"
             android:visibility="@{viewModel.frameControlButtonVisibility}" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_go_diary"
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
@@ -72,8 +72,7 @@
             android:layout_marginRight="16dp"
             android:alpha="@{viewModel.alphaByCaptureSize}"
             android:background="?selectableItemBackgroundBorderless"
-            android:text="@string/text_diary"
-            android:textColor="@{viewModel.textColorByCaptureSize}"
+            android:src="@{viewModel.goDiaryButtonSrc}"
             android:visibility="@{viewModel.frameControlButtonVisibility}" />
 
         <RelativeLayout
@@ -151,7 +150,7 @@
         <RelativeLayout
             android:id="@+id/relative_more_control_buttons"
             android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/btn_show_more"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
@@ -163,12 +162,12 @@
             <RelativeLayout
                 android:id="@+id/relative_timer"
                 android:layout_width="?attr/actionBarSize"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <ImageButton
                     android:id="@+id/btn_timer"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:background="?selectableItemBackgroundBorderless"
@@ -176,7 +175,7 @@
                     android:src="@{viewModel.timerButtonSrc}" />
 
                 <TextView
-                    android:layout_width="?attr/actionBarSize"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/btn_timer"
                     android:gravity="center"
@@ -187,20 +186,20 @@
 
             <RelativeLayout
                 android:layout_width="?attr/actionBarSize"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/relative_timer"
                 android:layout_toRightOf="@id/relative_timer">
 
                 <ImageButton
                     android:id="@+id/btn_flash"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
                     android:layout_centerHorizontal="true"
                     android:background="?selectableItemBackgroundBorderless"
                     android:src="@{viewModel.flashButtonSrc}" />
 
                 <TextView
-                    android:layout_width="?attr/actionBarSize"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/btn_flash"
                     android:gravity="center"
@@ -268,8 +267,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:text="@{String.valueOf(viewModel.delayMessageLabel)}"
-            android:textColor="@android:color/white"
+            android:textColor="@{viewModel.textColorByCaptureSize}"
             android:textSize="40sp"
             android:visibility="@{viewModel.delayVisibility}" />
 

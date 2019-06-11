@@ -17,6 +17,10 @@
     <string name="text_grid_phi">PHI</string>
     <string name="text_grid_four_by_four">4X4</string>
 
+    <string name="text_denied_permission">단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간</string>
+    <string name="text_settings">설정</string>
+    <string name="text_cancel">취소</string>
+
     <!--activity_camera.xml-->
     <string name="text_diary">다이어리</string>
     <string name="text_gallery">갤러리</string>

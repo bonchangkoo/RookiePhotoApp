@@ -26,6 +26,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     val facingButtonLabel: ObservableField<String> = ObservableField(context.getString(R.string.text_change))
     val showMoreButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_black_24))
     val captureSizeButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_black_24))
+    val goDiaryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_event_black_24))
     val timerButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_timer_off_white_24))
     val flashButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_flash_off_white_24))
     val flashButtonText: ObservableField<String> = ObservableField(context.getString(R.string.text_flash))
@@ -76,6 +77,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         if (fullScreen) {
             showMoreButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_white_24))
             captureSizeButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_white_24))
+            goDiaryButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_event_white_24))
             gridButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_grid_off_white_36))
             textColorByCaptureSize.set(ContextCompat.getColor(context, android.R.color.white))
             alphaByCaptureSize.set(1f)
@@ -83,6 +85,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         } else {
             showMoreButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_black_24))
             captureSizeButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_black_24))
+            goDiaryButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_event_black_24))
             gridButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_grid_off_black_36))
             textColorByCaptureSize.set(ContextCompat.getColor(context, android.R.color.black))
             alphaByCaptureSize.set(0.7f)

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
@@ -313,6 +314,7 @@ class CameraActivity : BaseActivity() {
                     } else {
                         R.drawable.baseline_collections_black_24
                     })
+                    .apply(RequestOptions.circleCropTransform())
                     .into(btn_go_gallery)
         }
     }
