@@ -1,11 +1,10 @@
 package kr.co.yogiyo.rookiephotoapp.camera
 
+import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.graphics.PointF
 import android.os.Bundle
-import android.provider.MediaStore
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -13,13 +12,18 @@ import android.view.animation.AnimationUtils
 import com.bumptech.glide.Glide
 import com.otaliastudios.cameraview.*
 import kotlinx.android.synthetic.main.activity_camera.*
+import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
+import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
+import kr.co.yogiyo.rookiephotoapp.gallery.GalleryFragment
 
-class CameraActivity : AppCompatActivity() {
+class CameraActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCameraBinding
 
@@ -68,6 +72,11 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        if (GlobalApplication.globalApplicationContext.fromDiary) {
+            btn_go_diary.visibility = View.INVISIBLE
+            btn_go_gallery.visibility = View.INVISIBLE
+        }
+
         btn_go_diary.setOnClickListener {
             val intent = Intent(this, DiariesActivity::class.java)
             startActivity(intent)
@@ -226,9 +235,13 @@ class CameraActivity : AppCompatActivity() {
                                 finish()
                                 return@BitmapCallback
                             }
-                            PreviewActivity.capturedImageBitmap = bitmap
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
-                            startActivity(intent)
+                            PreviewActivity.capturedImageBitmap = bitmap
+                            if (GlobalApplication.globalApplicationContext.fromDiary) {
+                                startActivityForResult(intent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
+                            } else {
+                                startActivity(intent)
+                            }
                         })
                     }
                 }
@@ -241,6 +254,27 @@ class CameraActivity : AppCompatActivity() {
                     }
                 }
             })
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        data?.let {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val intent = Intent(this@CameraActivity, DiaryEditActivity::class.java).apply {
+                        this.data = it.data
+                    }
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
+                Constants.RESULT_CAPTURED_PHOTO -> {
+                    val intent = Intent(this@CameraActivity, DiaryEditActivity::class.java)
+                    setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
+                    finish()
+                }
+            }
         }
     }
 
@@ -270,35 +304,17 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-    private fun getRecentlyImagePath(): String? {
-        var pathOfImage: String? = null
-
-        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-
-        contentResolver.query(uri, projection, null, null, null)?.run {
-            val columnIndexData = getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
-            val columnIndexFolderName = getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-
-            while (moveToNext()) {
-                if (getString(columnIndexFolderName) != "YogiDiary") {
-                    continue
-                }
-                pathOfImage = getString(columnIndexData)
-                break
-            }
-
-            close()
-        } ?: return pathOfImage
-
-        return pathOfImage
-    }
-
     private fun initGoGalleryButton() {
-        Glide.with(this@CameraActivity)
-                .load(getRecentlyImagePath())
-                .error(if (viewModel.isCaptureSizeFull()) R.drawable.baseline_collections_white_24 else R.drawable.baseline_collections_black_24)
-                .into(btn_go_gallery)
+        GalleryFragment.loadImages(this@CameraActivity, "YogiDiary").run {
+            Glide.with(this@CameraActivity)
+                    .load(if (isEmpty()) null else this[0].pathOfImage)
+                    .error(if (viewModel.isCaptureSizeFull()) {
+                        R.drawable.baseline_collections_white_24
+                    } else {
+                        R.drawable.baseline_collections_black_24
+                    })
+                    .into(btn_go_gallery)
+        }
     }
 
     private fun setCaptureSize(width: Int, height: Int, x: Int, y: Int) {

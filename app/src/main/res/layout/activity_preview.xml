@@ -1,42 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".camera.capture.PreviewActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/transparent"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <ImageButton
+            android:id="@+id/btn_back_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/toolbar_back" />
+    </android.support.v7.widget.Toolbar>
+
     <ImageView
         android:id="@+id/preview_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="8"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:adjustViewBounds="true"
         android:visibility="visible" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="2.5"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_back_capture"
-            android:layout_width="0dp"
+            android:id="@+id/btn_add_diary"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="2"
+            android:background="?selectableItemBackgroundBorderless"
+            android:drawableTop="@mipmap/diary_add_gray_"
+            android:drawablePadding="-5dp"
+            android:text="글쓰기"
+            android:textColor="#8F9699"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_save_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="70dp"
+            android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="@string/text_preview_back"
-            android:textSize="30sp"
-            tools:ignore="NestedWeights" />
+            android:background="@mipmap/photo_save" />
 
         <Button
             android:id="@+id/btn_edit"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="2"
+            android:background="?selectableItemBackgroundBorderless"
+            android:drawableTop="@mipmap/photo_edit"
+            android:drawablePadding="-5dp"
             android:text="@string/text_edit"
-            android:textSize="30sp" />
+            android:textColor="#8F9699"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
