@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -35,13 +36,42 @@ dependencies {
     // uCrop library
     implementation 'com.github.yalantis:ucrop:2.2.3'
 
-    // camera library
+    // natario1/CameraView library
     implementation 'com.otaliastudios:cameraview:1.6.1'
     implementation 'com.android.support:exifinterface:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+
+    // Room library
+    def room_version = "1.1.1"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.persistence.room:rxjava2:$room_version"
+
+    implementation "io.reactivex.rxjava2:rxjava:2.0.6"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+
+    implementation 'com.android.support:support-v4:28.0.0'
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // request permission library
     implementation 'gun0912.ted:tedpermission:2.1.1'
+
+    // preference support library for settings
+    implementation "com.android.support:preference-v7:28.0.0"
+
+    // Firebase Auth Library
+    implementation 'com.google.firebase:firebase-auth:16.2.1'
+    
+    // bumptech/Glide library
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    // AAC
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    implementation "android.arch.lifecycle:viewmodel:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,67 +10,266 @@
             type="kr.co.yogiyo.rookiephotoapp.camera.CameraViewModel" />
     </data>
 
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/relative_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:context=".camera.CameraActivity">
+
+        <RelativeLayout
+            android:id="@+id/relative_top_space"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="@{viewModel.topSpaceVisibilityByCaptureSize}" />
 
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/camera"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/relative_top_space"
+            android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:keepScreenOn="true" />
+            android:focusable="true"
+            android:keepScreenOn="true"
+            app:cameraGesturePinch="zoom"
+            app:cameraGestureTap="focusWithMarker"
+            app:cameraPictureSizeAspectRatio="1:1" />
 
-        <FrameLayout
-            android:id="@+id/frame_control_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <ImageButton
+            android:id="@+id/btn_show_more"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:alpha="@{viewModel.alphaByCaptureSize}"
+            android:background="?selectableItemBackgroundBorderless"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:src="@{viewModel.showMoreButtonSrc}"
+            android:visibility="@{viewModel.frameControlButtonVisibility}" />
+
+        <ImageButton
+            android:id="@+id/btn_capture_size"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_centerHorizontal="true"
+            android:alpha="@{viewModel.alphaByCaptureSize}"
+            android:background="?selectableItemBackgroundBorderless"
+            android:focusableInTouchMode="true"
+            android:src="@{viewModel.captureSizeButtonSrc}"
+            android:visibility="@{viewModel.frameControlButtonVisibility}" />
+
+        <Button
+            android:id="@+id/btn_go_diary"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:alpha="@{viewModel.alphaByCaptureSize}"
+            android:background="?selectableItemBackgroundBorderless"
+            android:text="@string/text_diary"
+            android:textColor="@{viewModel.textColorByCaptureSize}"
+            android:visibility="@{viewModel.frameControlButtonVisibility}" />
+
+        <RelativeLayout
+            android:id="@+id/relative_go_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginBottom="24dp"
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
-            <Button
-                android:id="@+id/btn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_back" />
+            <ImageButton
+                android:id="@+id/btn_go_gallery"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:scaleType="centerCrop" />
 
-            <Button
-                android:id="@+id/btn_flash"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="?attr/actionBarSize"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@{viewModel.flashButtonLabel}" />
+                android:layout_below="@+id/btn_go_gallery"
+                android:alpha="@{viewModel.alphaByCaptureSize}"
+                android:gravity="center"
+                android:text="@string/text_gallery"
+                android:textColor="@{viewModel.textColorByCaptureSize}"
+                android:textSize="12sp" />
+        </RelativeLayout>
 
-            <Button
-                android:id="@+id/btn_timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:text="@{viewModel.delayButtonLabel}" />
+        <Button
+            android:id="@+id/btn_capture"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/capture_button"
+            android:onClick="@{viewModel::onClickCaptureButton}"
+            android:visibility="@{viewModel.frameControlButtonVisibility}" />
 
-            <Button
-                android:id="@+id/btn_capture"
-                android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/relative_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginBottom="24dp"
+            android:visibility="@{viewModel.frameControlButtonVisibility}">
+
+            <ImageButton
+                android:id="@+id/btn_grid"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:alpha="@{viewModel.alphaByCaptureSize}"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@{viewModel.gridButtonSrc}" />
+
+            <TextView
+                android:layout_width="?attr/actionBarSize"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:onClick="@{viewModel::onClickCaptureButton}"
-                android:text="@string/text_capture" />
+                android:layout_below="@+id/btn_grid"
+                android:alpha="@{viewModel.alphaByCaptureSize}"
+                android:gravity="center"
+                android:text="@{viewModel.gridButtonText}"
+                android:textColor="@{viewModel.textColorByCaptureSize}"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_more_control_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_below="@+id/btn_show_more"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/color_BF424242"
+            android:visibility="@{viewModel.showMoreLayoutVisibility}">
+
+            <RelativeLayout
+                android:id="@+id/relative_timer"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/btn_timer"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:onClick="@{viewModel::onClickTimerButton}"
+                    android:src="@{viewModel.timerButtonSrc}" />
+
+                <TextView
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btn_timer"
+                    android:gravity="center"
+                    android:text="@string/text_timer"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/relative_timer"
+                android:layout_toRightOf="@id/relative_timer">
+
+                <ImageButton
+                    android:id="@+id/btn_flash"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@{viewModel.flashButtonSrc}" />
+
+                <TextView
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btn_flash"
+                    android:gravity="center"
+                    android:text="@{viewModel.flashButtonText}"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/btn_change_camera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:text="@{viewModel.facingButtonLabel}" />
-        </FrameLayout>
+                android:text="@{viewModel.facingButtonLabel}"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_capture_size_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_below="@+id/btn_capture_size"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="top|center"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/color_BF424242"
+            android:visibility="@{viewModel.showCaptureSizeLayoutVisibility}">
+
+            <Button
+                android:id="@+id/btn_one_to_one"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:text="@string/text_capture_size_one_to_one"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btn_three_to_four"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/btn_one_to_one"
+                android:layout_toRightOf="@id/btn_one_to_one"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/text_capture_size_three_to_four"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btn_nine_to_sixteen"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/btn_three_to_four"
+                android:layout_toRightOf="@id/btn_three_to_four"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/text_capture_size_nine_to_sixteen"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/text_timer_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:text="@{String.valueOf(viewModel.delayMessageLabel)}"
-            android:textColor="@color/color_FFFFFF"
+            android:textColor="@android:color/white"
             android:textSize="40sp"
             android:visibility="@{viewModel.delayVisibility}" />
 
@@ -79,6 +279,5 @@
             android:layout_height="match_parent"
             android:background="@color/color_BF424242"
             android:visibility="gone" />
-
-    </FrameLayout>
+    </RelativeLayout>
 </layout>
