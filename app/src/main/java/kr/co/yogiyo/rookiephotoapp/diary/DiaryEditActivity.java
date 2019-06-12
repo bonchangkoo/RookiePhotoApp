@@ -143,7 +143,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             startActivityForResult(photoCaptureIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO);
                         } else if (which == 1) {
                             Intent doStartEditPhotoActivityIntent = new Intent(DiaryEditActivity.this, GalleryActivity.class);
-                            if (GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+                            if (GlobalApplication.getGlobalApplicationContext().isFromDiary()) {
                                 startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO);
                             } else {
                                 startActivity(doStartEditPhotoActivityIntent);

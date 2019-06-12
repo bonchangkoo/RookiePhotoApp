@@ -12,7 +12,6 @@ import kr.co.yogiyo.rookiephotoapp.Constants.*
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
-import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 import java.io.File
 
@@ -84,20 +83,17 @@ class EditPhotoActivity : BaseActivity() {
 
         UCrop.getOutput(result)?.let { resultUri ->
 
-                if (GlobalApplication.globalApplicationContext.fromDiary) {
-                    val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
-                        data = resultUri
-                    }
-                    if (photoCategoryNumber == EDIT_CAPTURED_PHOTO) {
-                        startActivityForResult(intent, REQUEST_DIARY_CAPTURE_PHOTO)
-                    } else {
-                        startActivityForResult(intent, REQUEST_DIARY_PICK_GALLERY)
-                    }
-
-                } else {
-                    EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
-                    finish()
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
+                    data = resultUri
                 }
+
+                startActivityForResult(intent, if (photoCategoryNumber == EDIT_CAPTURED_PHOTO) REQUEST_DIARY_CAPTURE_PHOTO else REQUEST_DIARY_PICK_GALLERY)
+
+            } else {
+                EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+                finish()
+            }
 
         } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
@@ -131,7 +127,7 @@ class EditPhotoActivity : BaseActivity() {
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1
 
-        private var photoCategoryNumber: Int? = null
+        private var photoCategoryNumber : Int = EDIT_SELECTED_PHOTO
 
         private const val SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage"
     }

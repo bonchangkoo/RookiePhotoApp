@@ -78,7 +78,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
                         Intent doStartEditPhotoActivityIntent = new Intent(GalleryActivity.this, EditPhotoActivity.class);
                         doStartEditPhotoActivityIntent.putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO);
                         doStartEditPhotoActivityIntent.setData(uriForEdit);
-                        if (GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+                        if (GlobalApplication.getGlobalApplicationContext().isFromDiary()) {
                             startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY);
                         } else {
                             startActivity(doStartEditPhotoActivityIntent);
@@ -178,7 +178,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         editButton = findViewById(R.id.btn_edit);
         doneButton = findViewById(R.id.btn_done);
 
-        if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+        if (!GlobalApplication.getGlobalApplicationContext().isFromDiary()) {
             doneButton.setVisibility(View.GONE);
         }
 
