@@ -39,11 +39,6 @@ public class LocalDiaryViewModel extends AndroidViewModel {
         return diaryDatabase.diaryDao().findDiaryById(diaryId);
     }
 
-    // TODO : 날짜 순으로 정렬
-    public Flowable<List<Diary>> findDiariesBetweenDates(Date from, Date to) {
-        return diaryDatabase.diaryDao().findDiariesBetweenDates(from, to);
-    }
-
     public Completable updateDiary(final Diary diary, final Date date, final String image, final String description) {
         diary.setDate(date);
         diary.setImage(image);
