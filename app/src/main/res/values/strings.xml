@@ -88,6 +88,8 @@
     <string name="text_toolbar_edit">편집</string>
     <string name="text_photo_description">photo</string>
     <string name="text_toolbar_detail">상세</string>
+    <string name="text_diary_delete">다이어리 삭제</string>
+    <string name="test_diary_delete_question">정말로 삭제하시겠습니까?</string>
 
     <!--LocalDiaryViewModel.java-->
     <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
@@ -101,4 +103,6 @@
     <string name="text_day_now_diary">%d일</string>
     <string name="text_time_now_diary">%d:%s</string>
     <string name="text_yogidiary_path">%s/%s</string>
+
+
 </resources>

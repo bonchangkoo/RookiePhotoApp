@@ -9,13 +9,11 @@ import android.support.v7.app.AlertDialog
 import io.reactivex.CompletableObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_diary_detail.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.R
-import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -46,18 +44,21 @@ class DiaryDetailActivity : BaseActivity() {
         }
 
         ib_diary_delete.setOnClickListener {
-            val builder = AlertDialog.Builder(this@DiaryDetailActivity)
-            builder.setPositiveButton(getString(R.string.text_dialog_ok)) { dialog, id -> deleteDiary(diaryIdx) }
-            builder.setNegativeButton(getString(R.string.text_dialog_no)) { dialog, id -> dialog.dismiss() }
-            val dialog = builder.create()
-            dialog.setTitle("다이어리 삭제")
-            dialog.setMessage("정말로 삭제하시겠습니까?")
+            val builder = AlertDialog.Builder(this@DiaryDetailActivity).apply {
+                setPositiveButton(getString(R.string.text_dialog_ok)) { dialog, id -> deleteDiary(diaryIdx) }
+                setNegativeButton(getString(R.string.text_dialog_no)) { dialog, id -> dialog.dismiss() }
+            }
+            val dialog = builder.create().apply {
+                setTitle(getString(R.string.text_diary_delete))
+                setMessage(getString(R.string.test_diary_delete_question))
+            }
             dialog.show()
         }
 
         ib_diary_edit.setOnClickListener {
-            val diaryEditActivityIntent = Intent(this, DiaryEditActivity::class.java)
-            diaryEditActivityIntent.putExtra("DIARY_IDX", diaryIdx)
+            val diaryEditActivityIntent = Intent(this, DiaryEditActivity::class.java).apply {
+                putExtra("DIARY_IDX", diaryIdx)
+            }
             startActivity(diaryEditActivityIntent)
             finish()
         }
@@ -100,29 +101,27 @@ class DiaryDetailActivity : BaseActivity() {
         compositeDisposable.add(localDiaryViewModel?.findDiaryById(idx)
                 ?.subscribeOn(Schedulers.single())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe(object : Consumer<Diary> {
-                    override fun accept(diary: Diary) {
-                        diary?.run {
-                            localDiaryViewModel!!.deleteDiary(this)
-                                    .subscribeOn(Schedulers.single())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(object : CompletableObserver {
-                                        override fun onSubscribe(d: Disposable) {
-                                            //Do noting
-                                        }
+                ?.subscribe { diary ->
+                    diary.run {
+                        localDiaryViewModel?.deleteDiary(this)
+                                ?.subscribeOn(Schedulers.single())
+                                ?.observeOn(AndroidSchedulers.mainThread())
+                                ?.subscribe(object : CompletableObserver {
+                                    override fun onSubscribe(d: Disposable) {
+                                        //Do noting
+                                    }
 
-                                        override fun onComplete() {
-                                            showToast(R.string.text_diary_detail_deleted)
-                                            finish()
-                                        }
+                                    override fun onComplete() {
+                                        showToast(R.string.text_diary_detail_deleted)
+                                        finish()
+                                    }
 
-                                        override fun onError(e: Throwable) {
-                                            showToast(getString(R.string.text_cant_delete_diary))
-                                        }
-                                    })
-                        }
+                                    override fun onError(e: Throwable) {
+                                        showToast(getString(R.string.text_cant_delete_diary))
+                                    }
+                                })
                     }
-                }))
+                })
     }
 
     companion object {
