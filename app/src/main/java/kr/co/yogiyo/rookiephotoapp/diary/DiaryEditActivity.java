@@ -46,6 +46,7 @@ import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity;
 public class DiaryEditActivity extends BaseActivity implements View.OnClickListener {
 
     private final static String TAG = DiaryEditActivity.class.getSimpleName();
+    private static final String BITMAP_FROM_PREVIEW = "BITMAP_FROM_PREVIEW";
 
     private final static int DIARY_ADD = -1;
 
@@ -181,9 +182,9 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
+            if (getIntent().getByteArrayExtra(BITMAP_FROM_PREVIEW) != null) {
                 isBitmap = true;
-                byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
+                byte[] arr = getIntent().getByteArrayExtra(BITMAP_FROM_PREVIEW);
                 selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
             } else if (getIntent().getData() != null) {
