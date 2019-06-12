@@ -72,9 +72,17 @@ class PreviewActivity : BaseActivity() {
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
                 finish()
             } else {
-                capturedImageBitmap?.run {
-                    applicationContext.bitmapToDownloads(this)
-                    showToast(R.string.notification_image_saved)
+                capturedImageBitmap.let {
+                    val isSaveBitmap = applicationContext.bitmapToDownloads(it)
+                    when {
+                        isSaveBitmap -> {
+                            showToast(R.string.notification_image_saved)
+                        }
+                        else -> {
+                            showToast(getString(R.string.text_no_save_preview_image))
+                            finish()
+                        }
+                    }
                 }
             }
         }
@@ -119,7 +127,7 @@ class PreviewActivity : BaseActivity() {
         } else {
 
             val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
-                var uri: Uri = applicationContext.getImageUri(capturedImageBitmap)
+                val uri: Uri = applicationContext.getImageUri(capturedImageBitmap)
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }

@@ -11,14 +11,15 @@ import java.io.FileOutputStream
 import java.util.*
 
 @Throws(Exception::class)
-fun Context?.bitmapToDownloads(bitmap: Bitmap) {
+fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
+
     if (!Constants.YOGIDIARY_PATH.exists()) {
         if (!Constants.YOGIDIARY_PATH.mkdirs()) {
-
+            return false
         }
     }
 
-    val downloadsDirectoryPath = Constants.YOGIDIARY_PATH.path + "/"
+    val downloadsDirectoryPath = "${Constants.YOGIDIARY_PATH.path}/"
     val filename = String.format(Locale.getDefault(), "%d%s", Calendar.getInstance().timeInMillis, ".jpg")
 
     val file = File(downloadsDirectoryPath, filename)
@@ -29,11 +30,13 @@ fun Context?.bitmapToDownloads(bitmap: Bitmap) {
     }
 
     this?.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)))
+
+    return true
 }
 
 fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
 
-    var fileOutputStream: FileOutputStream?
+    val fileOutputStream: FileOutputStream?
     try {
         fileOutputStream = this?.openFileOutput("temp.jpg", Context.MODE_PRIVATE)
         fileOutputStream.use {
@@ -45,9 +48,9 @@ fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
 }
 
 // Bitmap을 Uri로 변환하는 함수
-fun Context?.getImageUri(inImage: Bitmap): Uri {
+fun Context?.getImageUri(bitmap: Bitmap): Uri {
     val bytes = ByteArrayOutputStream()
-    inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-    val path = MediaStore.Images.Media.insertImage(this?.contentResolver, inImage, "Image", null)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+    val path = MediaStore.Images.Media.insertImage(this?.contentResolver, bitmap, "Image", null)
     return Uri.parse(path)
 }
