@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -14,7 +13,6 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
-import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
@@ -22,7 +20,6 @@ import java.io.ByteArrayOutputStream
 
 
 class PreviewActivity : BaseActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
