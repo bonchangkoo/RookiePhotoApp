@@ -1,15 +1,16 @@
 package kr.co.yogiyo.rookiephotoapp
 
 import android.app.Application
+import android.graphics.Bitmap
 
 class GlobalApplication : Application() {
 
-    var fromDiary: Boolean = false
+    var isFromDiary: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        fromDiary = false
+        isFromDiary = false
     }
 
     override fun onTerminate() {

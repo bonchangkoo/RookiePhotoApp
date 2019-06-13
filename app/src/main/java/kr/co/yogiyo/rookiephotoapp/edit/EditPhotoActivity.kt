@@ -88,7 +88,7 @@ class EditPhotoActivity : BaseActivity() {
 
         UCrop.getOutput(result)?.let { resultUri ->
 
-            GlobalApplication.globalApplicationContext.fromDiary?.run {
+            GlobalApplication.globalApplicationContext.isFromDiary?.run {
                 if (this) {
                     val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
                         data = resultUri

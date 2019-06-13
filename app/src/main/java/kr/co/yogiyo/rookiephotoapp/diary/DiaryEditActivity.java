@@ -20,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,6 +41,7 @@ import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
@@ -177,10 +180,13 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
-                byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
-                selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
-                editPhotoImageButton.setImageBitmap(selectedBitmap);
+            if (getIntent().getStringExtra("FROM_PREVIEW") != null) {
+                selectedBitmap = PreviewActivity.capturedImageBitmap;
+                Glide.with(this)
+                        .load(selectedBitmap)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
+
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
@@ -355,7 +361,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     });
 
             try {
-                if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+                if (!GlobalApplication.getGlobalApplicationContext().isFromDiary()) {
                     copyFileToDownloads(selectedUri, time.getTime());
                 } else { // 촬영한 사진을 다이어리 추가 시
                     bitmapToDownloads(selectedBitmap, time.getTime());
@@ -437,7 +443,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             if (isPhotoUpdate) {
                                 image = time.getTime() + ".jpg";
                                 try {
-                                    if (!GlobalApplication.getGlobalApplicationContext().getFromDiary()) {
+                                    if (!GlobalApplication.getGlobalApplicationContext().isFromDiary()) {
                                         copyFileToDownloads(selectedUri, time.getTime());
                                     } else { // 촬영한 사진을 다이어리 추가 시
                                         bitmapToDownloads(selectedBitmap, time.getTime());
