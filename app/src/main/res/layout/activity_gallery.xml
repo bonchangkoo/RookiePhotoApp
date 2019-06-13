@@ -39,28 +39,30 @@
                 android:dropDownWidth="224dp" />
 
             <ImageButton
-                android:id="@+id/btn_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginLeft="24dp"
-                android:layout_toStartOf="@+id/btn_done"
-                android:layout_toLeftOf="@+id/btn_done"
-                android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_edit_white_24" />
-
-            <ImageButton
                 android:id="@+id/btn_done"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginStart="24dp"
                 android:layout_marginLeft="24dp"
+                android:layout_toStartOf="@+id/btn_edit"
+                android:layout_toLeftOf="@+id/btn_edit"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/baseline_done_white_24" />
+
+            <ImageButton
+                android:id="@+id/btn_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_done_white_24" />
+                android:src="@drawable/baseline_edit_white_24" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

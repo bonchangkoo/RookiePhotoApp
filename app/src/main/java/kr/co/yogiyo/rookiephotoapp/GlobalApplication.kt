@@ -4,12 +4,12 @@ import android.app.Application
 
 class GlobalApplication : Application() {
 
-    var fromDiary: Boolean = false
+    var isFromDiary: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
         instance = this
-        fromDiary = false
+        isFromDiary = false
     }
 
     override fun onTerminate() {

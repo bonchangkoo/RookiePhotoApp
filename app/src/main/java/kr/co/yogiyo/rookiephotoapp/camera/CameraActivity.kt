@@ -57,7 +57,7 @@ class CameraActivity : BaseActivity() {
 
     private fun initView() {
 
-        if (GlobalApplication.globalApplicationContext.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
             btn_go_diary.visibility = View.INVISIBLE
             btn_go_gallery.visibility = View.INVISIBLE
         }
@@ -127,7 +127,7 @@ class CameraActivity : BaseActivity() {
                             }
                             val intent = Intent(this@CameraActivity, PreviewActivity::class.java)
                             PreviewActivity.capturedImageBitmap = bitmap
-                            if (GlobalApplication.globalApplicationContext.fromDiary) {
+                            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                                 startActivityForResult(intent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
                             } else {
                                 startActivity(intent)
