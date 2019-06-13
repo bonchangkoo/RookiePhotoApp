@@ -2,8 +2,10 @@ package kr.co.yogiyo.rookiephotoapp.camera.capture
 
 import android.Manifest
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -13,83 +15,37 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
+import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
-import java.io.ByteArrayOutputStream
 
 
 class PreviewActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityPreviewBinding
+    private lateinit var previewViewModel: PreviewViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_preview)
 
-        initImageView()
+        previewViewModel = ViewModelProviders.of(this).get(PreviewViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_preview)
+        binding.viewModel = previewViewModel
+
         initView()
-
     }
 
-    private fun initImageView() {
+    private fun initView() {
+
+        btn_add_diary.visibility = previewViewModel.getAddDiaryVisibility()
 
         preview_image.run {
             visibility = View.VISIBLE
             setImageBitmap(capturedImageBitmap)
         }
-    }
 
-    private fun initView() {
-
-        btn_back_capture.setOnClickListener {
-            onBackPressed()
-        }
-
-        if (GlobalApplication.globalApplicationContext.fromDiary) {
-            btn_add_diary.visibility = View.INVISIBLE
-        }
-
-        btn_add_diary.setOnClickListener {
-
-            startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
-
-            val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
-                putExtra("DIARY_IDX", -1)
-                ByteArrayOutputStream().run {
-                    capturedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, this)
-                    val byteArray = this.toByteArray()
-                    putExtra("BITMAP_FROM_PREVIEW", byteArray)
-                }
-            }
-            startActivity(startDiaryEditActivityIntent)
-            finish()
-        }
-
-        btn_save_photo.setOnClickListener {
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
-                val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
-                applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
-
-                setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
-                finish()
-            } else {
-                capturedImageBitmap.let {
-                    val isSaveBitmap = applicationContext.bitmapToDownloads(it)
-                    when {
-                        isSaveBitmap -> {
-                            showToast(R.string.notification_image_saved)
-                        }
-                        else -> {
-                            showToast(getString(R.string.text_no_save_preview_image))
-                            finish()
-                        }
-                    }
-                }
-            }
-        }
-
-        btn_edit.setOnClickListener {
-            editCapturedPhoto()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,15 +63,47 @@ class PreviewActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!capturedImageBitmap.isRecycled) {
-            capturedImageBitmap.recycle()
+
+    fun onBackPressed(view: View) {
+        onBackPressed()
+    }
+
+    fun startSavePhotoActivity(view: View) {
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
+            applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
+            setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
+            finish()
+        } else {
+            capturedImageBitmap.let {
+                val isSaveBitmap = applicationContext.bitmapToDownloads(it)
+                when {
+                    isSaveBitmap -> {
+                        showToast(R.string.notification_image_saved)
+                    }
+                    else -> {
+                        showToast(getString(R.string.text_no_save_preview_image))
+                        finish()
+                    }
+                }
+            }
         }
     }
 
-    private fun editCapturedPhoto() {
+    fun startDiaryEditActivity(view: View) {
+        startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
 
+        val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
+            putExtra("DIARY_IDX", -1)
+            putExtra("FROM_PREVIEW", "pass bitmap")
+        }
+        startActivity(startDiaryEditActivityIntent)
+        finish()
+    }
+
+    fun editCapturedPhoto(view: View) {
+
+        // TODO : 후에 삭제할 코드
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
                 && ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -125,14 +113,13 @@ class PreviewActivity : BaseActivity() {
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
             )
         } else {
-
             val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
                 val uri: Uri = applicationContext.getImageUri(capturedImageBitmap)
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
 
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
             } else {
                 startActivity(doStartEditPhotoActivityIntent)
