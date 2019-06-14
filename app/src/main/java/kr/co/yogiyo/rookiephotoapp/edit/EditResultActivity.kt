@@ -14,6 +14,8 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
@@ -30,12 +32,6 @@ class EditResultActivity : BaseActivity() {
             if (field == null) {
                 showToast(R.string.dont_load_captured_photo)
             }
-            return field
-        }
-
-    private var startingPoint: String? = null   // `시작 액티비티`를 구별
-        get() {
-            field = intent.getStringExtra(STARTING_POINT)
             return field
         }
 
@@ -57,7 +53,7 @@ class EditResultActivity : BaseActivity() {
     private fun setSettingAndResultActionBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.run {
-            if (startingPoint != DiaryEditActivity::class.java.simpleName) {
+            if (!GlobalApplication.globalApplicationContext.isFromDiary) {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
             }
@@ -67,10 +63,9 @@ class EditResultActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_edit_result, menu)
         val downloadItem = menu.findItem(R.id.menu_download)
-        startingPoint?.run {
-            if (startingPoint != DiaryEditActivity::class.java.simpleName) {
-                downloadItem.setIcon(R.mipmap.diary_save)
-            }
+
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            downloadItem.setIcon(R.mipmap.diary_save)
         }
         return true
     }
@@ -78,7 +73,7 @@ class EditResultActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> {
-                if (startingPoint == DiaryEditActivity::class.java.simpleName) {
+                if (GlobalApplication.globalApplicationContext.isFromDiary) {
                     Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
                         data = editPhotoUri
                         setResult(Constants.RESULT_EDIT_PHOTO, this)
@@ -123,7 +118,7 @@ class EditResultActivity : BaseActivity() {
 
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
-        Log.d(TAG, "save file")
+
         if (!YOGIDIARY_PATH.exists()) {
             if (!YOGIDIARY_PATH.mkdirs()) {
                 return finish()
@@ -147,11 +142,6 @@ class EditResultActivity : BaseActivity() {
 
         showToast(R.string.notification_image_saved)
         finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        startingPoint = null
     }
 
     companion object {
