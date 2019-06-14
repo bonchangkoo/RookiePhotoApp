@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.notification.JobSchedulerStart;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        JobSchedulerStart.start(getApplicationContext());
 
         setupCheckPermission();
     }
@@ -53,5 +56,3 @@ public class MainActivity extends AppCompatActivity {
                 .check();
     }
 }
-
-

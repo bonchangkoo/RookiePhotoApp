@@ -101,4 +101,10 @@
     <string name="text_day_now_diary">%d일</string>
     <string name="text_time_now_diary">%d:%s</string>
     <string name="text_yogidiary_path">%s/%s</string>
+
+    <!--notification_check_eating.xml-->
+    <string name="text_start_camera">촬영하기</string>
+    <string name="text_start_diary_add">작성하기</string>
+    <string name="text_ask_food">어떤 음식을 드셨나요?</string>
+    <string name="text_explain_channel">앱의 알림을 관리하는 채널입니다.</string>
 </resources>
