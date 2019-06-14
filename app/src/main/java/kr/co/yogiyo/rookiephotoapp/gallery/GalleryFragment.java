@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 
 public class GalleryFragment extends Fragment {
@@ -77,7 +78,7 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    public static List<LoadImage> loadImages(Context context, String folderName) {
+    public static List<LoadImage> loadImages(String folderName) {
         List<LoadImage> listOfAllImages = new ArrayList<>();
         String pathOfImage;
         long modifiedDateOfImage;
@@ -87,7 +88,7 @@ public class GalleryFragment extends Fragment {
                 MediaStore.Images.Media.DATE_MODIFIED,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        Cursor cursor = GlobalApplication.getGlobalApplicationContext().getContentResolver().query(uri, projection, null, null, null);
 
         if (cursor == null) {
             return listOfAllImages;
@@ -124,7 +125,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void loadGallery(String folderName) {
-        List<LoadImage> loadImages = loadImages(context, folderName);
+        List<LoadImage> loadImages = loadImages(folderName);
         galleryAdapter.setImages(loadImages);
         galleryAdapter.notifyDataSetChanged();
     }

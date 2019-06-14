@@ -30,6 +30,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     val timerButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_timer_off_white_24))
     val flashButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_flash_off_white_24))
     val flashButtonText: ObservableField<String> = ObservableField(context.getString(R.string.text_flash))
+    val goGalleryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_collections_black_24))
     val gridButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_grid_off_black_36))
     val gridButtonText: ObservableField<String> = ObservableField(context.getString(R.string.text_grid))
     val delayVisibility: ObservableInt = ObservableInt(View.GONE)
@@ -39,7 +40,6 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     val showCaptureSizeLayoutVisibility: ObservableInt = ObservableInt(View.GONE)
     val textColorByCaptureSize: ObservableInt = ObservableInt(ContextCompat.getColor(context, android.R.color.black))
     val alphaByCaptureSize: ObservableFloat = ObservableFloat(0.7f)
-    val topSpaceVisibilityByCaptureSize: ObservableInt = ObservableInt(View.VISIBLE)
 
     private var flashType = Flash.OFF.ordinal
     private var gridType = Grid.OFF.ordinal
@@ -53,6 +53,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     }
 
     lateinit var captureNow: () -> Unit
+    lateinit var updateGalleryButton: CameraViewModel.() -> Unit
 
     fun isCaptureSizeFull() = captureSizeFull
 
@@ -68,7 +69,9 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         gridButtonSrc.set(ContextCompat.getDrawable(context, drawableId))
     }
 
-    fun updateViewByCaptureSize(fullScreen: Boolean) {
+    fun synchronizeGalleryButton() = updateGalleryButton()
+
+    fun updateViewByCaptureSize(fullScreen: Boolean = captureSizeFull) {
         if (captureSizeFull == fullScreen) {
             return
         }
@@ -78,24 +81,33 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
             showMoreButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_white_24))
             captureSizeButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_white_24))
             goDiaryButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_event_white_24))
-            gridButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_grid_off_white_36))
+            updateGalleryButton()
+            gridButtonSrc.set(ContextCompat.getDrawable(context, if (getGridType() == 0) {
+                R.drawable.baseline_grid_off_white_36
+            } else {
+                R.drawable.baseline_grid_on_white_36
+            }))
             textColorByCaptureSize.set(ContextCompat.getColor(context, android.R.color.white))
             alphaByCaptureSize.set(1f)
-            topSpaceVisibilityByCaptureSize.set(View.GONE)
         } else {
             showMoreButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_black_24))
             captureSizeButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_black_24))
             goDiaryButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_event_black_24))
-            gridButtonSrc.set(ContextCompat.getDrawable(context, R.drawable.baseline_grid_off_black_36))
+            updateGalleryButton()
+            gridButtonSrc.set(ContextCompat.getDrawable(context, if (getGridType() == 0) {
+                R.drawable.baseline_grid_off_black_36
+            } else {
+                R.drawable.baseline_grid_on_black_36
+            }))
             textColorByCaptureSize.set(ContextCompat.getColor(context, android.R.color.black))
             alphaByCaptureSize.set(0.7f)
-            topSpaceVisibilityByCaptureSize.set(View.VISIBLE)
         }
     }
 
     fun getNextFlashType() = ++flashType % Flash.values().size
 
     fun getNextGridType() = ++gridType % Grid.values().size
+    fun getGridType() = gridType % Grid.values().size
 
     fun onClickCaptureButton(view: View) {
         if (isTimerOn()) {

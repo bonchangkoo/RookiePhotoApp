@@ -51,7 +51,7 @@ class CameraActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.initButtonVisibility()
-        initGoGalleryButton()
+        viewModel.synchronizeGalleryButton()
 
         camera.start()
     }
@@ -73,7 +73,7 @@ class CameraActivity : BaseActivity() {
             btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
             else -> {
                 backPressedStartTime = Calendar.getInstance().timeInMillis.also {
-                    if(it - backPressedStartTime < 2000){
+                    if (it - backPressedStartTime < 2000) {
                         super.onBackPressed()
                     } else {
                         showSnackbar(relative_root, getString(R.string.text_finish_snackbar))
@@ -292,6 +292,19 @@ class CameraActivity : BaseActivity() {
 
     private fun CameraViewModel.initViewModel() {
         captureNow = { camera.capturePicture() }
+        updateGalleryButton = {
+            GalleryFragment.loadImages("YogiDiary").run {
+                Glide.with(this@CameraActivity)
+                        .load(if (isEmpty()) null else this[0].pathOfImage)
+                        .error(if (viewModel.isCaptureSizeFull()) {
+                            R.drawable.baseline_collections_white_24
+                        } else {
+                            R.drawable.baseline_collections_black_24
+                        })
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(btn_go_gallery)
+            }
+        }
     }
 
     private fun startBlinkAnimation() {
@@ -313,20 +326,6 @@ class CameraActivity : BaseActivity() {
         frame_dark_screen.run {
             visibility = View.VISIBLE
             startAnimation(blinkAnimation)
-        }
-    }
-
-    private fun initGoGalleryButton() {
-        GalleryFragment.loadImages(this@CameraActivity, "YogiDiary").run {
-            Glide.with(this@CameraActivity)
-                    .load(if (isEmpty()) null else this[0].pathOfImage)
-                    .error(if (viewModel.isCaptureSizeFull()) {
-                        R.drawable.baseline_collections_white_24
-                    } else {
-                        R.drawable.baseline_collections_black_24
-                    })
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(btn_go_gallery)
         }
     }
 

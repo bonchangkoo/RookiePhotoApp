@@ -35,7 +35,6 @@
                 app:cameraPictureSizeAspectRatio="1:1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="H,3:1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
@@ -96,7 +95,8 @@
                 android:layout_centerHorizontal="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="false"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@{viewModel.goGalleryButtonSrc}" />
 
             <TextView
                 android:layout_width="?attr/actionBarSize"
@@ -132,6 +132,7 @@
             android:layout_marginBottom="24dp"
             android:clickable="true"
             android:focusable="true"
+            android:focusableInTouchMode="true"
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
             <ImageButton
