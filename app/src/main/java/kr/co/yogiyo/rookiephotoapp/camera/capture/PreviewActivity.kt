@@ -60,7 +60,7 @@ class PreviewActivity : BaseActivity() {
 
                 val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
                     putExtra("DIARY_IDX", -1)
-                    putExtra("FROM_PREVIEW", "pass bitmap")
+                    putExtra("FROM_PREVIEW", true)
                 }
                 startActivity(startDiaryEditActivityIntent)
                 finish()
@@ -77,9 +77,7 @@ class PreviewActivity : BaseActivity() {
                 capturedImageBitmap.let {
                     val isSaveBitmap = applicationContext.bitmapToDownloads(it)
                     when {
-                        isSaveBitmap -> {
-                            showToast(R.string.notification_image_saved)
-                        }
+                        isSaveBitmap -> showToast(R.string.notification_image_saved)
                         else -> {
                             showToast(getString(R.string.text_no_save_preview_image))
                             finish()

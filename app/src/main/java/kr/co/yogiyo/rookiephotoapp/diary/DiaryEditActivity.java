@@ -185,9 +185,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getStringExtra("FROM_PREVIEW") != null) {
+            if (getIntent().hasExtra("FROM_PREVIEW")) {
                 isBitmap = true;
-
                 selectedBitmap = PreviewActivity.capturedImageBitmap;
                 Glide.with(this)
                         .load(selectedBitmap)
