@@ -29,7 +29,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="?selectableItemBackgroundBorderless"
-                android:onClick="onBackPressed"
                 android:src="@drawable/toolbar_back" />
         </android.support.v7.widget.Toolbar>
 
@@ -59,7 +58,6 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawableTop="@mipmap/diary_add_gray_"
                 android:drawablePadding="-5dp"
-                android:onClick="startDiaryEditActivity"
                 android:text="@string/text_write_diary"
                 android:textColor="#8F9699"
                 android:textStyle="bold" />
@@ -73,8 +71,7 @@
                 android:layout_marginRight="70dp"
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:background="@mipmap/photo_save"
-                android:onClick="startSavePhotoActivity" />
+                android:background="@mipmap/photo_save"/>
 
             <Button
                 android:id="@+id/btn_edit"
@@ -87,7 +84,6 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawableTop="@mipmap/photo_edit"
                 android:drawablePadding="-5dp"
-                android:onClick="editCapturedPhoto"
                 android:text="@string/text_edit"
                 android:textColor="#8F9699"
                 android:textStyle="bold" />

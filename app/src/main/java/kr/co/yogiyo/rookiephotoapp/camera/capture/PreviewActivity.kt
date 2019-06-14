@@ -39,11 +39,53 @@ class PreviewActivity : BaseActivity() {
 
     private fun initView() {
 
-        btn_add_diary.visibility = previewViewModel.getAddDiaryVisibility()
+        btn_back_capture.setOnClickListener {
+            onBackPressed()
+        }
 
         preview_image.run {
             visibility = View.VISIBLE
             setImageBitmap(capturedImageBitmap)
+        }
+
+        btn_add_diary.apply {
+            visibility = previewViewModel.getAddDiaryVisibility()
+            setOnClickListener {
+                startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
+
+                val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
+                    putExtra("DIARY_IDX", -1)
+                    putExtra("FROM_PREVIEW", "pass bitmap")
+                }
+                startActivity(startDiaryEditActivityIntent)
+                finish()
+            }
+        }
+
+        btn_save_photo.setOnClickListener {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
+                applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
+                setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
+                finish()
+            } else {
+                capturedImageBitmap.let {
+                    val isSaveBitmap = applicationContext.bitmapToDownloads(it)
+                    when {
+                        isSaveBitmap -> {
+                            showToast(R.string.notification_image_saved)
+                        }
+                        else -> {
+                            showToast(getString(R.string.text_no_save_preview_image))
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
+
+        btn_edit.setOnClickListener {
+            editCapturedPhoto()
         }
 
     }
@@ -64,44 +106,7 @@ class PreviewActivity : BaseActivity() {
     }
 
 
-    fun onBackPressed(view: View) {
-        onBackPressed()
-    }
-
-    fun startSavePhotoActivity(view: View) {
-        if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
-            applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
-            setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
-            finish()
-        } else {
-            capturedImageBitmap.let {
-                val isSaveBitmap = applicationContext.bitmapToDownloads(it)
-                when {
-                    isSaveBitmap -> {
-                        showToast(R.string.notification_image_saved)
-                    }
-                    else -> {
-                        showToast(getString(R.string.text_no_save_preview_image))
-                        finish()
-                    }
-                }
-            }
-        }
-    }
-
-    fun startDiaryEditActivity(view: View) {
-        startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
-
-        val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
-            putExtra("DIARY_IDX", -1)
-            putExtra("FROM_PREVIEW", "pass bitmap")
-        }
-        startActivity(startDiaryEditActivityIntent)
-        finish()
-    }
-
-    fun editCapturedPhoto(view: View) {
+    private fun editCapturedPhoto() {
 
         // TODO : 후에 삭제할 코드
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
