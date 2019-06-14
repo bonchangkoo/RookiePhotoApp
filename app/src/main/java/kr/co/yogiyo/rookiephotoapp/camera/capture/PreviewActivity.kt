@@ -57,7 +57,7 @@ class PreviewActivity : BaseActivity() {
             onBackPressed()
         }
 
-        if (GlobalApplication.globalApplicationContext.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
             btn_add_diary.visibility = View.INVISIBLE
         }
 
@@ -77,7 +77,7 @@ class PreviewActivity : BaseActivity() {
         }
 
         btn_save_photo.setOnClickListener {
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
                 saveBitmapToInternalStorage(applicationContext, capturedImageBitmap)
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
@@ -136,7 +136,7 @@ class PreviewActivity : BaseActivity() {
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
 
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
             } else {
                 startActivity(doStartEditPhotoActivityIntent)
