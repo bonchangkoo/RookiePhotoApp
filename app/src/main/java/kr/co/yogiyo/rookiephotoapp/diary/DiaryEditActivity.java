@@ -39,6 +39,7 @@ import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity;
@@ -177,9 +178,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW") != null) {
-                byte[] arr = getIntent().getByteArrayExtra("BITMAP_FROM_PREVIEW");
-                selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+            if (getIntent().getStringExtra("FROM_PREVIEW") != null) {
+                selectedBitmap = PreviewActivity.capturedImageBitmap;
                 editPhotoImageButton.setImageBitmap(selectedBitmap);
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             } else if (getIntent().getData() != null) {
