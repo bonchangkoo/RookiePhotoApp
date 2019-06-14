@@ -1,13 +1,9 @@
 package kr.co.yogiyo.rookiephotoapp.edit
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.util.Log
 import com.yalantis.ucrop.UCrop
 import com.yalantis.ucrop.UCropActivity
@@ -16,7 +12,7 @@ import kr.co.yogiyo.rookiephotoapp.Constants.*
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
-import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
+import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 import java.io.File
 
 class EditPhotoActivity : BaseActivity() {
@@ -30,11 +26,13 @@ class EditPhotoActivity : BaseActivity() {
 
     private fun doSeparateIntent() {
         intent?.let {
-            val photoCategoryNumber = it.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
+            photoCategoryNumber = it.getIntExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
 
             when (photoCategoryNumber) {
                 EDIT_SELECTED_PHOTO -> {
-                    pickFromGallery()
+                    it.data?.let { uri ->
+                        startCrop(uri)
+                    }
                 }
                 EDIT_CAPTURED_PHOTO -> {
                     val capturedPhotoUri = it.getParcelableExtra<Uri>(getString(R.string.capture_photo_uri))
@@ -42,6 +40,7 @@ class EditPhotoActivity : BaseActivity() {
                         startCrop(capturedPhotoUri)
                     } ?: showToast(R.string.dont_load_captured_photo)
                 }
+                else -> showToast(R.string.toast_unexpected_error)
             }
         } ?: finish()
     }
@@ -56,16 +55,12 @@ class EditPhotoActivity : BaseActivity() {
         data?.let {
             when (resultCode) {
                 Activity.RESULT_OK -> when (requestCode) {
-                    REQUEST_PICK_GALLERY -> it.data?.let { uri ->
-                        startCrop(uri)
-                    } ?: showToast(R.string.toast_cannot_retrieve_selected_image)
-
                     UCrop.REQUEST_CROP ->
                         handleCropResult(it)
                 }
                 RESULT_EDIT_PHOTO -> when (requestCode) {
                     REQUEST_DIARY_PICK_GALLERY -> it.data?.let { selectedUri ->
-                        val intent = Intent(this@EditPhotoActivity, DiaryEditActivity::class.java).apply {
+                        val intent = Intent(this@EditPhotoActivity, GalleryActivity::class.java).apply {
                             this.data = selectedUri
                         }
                         setResult(Activity.RESULT_OK, intent)
@@ -88,17 +83,19 @@ class EditPhotoActivity : BaseActivity() {
 
         UCrop.getOutput(result)?.let { resultUri ->
 
-            GlobalApplication.globalApplicationContext.isFromDiary?.run {
-                if (this) {
-                    val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
-                        data = resultUri
-                    }
-                    startActivityForResult(intent, REQUEST_DIARY_CAPTURE_PHOTO)
-                } else {
-                    EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
-                    finish()
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
+                    data = resultUri
+
                 }
+
+                startActivityForResult(intent, if (photoCategoryNumber == EDIT_CAPTURED_PHOTO) REQUEST_DIARY_CAPTURE_PHOTO else REQUEST_DIARY_PICK_GALLERY)
+
+            } else {
+                EditResultActivity.startWithUri(this@EditPhotoActivity, resultUri)
+                finish()
             }
+
         } ?: showToast(R.string.toast_cannot_retrieve_cropped_image)
     }
 
@@ -111,26 +108,6 @@ class EditPhotoActivity : BaseActivity() {
         } ?: showToast(R.string.toast_unexpected_error)
     }
 
-    private fun pickFromGallery() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
-                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                        || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION)
-        } else {
-            val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "image/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    val mimeTypes = arrayOf("image/jpeg", "image/png")
-                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-                }
-            }
-
-            startActivityForResult(Intent.createChooser(intent, getString(R.string.label_select_picture)), REQUEST_PICK_GALLERY)
-        }
-    }
 
     private fun startCrop(uri: Uri) {
         val destinationFileName = "$SAMPLE_CROPPED_IMAGE_NAME.jpg"
@@ -150,6 +127,8 @@ class EditPhotoActivity : BaseActivity() {
 
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1
+
+        private var photoCategoryNumber : Int = EDIT_SELECTED_PHOTO
 
         private const val SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage"
     }

@@ -48,6 +48,11 @@ class PreviewActivity : BaseActivity() {
             setImageBitmap(capturedImageBitmap)
         }
 
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            btn_add_diary.visibility = View.INVISIBLE
+
+        }
+
         btn_add_diary.apply {
             visibility = previewViewModel.getAddDiaryVisibility()
             setOnClickListener {

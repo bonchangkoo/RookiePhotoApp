@@ -77,7 +77,6 @@ class EditResultActivity : BaseActivity() {
                     Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
                         data = editPhotoUri
                         setResult(Constants.RESULT_EDIT_PHOTO, this)
-                        GlobalApplication.globalApplicationContext.isFromDiary = false
                         finish()
                     }
                 } else {
