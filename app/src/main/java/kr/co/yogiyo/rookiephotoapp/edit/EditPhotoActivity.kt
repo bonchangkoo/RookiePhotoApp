@@ -86,6 +86,7 @@ class EditPhotoActivity : BaseActivity() {
             if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 val intent = Intent(this@EditPhotoActivity, EditResultActivity::class.java).apply {
                     data = resultUri
+
                 }
 
                 startActivityForResult(intent, if (photoCategoryNumber == EDIT_CAPTURED_PHOTO) REQUEST_DIARY_CAPTURE_PHOTO else REQUEST_DIARY_PICK_GALLERY)

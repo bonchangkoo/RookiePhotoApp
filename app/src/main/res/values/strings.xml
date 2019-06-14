@@ -89,7 +89,7 @@
     <string name="text_photo_description">photo</string>
     <string name="text_toolbar_detail">상세</string>
 
-    <!--LocalDiaryViewModel.java-->
+    <!--LocalDiaryRepository.java-->
     <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
     <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
     <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
@@ -107,4 +107,10 @@
     <string name="text_start_diary_add">작성하기</string>
     <string name="text_ask_food">어떤 음식을 드셨나요?</string>
     <string name="text_explain_channel">앱의 알림을 관리하는 채널입니다.</string>
+
+    <!--activity_preview.xml-->
+    <string name="text_write_diary">글쓰기</string>
+
+    <!--PreviewActivity.kt-->
+    <string name="text_no_save_preview_image">사진을 저장할 수 없습니다</string>
 </resources>

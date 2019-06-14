@@ -20,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,6 +41,7 @@ import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity;
@@ -182,11 +185,14 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getByteArrayExtra(BITMAP_FROM_PREVIEW) != null) {
+            if (getIntent().hasExtra("FROM_PREVIEW")) {
                 isBitmap = true;
-                byte[] arr = getIntent().getByteArrayExtra(BITMAP_FROM_PREVIEW);
-                selectedBitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
-                editPhotoImageButton.setImageBitmap(selectedBitmap);
+                selectedBitmap = PreviewActivity.capturedImageBitmap;
+                Glide.with(this)
+                        .load(selectedBitmap)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
+
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
@@ -445,6 +451,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                                 image = time.getTime() + ".jpg";
                                 try {
                                     if (isBitmap) {
+
                                         bitmapToDownloads(selectedBitmap, time.getTime());
                                     } else {
                                         copyFileToDownloads(selectedUri, time.getTime());
