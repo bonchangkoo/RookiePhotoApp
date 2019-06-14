@@ -12,11 +12,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_edit_result.*
-import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
-import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import java.io.File
@@ -106,7 +103,10 @@ class EditResultActivity : BaseActivity() {
             editPhotoUri?.let {
                 if ("file" == it.scheme) {
                     try {
-                        copyFileToDownloads(it)
+                        if (applicationContext.copyFileToDownloads(it)) {
+                            showToast(R.string.notification_image_saved)
+                        }
+                        finish()
                     } catch (e: Exception) {
                         showToast(e.message)
                         Log.e(TAG, it.toString(), e)
@@ -114,34 +114,6 @@ class EditResultActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    @Throws(Exception::class)
-    private fun copyFileToDownloads(croppedFileUri: Uri) {
-
-        if (!YOGIDIARY_PATH.exists()) {
-            if (!YOGIDIARY_PATH.mkdirs()) {
-                return finish()
-            }
-        }
-
-        val downloadsDirectoryPath = YOGIDIARY_PATH.path + "/"
-        val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
-
-        val saveFile = File(downloadsDirectoryPath, filename)
-
-        val inStream = FileInputStream(File(croppedFileUri.path))
-        val outStream = FileOutputStream(saveFile)
-        val inChannel = inStream.channel
-        val outChannel = outStream.channel
-        inChannel.transferTo(0, inChannel.size(), outChannel)
-        inStream.close()
-        outStream.close()
-
-        sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)))
-
-        showToast(R.string.notification_image_saved)
-        finish()
     }
 
     companion object {
