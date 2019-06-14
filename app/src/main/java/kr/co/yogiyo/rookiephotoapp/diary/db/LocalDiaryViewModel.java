@@ -14,15 +14,12 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Action;
 
 public class LocalDiaryViewModel extends AndroidViewModel {
-
-    private CompositeDisposable compositeDisposable;
+    // TODO : 나중에 삭제
     private DiaryDatabase diaryDatabase;
-
 
     public LocalDiaryViewModel(@NonNull Application application) {
         super(application);
         diaryDatabase = DiaryDatabase.getDatabase(application);
-        compositeDisposable = new CompositeDisposable();
     }
 
     public Completable insertDiary(final Date date, final String image, final String description) {
@@ -66,9 +63,4 @@ public class LocalDiaryViewModel extends AndroidViewModel {
         });
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        compositeDisposable.dispose();
-    }
 }
