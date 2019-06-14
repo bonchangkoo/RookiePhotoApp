@@ -32,7 +32,7 @@ class DiaryDetailActivity : BaseActivity() {
     }
 
     private fun initialize() {
-        val dao = DiaryDatabase.getDatabase(this).diaryDao()
+        val dao = DiaryDatabase.getDatabase(this)!!.diaryDao()
         val repository = DiaryRepository.getInstance(dao)
         val factory = DiaryDetailViewModelFactory(repository)
 

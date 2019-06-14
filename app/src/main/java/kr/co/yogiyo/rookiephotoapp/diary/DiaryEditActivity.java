@@ -20,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -183,10 +185,14 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             Date currentTime = Calendar.getInstance().getTime();
             setDateAndTime(currentTime);
 
-            if (getIntent().getStringExtra("FROM_PREVIEW") != null) {
+            if (getIntent().hasExtra("FROM_PREVIEW")) {
                 isBitmap = true;
                 selectedBitmap = PreviewActivity.capturedImageBitmap;
-                editPhotoImageButton.setImageBitmap(selectedBitmap);
+                Glide.with(this)
+                        .load(selectedBitmap)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
+
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
@@ -445,6 +451,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                                 image = time.getTime() + ".jpg";
                                 try {
                                     if (isBitmap) {
+
                                         bitmapToDownloads(selectedBitmap, time.getTime());
                                     } else {
                                         copyFileToDownloads(selectedUri, time.getTime());

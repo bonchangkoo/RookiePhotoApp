@@ -32,7 +32,7 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { diary ->
-                    setDateAndTime(diary.date)
+                    setDateAndTime(diary.date!!)
                     detailImageUri.set(Uri.fromFile(File(Constants.YOGIDIARY_PATH, diary.image)))
                     descriptionTextLabel.set(diary.description)
                 })
