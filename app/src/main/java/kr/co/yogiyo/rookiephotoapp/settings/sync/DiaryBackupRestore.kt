@@ -10,10 +10,13 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DiaryBackupRestore {
 
     private val diaryBackupRestoreService = ServiceGenerator.createService(DiaryBackupRestoreService::class.java)
+    private val serverDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     fun executeGetDiaries(currentUser: FirebaseUser): Flowable<List<RestoredDiary>> {
         return diaryBackupRestoreService.getDiaries(currentUser.uid)
@@ -28,9 +31,9 @@ class DiaryBackupRestore {
         val builder = MultipartBody.Builder().apply {
             setType(MEDIA_TYPE_MULTIPART!!)
             addFormDataPart("diary_id", diary.idx.toString())
-            addFormDataPart("date", Constants.serverDateFormat.format(diary.date))
+            addFormDataPart("date", serverDateFormat.format(diary.date))
             diary.image?.let { diaryImage ->
-                File(Constants.YOGIDIARY_PATH, Constants.COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
+                File(Constants.YOGIDIARY_PATH, COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
                     if (imageFile.isFile) {
                         addFormDataPart("image", imageFile.name, RequestBody.create(MEDIA_TYPE_IMAGE, imageFile))
                     }
@@ -52,5 +55,6 @@ class DiaryBackupRestore {
     companion object {
         private val MEDIA_TYPE_MULTIPART = MediaType.parse("multipart/form-data")
         private val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
+        const val COMPRESSED_FOLDER_NAME = "compressed"
     }
 }

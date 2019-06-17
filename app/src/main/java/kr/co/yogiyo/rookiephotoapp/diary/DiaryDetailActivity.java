@@ -4,7 +4,6 @@ package kr.co.yogiyo.rookiephotoapp.diary;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +12,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -116,9 +118,11 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void accept(Diary diary) {
                         setDateAndTime(diary.getDate());
-                        if (diary.getImage() != null) {
-                            detailPhotoImageView.setImageURI(Uri.fromFile(new File(Constants.YOGIDIARY_PATH, diary.getImage())));
-                        }
+                        Glide.with(DiaryDetailActivity.this)
+                                .load(Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + diary.getImage())
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .into(detailPhotoImageView);
                         detailDescriptionTextView.setText(diary.getDescription());
                     }
                 }));

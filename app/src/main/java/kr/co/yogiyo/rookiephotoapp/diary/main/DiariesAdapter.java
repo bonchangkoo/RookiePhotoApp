@@ -66,7 +66,6 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
                 .load(imageAbsolutePath)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .error(R.drawable.baseline_not_interested_black_36)
                 .into(diariesViewHolder.imageView);
     }
 

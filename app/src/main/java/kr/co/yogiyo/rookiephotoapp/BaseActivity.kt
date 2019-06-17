@@ -1,9 +1,11 @@
 package kr.co.yogiyo.rookiephotoapp
 
-import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -28,7 +30,7 @@ open class BaseActivity : AppCompatActivity() {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
     }
 
-    fun addProgressBarInto(layout: RelativeLayout) {
+    fun addProgressBarInto(layout: ViewGroup) {
         progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleLarge)
         val params = RelativeLayout.LayoutParams(200, 200)
         params.addRule(RelativeLayout.CENTER_IN_PARENT)
@@ -44,13 +46,20 @@ open class BaseActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
     }
 
-    fun buildAlertDialog(context: Context, message: String): AlertDialog.Builder {
+    fun createAlertDialog(context: Context,
+                          title: String? = null, message: String? = null,
+                          positiveButtonText: String? = null, negativeButtonText: String? = null,
+                          onClickListener: DialogInterface.OnClickListener? = null,
+                          onShowListener: DialogInterface.OnShowListener? = null): AlertDialog {
+
         return AlertDialog.Builder(context)
+                .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(getString(R.string.text_confirm)) { _, _ ->
-                    // Do nothing
+                .setPositiveButton(positiveButtonText, onClickListener)
+                .setNegativeButton(negativeButtonText, onClickListener)
+                .create().apply {
+                    setOnShowListener(onShowListener)
                 }
-                .setNegativeButton(null, null)
     }
 
     companion object {

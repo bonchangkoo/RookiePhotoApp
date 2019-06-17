@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 
 public class SignDialogFragment extends PreferenceDialogFragmentCompat
@@ -93,11 +92,8 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
 
     @Override
     public void onSuccess(FirebaseUser user) {
-        String preferenceKey = getArguments().getString(Constants.PREFERENCE_KEY);
-        if (preferenceKey.equals(Constants.SIGN_DIALOG_KEY)) {
-            Preference preference = getPreference();
-            preference.setTitle(user.getEmail());
-        }
+        Preference preference = getPreference();
+        preference.setTitle(user.getEmail());
         ((SettingsActivity) context).showToast(getString(R.string.text_signin_success));
         dismiss();
     }

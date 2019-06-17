@@ -98,15 +98,12 @@
                 android:id="@+id/iv_diary_detail_photo"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:contentDescription="@string/text_diary_test_image"
-                android:scaleType="fitCenter"
-                android:src="@drawable/test_image" />
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/tv_diary_detail_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/text_diary_content"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
         </LinearLayout>
