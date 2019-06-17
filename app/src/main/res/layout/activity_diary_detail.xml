@@ -21,6 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
             android:background="?colorAccent"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <RelativeLayout

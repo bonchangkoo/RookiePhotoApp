@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?colorAccent"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title="@string/format_crop_result_d_d"
         app:titleTextColor="@android:color/white">
