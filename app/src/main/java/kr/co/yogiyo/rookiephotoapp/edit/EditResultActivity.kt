@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.*
+import kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 
@@ -32,30 +33,27 @@ class EditResultActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_result)
 
-        setView()
+        initView()
     }
 
-    // UCropView setting
-    private fun setView() {
+    private fun initView() {
         setSupportActionBar(toolbar)
 
         if (GlobalApplication.globalApplicationContext.isFromDiary) {
-
-            ib_download.setImageResource(R.mipmap.diary_save)
-
             ib_diary_add.visibility = View.INVISIBLE
-
-            ib_download.setOnClickListener {
-                Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
-                    data = editPhotoUri
-                    setResult(Constants.RESULT_EDIT_PHOTO, this)
-                    finish()
+            ib_download.run {
+                setImageResource(R.mipmap.diary_save)
+                setOnClickListener {
+                    Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
+                        data = editPhotoUri
+                        setResult(Constants.RESULT_EDIT_PHOTO, this)
+                        finish()
+                    }
                 }
             }
         } else {
             ib_diary_add.setOnClickListener {
                 startActivity(Intent(this@EditResultActivity, DiariesActivity::class.java))
-
                 val startDiaryEditActivityIntent = Intent(this@EditResultActivity, DiaryEditActivity::class.java).apply {
                     putExtra("DIARY_IDX", -1)
                     data = editPhotoUri
@@ -66,7 +64,6 @@ class EditResultActivity : BaseActivity() {
             ib_download.setOnClickListener {
                 saveCroppedImage()
             }
-
         }
 
         editPhotoUri?.let {
@@ -81,7 +78,8 @@ class EditResultActivity : BaseActivity() {
     }
 
     private fun saveCroppedImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission(this@EditResultActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission
+                (this@EditResultActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this@EditResultActivity,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
@@ -105,8 +103,6 @@ class EditResultActivity : BaseActivity() {
     companion object {
 
         private val TAG = EditResultActivity::class.java.simpleName
-
-        private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
 
         fun startWithUri(context: Context, uri: Uri) {
             val intent = Intent(context, EditResultActivity::class.java).apply {
