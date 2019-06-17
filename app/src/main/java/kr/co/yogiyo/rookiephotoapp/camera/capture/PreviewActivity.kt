@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.*
+import kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -137,9 +138,6 @@ class PreviewActivity : BaseActivity() {
     }
 
     companion object {
-
         lateinit var capturedImageBitmap: Bitmap
-        private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
-
     }
 }
