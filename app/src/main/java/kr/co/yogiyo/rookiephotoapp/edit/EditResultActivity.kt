@@ -9,17 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.*
-import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.util.*
 
 class EditResultActivity : BaseActivity() {
 
@@ -37,50 +33,27 @@ class EditResultActivity : BaseActivity() {
         setContentView(R.layout.activity_edit_result)
 
         setView()
-        setSettingAndResultActionBar()
     }
 
     // UCropView setting
     private fun setView() {
-        editPhotoUri?.let {
-            iv_edited_photo.setImageURI(it)
-        }
-    }
-
-    private fun setSettingAndResultActionBar() {
         setSupportActionBar(toolbar)
-        supportActionBar?.run {
-            if (!GlobalApplication.globalApplicationContext.isFromDiary) {
-                setDisplayHomeAsUpEnabled(true)
-                setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_edit_result, menu)
-        val downloadItem = menu.findItem(R.id.menu_download)
 
         if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            downloadItem.setIcon(R.mipmap.diary_save)
-        }
-        return true
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_download -> {
-                if (GlobalApplication.globalApplicationContext.isFromDiary) {
-                    Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
-                        data = editPhotoUri
-                        setResult(Constants.RESULT_EDIT_PHOTO, this)
-                        finish()
-                    }
-                } else {
-                    saveCroppedImage()
+            ib_download.setImageResource(R.mipmap.diary_save)
+
+            ib_diary_add.visibility = View.INVISIBLE
+
+            ib_download.setOnClickListener {
+                Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
+                    data = editPhotoUri
+                    setResult(Constants.RESULT_EDIT_PHOTO, this)
+                    finish()
                 }
-            } // 이미지 저장
-            android.R.id.home -> {
+            }
+        } else {
+            ib_diary_add.setOnClickListener {
                 startActivity(Intent(this@EditResultActivity, DiariesActivity::class.java))
 
                 val startDiaryEditActivityIntent = Intent(this@EditResultActivity, DiaryEditActivity::class.java).apply {
@@ -90,8 +63,21 @@ class EditResultActivity : BaseActivity() {
                 startActivity(startDiaryEditActivityIntent)
                 finish()
             }
+            ib_download.setOnClickListener {
+                saveCroppedImage()
+            }
+
         }
-        return super.onOptionsItemSelected(item)
+
+        editPhotoUri?.let {
+            Glide.with(this)
+                    .load(it)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(iv_edited_photo)
+        }
+
+
     }
 
     private fun saveCroppedImage() {
