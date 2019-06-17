@@ -142,116 +142,57 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
     // TODO : 백업/복원 실행할 때 다른 작업 못하도록 또는 바로 클릭 못하도록 또는 화면 분할 (작업 진행도 표시 필요할 듯)
     // TODO : 리사이징한 사진 복구 어떻게 할지 고민
     private void executeBackup(FirebaseUser currentUser) {
-        compositeDisposable.add(localDiaryViewModel.findDiaries().toFlowable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .map(diaries -> {
-                    if (diaries.isEmpty()) {
-                        throw new Exception(NO_DATA);
-                    }
+        compositeDisposable.add(
+                localDiaryViewModel.findDiaries().toFlowable()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .map(diaries -> {
+                            if (diaries.isEmpty()) {
+                                throw new Exception(NO_DATA);
+                            }
 
-                    compositeDisposable.add(diaryBackupRestore.executePostClearDiary(currentUser)
-                            .subscribe(responseBody -> {
-                                // Do nothing
-                            }, throwable -> {
-                                // Do nothing
-                            })
-                    );
+                            compositeDisposable.add(
+                                    diaryBackupRestore.executePostClearDiary(currentUser)
+                                            .subscribe(responseBody -> {
+                                                // Do nothing
+                                            }, throwable -> {
+                                                // Do nothing
+                                            })
+                            );
 
-                    return diaries;
-                })
-                .flatMapIterable(diaries -> diaries)
-                .flatMap((Function<Diary, Publisher<ResponseBody>>) diary -> {
-                    if (diary.getImage() != null) {
-                        File imageFile = new File(Constants.YOGIDIARY_PATH, diary.getImage());
-                        if (imageFile.isFile()) {
-                            imageCompressor.setDestinationDirectoryPath(
-                                    Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
-                                    .compressToFile(imageFile);
-                        }
-                    }
+                            return diaries;
+                        })
+                        .flatMapIterable(diaries -> diaries)
+                        .flatMap((Function<Diary, Publisher<ResponseBody>>) diary -> {
+                            if (diary.getImage() != null) {
+                                File imageFile = new File(Constants.YOGIDIARY_PATH, diary.getImage());
+                                if (imageFile.isFile()) {
+                                    imageCompressor.setDestinationDirectoryPath(
+                                            Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
+                                            .compressToFile(imageFile);
+                                }
+                            }
 
-                    return diaryBackupRestore.executePostDiary(currentUser, diary);
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(responseDiariesBody -> {
-                    Log.d(TAG, "body string " + responseDiariesBody.string());
-                    if (responseDiariesBody.string().contains(ERROR_MESSAGE)) {
-                        throw new Exception();
-                    }
-                }, throwable -> {
-                    ((SettingsActivity) context).hideLoading();
-                    BackupRestoreDialogFragment.this.getDialog().dismiss();
-
-                    if (NO_DATA.equals(throwable.getMessage())) {
-                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_backup_data),
-                                getString(R.string.text_confirm), null, null, this).show();
-                    } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
-                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_network_error),
-                                getString(R.string.text_confirm), null, null, this).show();
-                    } else {
-                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_fail),
-                                getString(R.string.text_confirm), null, null, this).show();
-                    }
-
-                    Log.d(TAG, throwable.getMessage());
-                }, () -> {
-                    ((SettingsActivity) context).hideLoading();
-                    BackupRestoreDialogFragment.this.getDialog().dismiss();
-
-                    ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_success),
-                            getString(R.string.text_confirm), null, null, this).show();
-                })
-        );
-    }
-
-    private void executeRestore(FirebaseUser currentUser) {
-        compositeDisposable.add(diaryBackupRestore.executeGetDiaries(currentUser)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .flatMapIterable(restoredDiaries -> {
-                    if (restoredDiaries.isEmpty()) {
-                        throw new Exception(NO_DATA);
-                    }
-
-                    return restoredDiaries;
-                })
-                .map(restoredDiary -> {
-                    Date date = serverDateFormat.parse(restoredDiary.getDatetime());
-
-                    String image = null;
-                    if (restoredDiary.getImage() != null) {
-                        image = restoredDiary.getImage().substring(restoredDiary.getImage().lastIndexOf(File.separator) + 1);
-                    }
-
-                    localDiaryViewModel.insertDiary(restoredDiary.getDiaryId(), date, image, restoredDiary.getDescription())
-                            .subscribe();
-
-                    return restoredDiary;
-                })
-                .filter(restoredDiary -> restoredDiary.getImage() != null)
-                .flatMap((Function<RestoredDiary, Publisher<Pair<String, ResponseBody>>>) restoredDiary ->
-                        diaryBackupRestore.executeGetImage(restoredDiary.getImage().substring(restoredDiary.getImage().indexOf(File.separator) + 1)))
-                .map(pair -> {
-                    String imageFileName = pair.first.substring(pair.first.lastIndexOf(File.separator) + 1);
-                    boolean writtenToDisk = BackupRestoreDialogFragment.this.writeResponseBodyToDisk(imageFileName, pair.second);
-
-                    return writtenToDisk;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(writtenToDisk -> Log.d(TAG, "success = " + writtenToDisk),
-                        throwable -> {
+                            return diaryBackupRestore.executePostDiary(currentUser, diary);
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(responseDiariesBody -> {
+                            Log.d(TAG, "body string " + responseDiariesBody.string());
+                            if (responseDiariesBody.string().contains(ERROR_MESSAGE)) {
+                                throw new Exception();
+                            }
+                        }, throwable -> {
                             ((SettingsActivity) context).hideLoading();
                             BackupRestoreDialogFragment.this.getDialog().dismiss();
 
-                            if (throwable.getMessage().equals(NO_DATA) || throwable.getMessage().contains(NO_BACKUP_HISTORY)) {
-                                ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_restore_data),
+                            if (NO_DATA.equals(throwable.getMessage())) {
+                                ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_backup_data),
                                         getString(R.string.text_confirm), null, null, this).show();
                             } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
                                 ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_network_error),
                                         getString(R.string.text_confirm), null, null, this).show();
                             } else {
-                                ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_fail),
+                                ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_fail),
                                         getString(R.string.text_confirm), null, null, this).show();
                             }
 
@@ -260,9 +201,71 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                             ((SettingsActivity) context).hideLoading();
                             BackupRestoreDialogFragment.this.getDialog().dismiss();
 
-                            ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_success),
+                            ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_success),
                                     getString(R.string.text_confirm), null, null, this).show();
                         })
+        );
+    }
+
+    private void executeRestore(FirebaseUser currentUser) {
+        compositeDisposable.add(
+                diaryBackupRestore.executeGetDiaries(currentUser)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .flatMapIterable(restoredDiaries -> {
+                            if (restoredDiaries.isEmpty()) {
+                                throw new Exception(NO_DATA);
+                            }
+
+                            return restoredDiaries;
+                        })
+                        .map(restoredDiary -> {
+                            Date date = serverDateFormat.parse(restoredDiary.getDatetime());
+
+                            String image = null;
+                            if (restoredDiary.getImage() != null) {
+                                image = restoredDiary.getImage().substring(restoredDiary.getImage().lastIndexOf(File.separator) + 1);
+                            }
+
+                            localDiaryViewModel.insertDiary(restoredDiary.getDiaryId(), date, image, restoredDiary.getDescription())
+                                    .subscribe();
+
+                            return restoredDiary;
+                        })
+                        .filter(restoredDiary -> restoredDiary.getImage() != null)
+                        .flatMap((Function<RestoredDiary, Publisher<Pair<String, ResponseBody>>>) restoredDiary ->
+                                diaryBackupRestore.executeGetImage(restoredDiary.getImage().substring(restoredDiary.getImage().indexOf(File.separator) + 1)))
+                        .map(pair -> {
+                            String imageFileName = pair.first.substring(pair.first.lastIndexOf(File.separator) + 1);
+                            boolean writtenToDisk = BackupRestoreDialogFragment.this.writeResponseBodyToDisk(imageFileName, pair.second);
+
+                            return writtenToDisk;
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(writtenToDisk -> Log.d(TAG, "success = " + writtenToDisk),
+                                throwable -> {
+                                    ((SettingsActivity) context).hideLoading();
+                                    BackupRestoreDialogFragment.this.getDialog().dismiss();
+
+                                    if (throwable.getMessage().equals(NO_DATA) || throwable.getMessage().contains(NO_BACKUP_HISTORY)) {
+                                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_restore_data),
+                                                getString(R.string.text_confirm), null, null, this).show();
+                                    } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
+                                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_network_error),
+                                                getString(R.string.text_confirm), null, null, this).show();
+                                    } else {
+                                        ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_fail),
+                                                getString(R.string.text_confirm), null, null, this).show();
+                                    }
+
+                                    Log.d(TAG, throwable.getMessage());
+                                }, () -> {
+                                    ((SettingsActivity) context).hideLoading();
+                                    BackupRestoreDialogFragment.this.getDialog().dismiss();
+
+                                    ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_success),
+                                            getString(R.string.text_confirm), null, null, this).show();
+                                })
         );
     }
 

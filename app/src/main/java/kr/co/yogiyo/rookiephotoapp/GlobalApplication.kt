@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class GlobalApplication : Application() {
 
-    var fromDiary: Boolean = false
+    var isFromDiary: Boolean = false
 
     val firebaseAuth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
@@ -14,7 +14,7 @@ class GlobalApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        fromDiary = false
+        isFromDiary = false
     }
 
     override fun onTerminate() {
