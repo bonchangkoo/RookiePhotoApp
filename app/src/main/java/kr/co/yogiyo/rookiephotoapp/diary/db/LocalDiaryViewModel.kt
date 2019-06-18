@@ -27,11 +27,6 @@ class LocalDiaryViewModel(application: Application) : AndroidViewModel(applicati
         return diaryDatabase?.diaryDao()?.findDiaryById(diaryId)
     }
 
-    // TODO : 날짜 순으로 정렬
-    fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>> {
-        return diaryDatabase?.diaryDao()?.findDiariesBetweenDates(from, to) ?: Flowable.just(arrayListOf())
-    }
-
     fun updateDiary(diary: Diary, date: Date, image: String, description: String): Completable {
         diary.date = date
         diary.image = image
