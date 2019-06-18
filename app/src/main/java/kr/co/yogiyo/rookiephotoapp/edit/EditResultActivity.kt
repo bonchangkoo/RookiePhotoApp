@@ -54,7 +54,7 @@ class EditResultActivity : BaseActivity() {
     private fun setSettingAndResultActionBar() {
         setSupportActionBar(toolbar)
         supportActionBar?.run {
-            if (!GlobalApplication.globalApplicationContext.fromDiary) {
+            if (!GlobalApplication.globalApplicationContext.isFromDiary) {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
             }
@@ -65,7 +65,7 @@ class EditResultActivity : BaseActivity() {
         menuInflater.inflate(R.menu.menu_edit_result, menu)
         val downloadItem = menu.findItem(R.id.menu_download)
 
-        if (GlobalApplication.globalApplicationContext.fromDiary) {
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
             downloadItem.setIcon(R.mipmap.diary_save)
         }
         return true
@@ -74,11 +74,10 @@ class EditResultActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_download -> {
-                if (GlobalApplication.globalApplicationContext.fromDiary) {
+                if (GlobalApplication.globalApplicationContext.isFromDiary) {
                     Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
                         data = editPhotoUri
                         setResult(Constants.RESULT_EDIT_PHOTO, this)
-                        GlobalApplication.globalApplicationContext.fromDiary = false
                         finish()
                     }
                 } else {

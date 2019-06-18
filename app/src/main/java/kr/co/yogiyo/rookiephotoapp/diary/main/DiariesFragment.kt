@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_diaries.view.*
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 
 class DiariesFragment : Fragment() {
@@ -25,7 +26,8 @@ class DiariesFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        diariesViewModel = ViewModelProviders.of(activity!!).get(DiariesViewModel::class.java)
+        diariesViewModel = ViewModelProviders.of(activity!!, DiariesViewModelFactory.getInstance(GlobalApplication.globalApplicationContext))
+                .get(DiariesViewModel::class.java)
         compositeDisposable.add(
                 diariesObservable
                         .filter { it.first == arguments!!.getInt(POSITION) }

@@ -2,53 +2,38 @@ package kr.co.yogiyo.rookiephotoapp.camera.capture
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
-import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants
-import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
-import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
+import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.util.Calendar
-import java.util.Locale
 
 class PreviewActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityPreviewBinding
+    private lateinit var previewViewModel: PreviewViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_preview)
 
-        initImageView()
+        previewViewModel = ViewModelProviders.of(this).get(PreviewViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_preview)
+        binding.viewModel = previewViewModel
+
         initView()
-    }
-
-    private fun initImageView() {
-
-        preview_image.run {
-            visibility = View.VISIBLE
-            setImageBitmap(capturedImageBitmap)
-        }
-
-        capturedImageBitmap.run {
-            showToast(String.format("width: %d, height: %d \nsize : %f MB",
-                    this.width, this.height, getApproximateFileMegabytes(this)))
-        }
     }
 
     private fun initView() {
@@ -57,34 +42,46 @@ class PreviewActivity : BaseActivity() {
             onBackPressed()
         }
 
-        if (GlobalApplication.globalApplicationContext.fromDiary) {
-            btn_add_diary.visibility = View.INVISIBLE
+        preview_image.run {
+            visibility = View.VISIBLE
+            setImageBitmap(capturedImageBitmap)
         }
 
-        btn_add_diary.setOnClickListener {
+        if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            btn_add_diary.visibility = View.INVISIBLE
 
-            startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
+        }
 
-            val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
-                putExtra("DIARY_IDX", -1)
-                val stream = ByteArrayOutputStream()
-                capturedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                val byteArray = stream.toByteArray()
-                putExtra("BITMAP_FROM_PREVIEW", byteArray)
+        btn_add_diary.apply {
+            visibility = previewViewModel.getAddDiaryVisibility()
+            setOnClickListener {
+                startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
+
+                val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
+                    putExtra("DIARY_IDX", -1)
+                    putExtra("FROM_PREVIEW", true)
+                }
+                startActivity(startDiaryEditActivityIntent)
+                finish()
             }
-            startActivity(startDiaryEditActivityIntent)
-            finish()
         }
 
         btn_save_photo.setOnClickListener {
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 val intent = Intent(this@PreviewActivity, CameraActivity::class.java)
-                saveBitmapToInternalStorage(applicationContext, capturedImageBitmap)
+                applicationContext.saveBitmapToInternalStorage(capturedImageBitmap)
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
                 finish()
             } else {
-                capturedImageBitmap.run {
-                    bitmapToDownloads(this)
+                capturedImageBitmap.let {
+                    val isSaveBitmap = applicationContext.bitmapToDownloads(it)
+                    when {
+                        isSaveBitmap -> showToast(R.string.notification_image_saved)
+                        else -> {
+                            showToast(getString(R.string.text_no_save_preview_image))
+                            finish()
+                        }
+                    }
                 }
             }
         }
@@ -110,15 +107,10 @@ class PreviewActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!capturedImageBitmap.isRecycled) {
-            capturedImageBitmap.recycle()
-        }
-    }
 
     private fun editCapturedPhoto() {
 
+        // TODO : 후에 삭제할 코드
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
                 && ActivityCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -128,15 +120,13 @@ class PreviewActivity : BaseActivity() {
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
             )
         } else {
-
             val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
-
-                val uri: Uri = getImageUri(this@PreviewActivity, capturedImageBitmap)
+                val uri: Uri = applicationContext.getImageUri(capturedImageBitmap)
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
 
-            if (GlobalApplication.globalApplicationContext.fromDiary) {
+            if (GlobalApplication.globalApplicationContext.isFromDiary) {
                 startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
             } else {
                 startActivity(doStartEditPhotoActivityIntent)
@@ -145,57 +135,10 @@ class PreviewActivity : BaseActivity() {
         }
     }
 
-    private fun saveBitmapToInternalStorage(context: Context, bitmap: Bitmap) {
-
-        val fileOutputStream: FileOutputStream?
-        try {
-            fileOutputStream = context.openFileOutput("temp.jpg", Context.MODE_PRIVATE)
-            fileOutputStream.use {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    @Throws(Exception::class)
-    private fun bitmapToDownloads(bitmap: Bitmap) {
-        if (!YOGIDIARY_PATH.exists()) {
-            if (!YOGIDIARY_PATH.mkdirs()) {
-                return finish()
-            }
-        }
-
-        val downloadsDirectoryPath = YOGIDIARY_PATH.path + "/"
-        val filename = String.format(Locale.getDefault(), "%d%s", Calendar.getInstance().timeInMillis, ".jpg")
-
-        val file = File(downloadsDirectoryPath, filename)
-
-        FileOutputStream(file).use {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            it.flush()
-        }
-
-        sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)))
-
-        showToast(R.string.notification_image_saved)
-    }
-
-    // Bitmap을 Uri로 변환하는 함수
-    private fun getImageUri(context: Context, inImage: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path = MediaStore.Images.Media.insertImage(context.contentResolver, inImage, "Image", null)
-        return Uri.parse(path)
-    }
-
     companion object {
 
         lateinit var capturedImageBitmap: Bitmap
-
         private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
 
-        private fun getApproximateFileMegabytes(bitmap: Bitmap) =
-                (bitmap.rowBytes * bitmap.height / 1024 / 1024).toFloat()
     }
 }

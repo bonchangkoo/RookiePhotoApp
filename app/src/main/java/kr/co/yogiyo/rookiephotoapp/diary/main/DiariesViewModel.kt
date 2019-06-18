@@ -7,16 +7,17 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
-import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.GregorianCalendar
 import java.util.Calendar
 import java.util.Date
 
-class DiariesViewModel(application: Application) : AndroidViewModel(application) {
+class DiariesViewModel(
+        private val diariesRepository: DiariesRepository,
+        application: Application
+) : AndroidViewModel(application) {
 
     private var yearMonthFormat = SimpleDateFormat("yyyy.M", Locale.getDefault())
     private val diariesPublishSubject by lazy {
@@ -29,7 +30,6 @@ class DiariesViewModel(application: Application) : AndroidViewModel(application)
     val nowPageYearMonth: ObservableField<String> = ObservableField(yearMonthFormat.format(Date()))
 
     private val compositeDisposable = CompositeDisposable()
-    private val diaryDatabase = DiaryDatabase.getDatabase(GlobalApplication.globalApplicationContext)
 
     lateinit var showLoadingView: () -> Unit
     lateinit var hideLoadingView: () -> Unit
@@ -64,7 +64,7 @@ class DiariesViewModel(application: Application) : AndroidViewModel(application)
 
         showLoadingView
         compositeDisposable.add(
-                diaryDatabase.diaryDao().findDiariesBetweenDates(fromCalendar.time, toCalendar.time)
+                diariesRepository.findDiariesBetweenDates(fromCalendar.time, toCalendar.time)
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
                         .subscribe({ diaries ->

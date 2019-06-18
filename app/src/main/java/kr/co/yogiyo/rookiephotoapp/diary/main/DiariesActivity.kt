@@ -5,9 +5,9 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.activity_diaries.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityDiariesBinding
@@ -37,10 +37,11 @@ class DiariesActivity : BaseActivity() {
     }
 
     private fun initialize() {
-        diariesViewModel = ViewModelProviders.of(this).get(DiariesViewModel::class.java).apply {
-            showLoadingView = { showLoading(true) }
-            hideLoadingView = { showLoading(false) }
-        }
+        diariesViewModel = ViewModelProviders.of(this, DiariesViewModelFactory.getInstance(GlobalApplication.globalApplicationContext))
+                .get(DiariesViewModel::class.java).apply {
+                    showLoadingView = { showLoading(true) }
+                    hideLoadingView = { showLoading(false) }
+                }
 
         activityDiariesBinding = DataBindingUtil.setContentView(this, R.layout.activity_diaries)
         activityDiariesBinding.viewModel = diariesViewModel
