@@ -13,8 +13,10 @@ class LoadingDialogFragment : DialogFragment() {
         return AlertDialog.Builder(context)
                 .setView(View.inflate(context, R.layout.dialog_fragment_loading, null))
                 .create().apply {
-                    window!!.setBackgroundDrawableResource(android.R.color.transparent)
-                    window!!.setDimAmount(0f)
+                    window?.run {
+                        setBackgroundDrawableResource(android.R.color.transparent)
+                        setDimAmount(0f)
+                    }
                 }
     }
 }

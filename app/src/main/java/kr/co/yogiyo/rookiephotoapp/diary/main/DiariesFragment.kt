@@ -48,7 +48,7 @@ class DiariesFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_diaries, container, false)
 
-        view.recycler_diaries.apply {
+        view.recycler_diaries.run {
             val linearLayoutManager = LinearLayoutManager(context)
             layoutManager = linearLayoutManager
             diariesAdapter = DiariesAdapter(context, ArrayList())
