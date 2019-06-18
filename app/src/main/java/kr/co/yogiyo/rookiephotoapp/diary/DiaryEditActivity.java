@@ -1,6 +1,5 @@
 package kr.co.yogiyo.rookiephotoapp.diary;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -13,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -165,21 +165,14 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DiaryEditActivity.this);
-        builder.setPositiveButton(R.string.text_dialog_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        });
-        builder.setNegativeButton(R.string.text_dialog_no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.setTitle("작성 취소");
-        dialog.setMessage("정말로 취소하시겠습니까?");
-        dialog.show();
+        createAlertDialog(DiaryEditActivity.this, "작성 취소", "정말로 취소하시겠습니까?",
+                getString(R.string.text_dialog_ok), getString(R.string.text_dialog_no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (id == DialogInterface.BUTTON_POSITIVE) finish();
+                        else dialog.dismiss();
+                    }
+                }, null).show();
     }
 
     private void setViewData(int idx) {

@@ -2,11 +2,9 @@ package kr.co.yogiyo.rookiephotoapp.settings;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.util.Log;
@@ -42,7 +40,7 @@ import kr.co.yogiyo.rookiephotoapp.settings.sync.DiaryBackupRestore;
 import kr.co.yogiyo.rookiephotoapp.settings.sync.RestoredDiary;
 import okhttp3.ResponseBody;
 
-public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat implements DialogInterface.OnShowListener {
+public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat {
 
     private static final String TAG = BackupRestoreDialogFragment.class.getSimpleName();
     private final String NO_DATA = "no_data";
@@ -187,13 +185,13 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
 
                             if (NO_DATA.equals(throwable.getMessage())) {
                                 ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_backup_data),
-                                        getString(R.string.text_confirm), null, null, this).show();
+                                        getString(R.string.text_confirm), null, null, null).show();
                             } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
                                 ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_network_error),
-                                        getString(R.string.text_confirm), null, null, this).show();
+                                        getString(R.string.text_confirm), null, null, null).show();
                             } else {
                                 ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_fail),
-                                        getString(R.string.text_confirm), null, null, this).show();
+                                        getString(R.string.text_confirm), null, null, null).show();
                             }
 
                             Log.d(TAG, throwable.getMessage());
@@ -202,7 +200,7 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                             BackupRestoreDialogFragment.this.getDialog().dismiss();
 
                             ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_success),
-                                    getString(R.string.text_confirm), null, null, this).show();
+                                    getString(R.string.text_confirm), null, null, null).show();
                         })
         );
     }
@@ -249,13 +247,13 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
 
                                     if (throwable.getMessage().equals(NO_DATA) || throwable.getMessage().contains(NO_BACKUP_HISTORY)) {
                                         ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_restore_data),
-                                                getString(R.string.text_confirm), null, null, this).show();
+                                                getString(R.string.text_confirm), null, null, null).show();
                                     } else if (throwable.getMessage().contains(FAILED_TO_CONNECT)) {
                                         ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_network_error),
-                                                getString(R.string.text_confirm), null, null, this).show();
+                                                getString(R.string.text_confirm), null, null, null).show();
                                     } else {
                                         ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_fail),
-                                                getString(R.string.text_confirm), null, null, this).show();
+                                                getString(R.string.text_confirm), null, null, null).show();
                                     }
 
                                     Log.d(TAG, throwable.getMessage());
@@ -264,7 +262,7 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                                     BackupRestoreDialogFragment.this.getDialog().dismiss();
 
                                     ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_success),
-                                            getString(R.string.text_confirm), null, null, this).show();
+                                            getString(R.string.text_confirm), null, null, null).show();
                                 })
         );
     }
@@ -309,10 +307,5 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
         askBackupRestoreText.setText(getString(R.string.text_please_wait));
         cancelText.setVisibility(View.GONE);
         okText.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onShow(DialogInterface dialog) {
-        ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.color_FF0000));
     }
 }

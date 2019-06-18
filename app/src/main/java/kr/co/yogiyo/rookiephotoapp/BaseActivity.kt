@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp
 
 import android.content.Context
 import android.content.DialogInterface
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -58,7 +59,12 @@ open class BaseActivity : AppCompatActivity() {
                 .setPositiveButton(positiveButtonText, onClickListener)
                 .setNegativeButton(negativeButtonText, onClickListener)
                 .create().apply {
-                    setOnShowListener(onShowListener)
+                    setOnShowListener(if(onShowListener == null){
+                        DialogInterface.OnShowListener {dialog ->
+                            (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
+                        }
+                    } else onShowListener)
                 }
     }
 
