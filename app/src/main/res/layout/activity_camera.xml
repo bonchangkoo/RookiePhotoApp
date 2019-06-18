@@ -132,7 +132,6 @@
             android:layout_marginBottom="24dp"
             android:clickable="true"
             android:focusable="true"
-            android:focusableInTouchMode="true"
             android:visibility="@{viewModel.frameControlButtonVisibility}">
 
             <ImageButton
