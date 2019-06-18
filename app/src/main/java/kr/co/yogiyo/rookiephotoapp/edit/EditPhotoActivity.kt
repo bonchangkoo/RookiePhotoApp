@@ -128,7 +128,7 @@ class EditPhotoActivity : BaseActivity() {
         const val EDIT_SELECTED_PHOTO = 0
         const val EDIT_CAPTURED_PHOTO = 1
 
-        private var photoCategoryNumber : Int = EDIT_SELECTED_PHOTO
+        private var photoCategoryNumber: Int = EDIT_SELECTED_PHOTO
 
         private const val SAMPLE_CROPPED_IMAGE_NAME = "SampleCropImage"
     }

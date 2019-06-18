@@ -23,21 +23,32 @@ class LocalDiaryViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun insertDiary(idx: Int, date: Date, image: String?, description: String?): Completable {
+        return Completable.fromAction {
+            val diary = Diary(idx, date, image, description)
+            diaryDatabase?.diaryDao()?.insertDiary(diary)
+        }
+    }
+
     fun findDiaryById(diaryId: Int): Single<Diary>? {
         return diaryDatabase?.diaryDao()?.findDiaryById(diaryId)
     }
 
     // TODO : 날짜 순으로 정렬
-    fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>>? {
-        return diaryDatabase?.diaryDao()?.findDiariesBetweenDates(from, to)
+    fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>> {
+        return diaryDatabase?.diaryDao()?.findDiariesBetweenDates(from, to) ?: Flowable.just(arrayListOf())
     }
 
-    fun updateDiary(diary: Diary, date: Date, image: String, description: String): Completable {
+    fun updateDiary(diary: Diary, date: Date, image: String?, description: String?): Completable {
         diary.date = date
         diary.image = image
         diary.description = description
 
         return Completable.fromAction { diaryDatabase?.diaryDao()?.updateDiary(diary) }
+    }
+
+    fun findDiaries(): Single<List<Diary>> {
+        return diaryDatabase?.diaryDao()?.findDiaries() ?: Single.just(arrayListOf())
     }
 
     fun deleteDiary(diary: Diary): Completable {
