@@ -5,55 +5,50 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.widget.Button
-import android.widget.NumberPicker
+import android.view.View
+import kotlinx.android.synthetic.main.picker_year_month.view.*
 import kr.co.yogiyo.rookiephotoapp.R
-import java.util.*
+import java.util.Calendar
 
 class YearMonthPickerDialog : DialogFragment() {
 
     private lateinit var listener: DatePickerDialog.OnDateSetListener
-    private lateinit var yearPicker: NumberPicker
-    private lateinit var monthPicker: NumberPicker
-    private lateinit var confirmButton: Button
-    private lateinit var cancelButton: Button
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = activity!!.layoutInflater.inflate(R.layout.picker_year_month, null)
+        val view = View.inflate(context, R.layout.picker_year_month, null)
 
-        val builder = AlertDialog.Builder(context).apply {
-            yearPicker = view.findViewById<NumberPicker>(R.id.picker_year).apply {
-                maxValue = MAX_YEAR
-                minValue = MIN_YEAR
-                value = Calendar.getInstance().run {
-                    timeInMillis = arguments!!.getLong(MILLISECOND_TIME)
-                    get(Calendar.YEAR)
-                }
+        val yearPicker = view.picker_year.apply {
+            maxValue = MAX_YEAR
+            minValue = MIN_YEAR
+            value = Calendar.getInstance().run {
+                timeInMillis = arguments!!.getLong(MILLISECOND_TIME)
+                get(Calendar.YEAR)
             }
-
-            monthPicker = view.findViewById<NumberPicker>(R.id.picker_month).apply {
-                maxValue = MAX_MONTH
-                minValue = MIN_MONTH
-                value = Calendar.getInstance().run {
-                    timeInMillis = arguments!!.getLong(MILLISECOND_TIME)
-                    get(Calendar.MONTH) + 1
-                }
-            }
-
-            confirmButton = view.findViewById<Button>(R.id.btn_confirm).apply {
-                setOnClickListener {
-                    listener.onDateSet(null, yearPicker.value, monthPicker.value - 1, 1)
-                    dismiss()
-                }
-            }
-            cancelButton = view.findViewById<Button>(R.id.btn_cancel).apply {
-                setOnClickListener { dismiss() }
-            }
-
-            setView(view)
         }
 
-        return builder.create()
+        val monthPicker = view.picker_month.apply {
+            maxValue = MAX_MONTH
+            minValue = MIN_MONTH
+            value = Calendar.getInstance().run {
+                timeInMillis = arguments!!.getLong(MILLISECOND_TIME)
+                get(Calendar.MONTH) + 1
+            }
+        }
+
+        view.btn_confirm.run {
+            setOnClickListener {
+                listener.onDateSet(null, yearPicker.value, monthPicker.value - 1, 1)
+                dismiss()
+            }
+        }
+
+        view.btn_cancel.run {
+            setOnClickListener { dismiss() }
+        }
+
+        return AlertDialog.Builder(context)
+                .setView(view)
+                .create()
     }
 
     fun setListener(listener: DatePickerDialog.OnDateSetListener) {

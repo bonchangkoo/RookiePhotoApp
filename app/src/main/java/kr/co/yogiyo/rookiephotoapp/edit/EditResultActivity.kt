@@ -22,7 +22,8 @@ import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class EditResultActivity : BaseActivity() {
 

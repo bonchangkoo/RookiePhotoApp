@@ -25,8 +25,8 @@ import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
-
+import java.util.Calendar
+import java.util.Locale
 
 class PreviewActivity : BaseActivity() {
 
@@ -83,7 +83,7 @@ class PreviewActivity : BaseActivity() {
                 setResult(Constants.RESULT_CAPTURED_PHOTO, intent)
                 finish()
             } else {
-                capturedImageBitmap?.run {
+                capturedImageBitmap.run {
                     bitmapToDownloads(this)
                 }
             }
@@ -131,7 +131,7 @@ class PreviewActivity : BaseActivity() {
 
             val doStartEditPhotoActivityIntent = Intent(this, EditPhotoActivity::class.java).apply {
 
-                var uri: Uri = getImageUri(this@PreviewActivity, capturedImageBitmap)
+                val uri: Uri = getImageUri(this@PreviewActivity, capturedImageBitmap)
                 putExtra(getString(R.string.edit_photo_category_number), EDIT_CAPTURED_PHOTO)
                 putExtra(getString(R.string.capture_photo_uri), uri)
             }
@@ -147,7 +147,7 @@ class PreviewActivity : BaseActivity() {
 
     private fun saveBitmapToInternalStorage(context: Context, bitmap: Bitmap) {
 
-        var fileOutputStream: FileOutputStream?
+        val fileOutputStream: FileOutputStream?
         try {
             fileOutputStream = context.openFileOutput("temp.jpg", Context.MODE_PRIVATE)
             fileOutputStream.use {

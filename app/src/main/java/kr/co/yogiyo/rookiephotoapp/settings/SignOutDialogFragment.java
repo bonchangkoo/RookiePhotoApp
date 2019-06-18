@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -26,10 +25,8 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        RelativeLayout signoutDialogRelative = view.findViewById(R.id.relative_signout_dialog);
         TextView cancelText = view.findViewById(R.id.text_cancel);
         TextView signoutText = view.findViewById(R.id.text_signout);
-        ((SettingsActivity) context).addProgressBarInto(signoutDialogRelative);
 
         cancelText.setOnClickListener(this);
         signoutText.setOnClickListener(this);
@@ -45,7 +42,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        // Do nothing
+        ((SettingsActivity) context).showLoading(false);
     }
 
     // TODO : 콜백을 RxJava로 바꿀 수 있을지 고민하기
@@ -58,7 +55,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
                 dismiss();
                 break;
             case R.id.text_signout:
-                ((SettingsActivity) context).showLoading();
+                ((SettingsActivity) context).showLoading(true);
                 ((AuthNavigator) context).signOut(this);
                 break;
         }

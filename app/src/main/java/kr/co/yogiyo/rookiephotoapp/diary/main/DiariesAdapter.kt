@@ -10,17 +10,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import kotlinx.android.synthetic.main.item_diary.view.*
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailActivity
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.GregorianCalendar
 
 class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder>() {
 
-    private var hourMinuteFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
-    private var dayFormat = SimpleDateFormat("dd일", Locale.getDefault())
+    private val hourMinuteFormat by lazy { SimpleDateFormat("KK:mm\na", Locale.getDefault()) }
+    private val dayFormat by lazy { SimpleDateFormat("dd일", Locale.getDefault()) }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): DiariesViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
@@ -37,17 +39,20 @@ class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerV
             time = date
         }
 
-        diariesViewHolder.dayText.text = dayFormat.format(calendar.time)
-        diariesViewHolder.timeText.text = hourMinuteFormat.format(calendar.time)
-        diariesViewHolder.descriptionText.text = diary.description
+        diariesViewHolder.run {
+            dayText.text = dayFormat.format(calendar.time)
+            timeText.text = hourMinuteFormat.format(calendar.time)
+                    .replace("오전", "AM")
+                    .replace("오후", "PM")
+            descriptionText.text = diary.description
+        }
 
-        val yogiDiaryStorageDir = Constants.YOGIDIARY_PATH
-
-        val imageAbsolutePath = "${yogiDiaryStorageDir.absolutePath}/${diary.image}"
+        val imageAbsolutePath = "${Constants.YOGIDIARY_PATH.absolutePath}/${diary.image}"
         Glide.with(context)
                 .load(imageAbsolutePath)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.baseline_not_interested_black_36)
+                .skipMemoryCache(true)
                 .into(diariesViewHolder.imageView)
     }
 
@@ -61,15 +66,16 @@ class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerV
 
     inner class DiariesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val dayText: TextView = itemView.findViewById(R.id.text_day)
-        val timeText: TextView = itemView.findViewById(R.id.text_time)
-        val descriptionText: TextView = itemView.findViewById(R.id.text_description)
-        val imageView: ImageView = itemView.findViewById(R.id.image_view)
+        val dayText: TextView = itemView.text_day
+        val timeText: TextView = itemView.text_time
+        val descriptionText: TextView = itemView.text_description
+        val imageView: ImageView = itemView.image_view
 
         init {
             itemView.setOnClickListener {
-                val intent = Intent(context, DiaryDetailActivity::class.java)
-                intent.putExtra("DIARY_IDX", diaries[adapterPosition].idx)
+                val intent = Intent(context, DiaryDetailActivity::class.java).apply {
+                    putExtra("DIARY_IDX", diaries[adapterPosition].idx)
+                }
                 context.startActivity(intent)
             }
         }

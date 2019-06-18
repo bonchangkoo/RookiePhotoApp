@@ -3,27 +3,36 @@ package kr.co.yogiyo.rookiephotoapp.diary.main
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.databinding.ObservableField
-import android.util.Log
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.GregorianCalendar
+import java.util.Calendar
+import java.util.Date
 
 class DiariesViewModel(application: Application) : AndroidViewModel(application) {
 
     private var yearMonthFormat = SimpleDateFormat("yyyy.M", Locale.getDefault())
+    private val diariesPublishSubject by lazy {
+        PublishSubject.create<Pair<Int, List<Diary>>>()
+    }
+    val diariesObservable: Observable<Pair<Int, List<Diary>>> by lazy {
+        diariesPublishSubject.hide()
+    }
 
     val nowPageYearMonth: ObservableField<String> = ObservableField(yearMonthFormat.format(Date()))
 
     private val compositeDisposable = CompositeDisposable()
-    private val diaryDatabase = DiaryDatabase.getDatabase(application)
+    private val diaryDatabase = DiaryDatabase.getDatabase(GlobalApplication.globalApplicationContext)
 
-    private lateinit var diariesNavigator: DiariesNavigator
-
-    private lateinit var nowPageCalendar: Calendar
+    lateinit var showLoadingView: () -> Unit
+    lateinit var hideLoadingView: () -> Unit
 
     override fun onCleared() {
         super.onCleared()
@@ -32,22 +41,45 @@ class DiariesViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun setNavigator(diariesNavigator: DiariesNavigator) {
-        this.diariesNavigator = diariesNavigator
-    }
-
-    fun updateNowPageByPosition(position: Int) {
-        nowPageCalendar = getCalendarFromPosition(position)
-        nowPageYearMonth.set(yearMonthFormat.format(nowPageCalendar.time))
-    }
-
-    fun updateNowPageByYearMon(year: Int, month: Int) {
-        // TODO: 포지션 반환
-        nowPageCalendar = Calendar.getInstance().apply {
-            set(year, month, 1)
-            time
+    fun loadNowPageDiaries(position: Int) {
+        val fromCalendar = GregorianCalendar().apply {
+            time = getCalendarFromPosition(position).time
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
-        nowPageYearMonth.set(yearMonthFormat.format(nowPageCalendar.time))
+
+        val toCalendar = GregorianCalendar().apply {
+            time = getCalendarFromPosition(position).time
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.MONTH, 1)
+            add(Calendar.MILLISECOND, -1)
+        }
+
+        showLoadingView
+        compositeDisposable.add(
+                diaryDatabase.diaryDao().findDiariesBetweenDates(fromCalendar.time, toCalendar.time)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .subscribe({ diaries ->
+                            diariesPublishSubject.onNext(Pair(position, sortDiaries(diaries, true)))
+                            hideLoadingView
+                        }, {
+                            hideLoadingView
+                        })
+        )
+    }
+
+    fun updateNowPageYearMonth(position: Int) {
+        getCalendarFromPosition(position).run {
+            nowPageYearMonth.set(yearMonthFormat.format(time))
+        }
     }
 
     fun getPositionFromYearMonth(year: Int, month: Int): Int {
@@ -59,56 +91,19 @@ class DiariesViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun getCalendarFromPosition(position: Int): Calendar {
-        val calendar = GregorianCalendar()
-        calendar.time = DiariesActivity.BASE_DATE
-        calendar.add(Calendar.MONTH, position - DiariesActivity.FIRST_PAGE)
-        return calendar
+        return GregorianCalendar().apply {
+            time = DiariesActivity.BASE_DATE
+            add(Calendar.MONTH, position - DiariesActivity.FIRST_PAGE)
+        }
     }
 
     private fun howFarFromBase(year: Int, month: Int): Int {
-        val calendar = Calendar.getInstance()
-        calendar.time = DiariesActivity.BASE_DATE
+        val calendar = Calendar.getInstance().apply {
+            time = DiariesActivity.BASE_DATE
+        }
         val distanceYear = (year - calendar.get(Calendar.YEAR)) * 12
         val distanceMonth = month - calendar.get(Calendar.MONTH)
         return distanceYear + distanceMonth
-    }
-
-    fun loadThisMonthDiaries() {
-        val fromCalendar = GregorianCalendar().apply {
-            time = nowPageCalendar.time
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        val toCalendar = GregorianCalendar().apply {
-            time = nowPageCalendar.time
-            set(Calendar.DAY_OF_MONTH, 1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            add(Calendar.MONTH, 1)
-            add(Calendar.MILLISECOND, -1)
-        }
-
-        loadDiariesBetweenDates(fromCalendar.time, toCalendar.time)
-    }
-
-    private fun loadDiariesBetweenDates(from: Date, to: Date) {
-        diariesNavigator.showLoading()
-        compositeDisposable.add(diaryDatabase.diaryDao().findDiariesBetweenDates(from, to)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    diariesNavigator.loadThisMonthDiaries(sortDiaries(it, true))
-                    diariesNavigator.hideLoading()
-                }, {
-                    diariesNavigator.hideLoading()
-                })
-        )
     }
 
     private fun sortDiaries(diaries: List<Diary>, reverse: Boolean): List<Diary> {
