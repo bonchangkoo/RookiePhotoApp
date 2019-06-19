@@ -23,6 +23,7 @@ import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -120,7 +121,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         editDescriptionTextView.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -188,6 +188,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 selectedBitmap = PreviewActivity.capturedImageBitmap;
                 Glide.with(this)
                         .load(selectedBitmap)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(editPhotoImageButton);
 
@@ -196,6 +197,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 selectedUri = uri;
                 Glide.with(this)
                         .load(selectedUri)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(editPhotoImageButton);
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
@@ -211,6 +213,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             photoFileName = diary.getImage();
                             Glide.with(DiaryEditActivity.this)
                                     .load(Constants.YOGIDIARY_PATH + File.separator + photoFileName)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .skipMemoryCache(true)
                                     .into(editPhotoImageButton);
                             editDescriptionTextView.setText(diary.getDescription());
@@ -277,6 +280,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     selectedUri = data.getData();
                     Glide.with(DiaryEditActivity.this)
                             .load(selectedUri)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .listener(new RequestListener<Drawable>() {
                                 @Override
@@ -300,6 +304,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                     selectedBitmap = loadBitmapFromInternalStorage(getApplicationContext());
                     Glide.with(DiaryEditActivity.this)
                             .load(selectedBitmap)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(editPhotoImageButton);
                     isPhotoUpdate = true;
