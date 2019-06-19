@@ -8,10 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,7 +22,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -191,7 +194,10 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
-                editPhotoImageButton.setImageURI(uri);
+                Glide.with(this)
+                        .load(selectedUri)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             }
         } else {
@@ -205,8 +211,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             photoFileName = diary.getImage();
                             Glide.with(DiaryEditActivity.this)
                                     .load(Constants.YOGIDIARY_PATH + File.separator + photoFileName)
-                                    .error(ContextCompat.getDrawable(DiaryEditActivity.this, R.mipmap.diary_photo_add))
-                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .skipMemoryCache(true)
                                     .into(editPhotoImageButton);
                             editDescriptionTextView.setText(diary.getDescription());
@@ -271,20 +275,33 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             case RESULT_OK:
                 if ((requestCode == Constants.REQUEST_DIARY_PICK_GALLERY || requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     selectedUri = data.getData();
-                    if (selectedUri != null) {
-                        editPhotoImageButton.setImageURI(null);
-                        editPhotoImageButton.setImageURI(selectedUri);
-                        isPhotoUpdate = true;
-                    } else {
-                        showToast(R.string.toast_cannot_retrieve_selected_image);
-                    }
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedUri)
+                            .skipMemoryCache(true)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    showToast(R.string.toast_cannot_retrieve_selected_image);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    isPhotoUpdate = true;
+                                    return false;
+                                }
+                            })
+                            .into(editPhotoImageButton);
                 }
                 break;
             case Constants.RESULT_CAPTURED_PHOTO:
                 if ((requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     isBitmap = true;
                     selectedBitmap = loadBitmapFromInternalStorage(getApplicationContext());
-                    editPhotoImageButton.setImageBitmap(selectedBitmap);
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedBitmap)
+                            .skipMemoryCache(true)
+                            .into(editPhotoImageButton);
                     isPhotoUpdate = true;
                 }
                 break;
