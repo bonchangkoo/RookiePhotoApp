@@ -26,6 +26,10 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     private EditText passwordEdit;
     private TextView showSignFailText;
 
+    public static SignDialogFragment newInstance() {
+        return new SignDialogFragment();
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -52,7 +56,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setTitle("로그인")
+        builder.setTitle(getString(R.string.text_signin))
                 .setPositiveButton(null, null)
                 .setNegativeButton(null, null);
     }
@@ -63,7 +67,6 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     }
 
     // TODO : 콜백을 RxJava로 바꿀 수 있을지 고민하기
-    // TODO : 취소할 때 로그인/회원가입 요청 취소할 수 있는지 조사
     // TODO : 구글 로그인 실패 A non-recoverable sign in failure occurred (status code: 12500)
     @Override
     public void onClick(View v) {
@@ -79,7 +82,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
                         emailEdit.getText().toString(), passwordEdit.getText().toString(), this);
                 break;
             case R.id.relative_signup:
-                getDialog().setTitle("회원가입");
+                getDialog().setTitle(getString(R.string.text_signup));
                 signinButton.setVisibility(View.GONE);
                 signupRelativeButton.setVisibility(View.GONE);
                 signupButton.setVisibility(View.VISIBLE);
@@ -91,7 +94,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     public void onSuccess(FirebaseUser user) {
         Preference preference = getPreference();
         preference.setTitle(user.getEmail());
-        ((SettingsActivity) context).showToast("로그인 성공");
+        ((SettingsActivity) context).showToast(getString(R.string.text_signin_success));
         dismiss();
     }
 

@@ -1,6 +1,10 @@
 package kr.co.yogiyo.rookiephotoapp
 
 import android.support.design.widget.Snackbar
+import android.content.Context
+import android.content.DialogInterface
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ProgressBar
@@ -49,6 +53,27 @@ open class BaseActivity : AppCompatActivity() {
 
     fun hideLoading() {
         progressBar.visibility = View.GONE
+    }
+
+    fun createAlertDialog(context: Context,
+                          title: String? = null, message: String? = null,
+                          positiveButtonText: String? = null, negativeButtonText: String? = null,
+                          onClickListener: DialogInterface.OnClickListener? = null,
+                          onShowListener: DialogInterface.OnShowListener? = null): AlertDialog {
+
+        return AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveButtonText, onClickListener)
+                .setNegativeButton(negativeButtonText, onClickListener)
+                .create().apply {
+                    setOnShowListener(if(onShowListener == null){
+                        DialogInterface.OnShowListener {dialog ->
+                            (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FDB32D))
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FDB32D))
+                        }
+                    } else onShowListener)
+                }
     }
 
     companion object {

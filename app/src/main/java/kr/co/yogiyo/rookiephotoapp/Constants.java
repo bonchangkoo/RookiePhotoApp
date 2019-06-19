@@ -19,5 +19,4 @@ public class Constants {
 
     // PATH
     public static final File YOGIDIARY_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
-
 }

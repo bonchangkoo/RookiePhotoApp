@@ -7,7 +7,7 @@ public interface DiaryDatabaseCallback {
     void onDiaryAdded();
 
     void onDiaryByIdFinded(Diary diary);
-    
+
     void onDiariesBetweenDatesFinded(List<Diary> diaries);
 
     void onDiaryUpdated();

@@ -46,12 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
         TedPermission.with(this)
                 .setPermissionListener(permissionListener)
-                .setDeniedMessage(getString(R.string.text_denied_permission))
-                .setGotoSettingButtonText(getString(R.string.text_settings))
-                .setDeniedCloseButtonText(getString(R.string.text_cancel))
+                .setDeniedMessage(R.string.text_denied_permission)
+                .setGotoSettingButtonText(R.string.text_settings)
+                .setDeniedCloseButtonText(R.string.text_cancel)
                 .setPermissions(permissions.toArray(new String[0]))
                 .check();
     }
 }
-
-
