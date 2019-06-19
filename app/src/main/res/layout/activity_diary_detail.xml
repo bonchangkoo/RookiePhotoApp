@@ -81,9 +81,7 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/diary_image_view_border"
                 android:contentDescription="@string/text_diary_test_image"
-                android:scaleType="fitCenter"
-                android:src="@drawable/test_image" />
-
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -134,6 +132,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
 
             <TextView
                 android:id="@+id/tv_diary_detail_description"

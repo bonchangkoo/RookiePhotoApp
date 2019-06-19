@@ -1,6 +1,5 @@
 package kr.co.yogiyo.rookiephotoapp.diary;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,9 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -115,7 +121,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         editDescriptionTextView.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -163,21 +168,14 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DiaryEditActivity.this);
-        builder.setPositiveButton(getString(R.string.text_dialog_ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                finish();
-            }
-        });
-        builder.setNegativeButton(getString(R.string.text_dialog_no), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.setTitle("작성 취소");
-        dialog.setMessage("정말로 취소하시겠습니까?");
-        dialog.show();
+        createAlertDialog(DiaryEditActivity.this, "작성 취소", "정말로 취소하시겠습니까?",
+                getString(R.string.text_dialog_ok), getString(R.string.text_dialog_no),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (id == DialogInterface.BUTTON_POSITIVE) finish();
+                        else dialog.dismiss();
+                    }
+                }, null).show();
     }
 
     private void setViewData(int idx) {
@@ -190,13 +188,18 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 selectedBitmap = PreviewActivity.capturedImageBitmap;
                 Glide.with(this)
                         .load(selectedBitmap)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(editPhotoImageButton);
 
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
-                editPhotoImageButton.setImageURI(uri);
+                Glide.with(this)
+                        .load(selectedUri)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             }
         } else {
@@ -208,7 +211,11 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                         public void accept(Diary diary) {
                             setDateAndTime(diary.getDate());
                             photoFileName = diary.getImage();
-                            editPhotoImageButton.setImageURI(Uri.fromFile(new File(Constants.YOGIDIARY_PATH, photoFileName)));
+                            Glide.with(DiaryEditActivity.this)
+                                    .load(Constants.YOGIDIARY_PATH + File.separator + photoFileName)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .skipMemoryCache(true)
+                                    .into(editPhotoImageButton);
                             editDescriptionTextView.setText(diary.getDescription());
                         }
                     }));
@@ -227,8 +234,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         editDateTextView.setText(String.format("%s월 %s일", month, day));
         datePickerDialog = new DatePickerDialog
-                (DiaryEditActivity.this, R.style.PickerTheme, dateListener,
-                        Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
+                (DiaryEditActivity.this, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
 
         SimpleDateFormat hourFormat = new SimpleDateFormat("hh", Locale.getDefault());
         SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
@@ -246,8 +252,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             applyMerdiemHour = applyMerdiemHour + 12;
         }
 
-        timePickerDialog = new TimePickerDialog
-                (DiaryEditActivity.this, R.style.PickerTheme, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
+        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
+
         updateHour = applyMerdiemHour;
         updateMinute = Integer.valueOf(minute);
     }
@@ -272,20 +278,35 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             case RESULT_OK:
                 if ((requestCode == Constants.REQUEST_DIARY_PICK_GALLERY || requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     selectedUri = data.getData();
-                    if (selectedUri != null) {
-                        editPhotoImageButton.setImageURI(null);
-                        editPhotoImageButton.setImageURI(selectedUri);
-                        isPhotoUpdate = true;
-                    } else {
-                        showToast(R.string.toast_cannot_retrieve_selected_image);
-                    }
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedUri)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    showToast(R.string.toast_cannot_retrieve_selected_image);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    isPhotoUpdate = true;
+                                    return false;
+                                }
+                            })
+                            .into(editPhotoImageButton);
                 }
                 break;
             case Constants.RESULT_CAPTURED_PHOTO:
                 if ((requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     isBitmap = true;
                     selectedBitmap = loadBitmapFromInternalStorage(getApplicationContext());
-                    editPhotoImageButton.setImageBitmap(selectedBitmap);
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedBitmap)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(editPhotoImageButton);
                     isPhotoUpdate = true;
                 }
                 break;

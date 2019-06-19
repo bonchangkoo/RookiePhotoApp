@@ -219,7 +219,7 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void setupCheckPermission() {
-        PermissionListener permissionlistener = new PermissionListener() {
+        PermissionListener permissionListener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
                 // Do nothing
@@ -239,10 +239,10 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         }
 
         TedPermission.with(this)
-                .setPermissionListener(permissionlistener)
-                .setDeniedMessage("단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간")
-                .setGotoSettingButtonText("설정")
-                .setDeniedCloseButtonText("취소")
+                .setPermissionListener(permissionListener)
+                .setDeniedMessage(R.string.text_denied_permission)
+                .setGotoSettingButtonText(R.string.text_settings)
+                .setDeniedCloseButtonText(R.string.text_cancel)
                 .setPermissions(permissions.toArray(new String[0]))
                 .check();
     }

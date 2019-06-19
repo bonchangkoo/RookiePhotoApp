@@ -127,17 +127,18 @@ public class DiariesFragment extends Fragment {
 
         loadDiariesProgressBar.setVisibility(View.VISIBLE);
 
-        compositeDisposable.add(localDiaryViewModel.findDiariesBetweenDates(fromCalendar.getTime(), toCalendar.getTime())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Diary>>() {
-                    @Override
-                    public void accept(List<Diary> diaries) {
-                        diariesAdapter.setItems(diaries);
-                        diariesAdapter.notifyDataSetChanged();
-                        loadDiariesProgressBar.setVisibility(View.GONE);
-                    }
-                }));
+        compositeDisposable.add(
+                localDiaryViewModel.findDiariesBetweenDates(fromCalendar.getTime(), toCalendar.getTime())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<List<Diary>>() {
+                            @Override
+                            public void accept(List<Diary> diaries) {
+                                diariesAdapter.setItems(diaries);
+                                diariesAdapter.notifyDataSetChanged();
+                                loadDiariesProgressBar.setVisibility(View.GONE);
+                            }
+                        }));
     }
 
 }

@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.util.List;
@@ -41,6 +42,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     public void onBindViewHolder(@NonNull final GalleryViewHolder galleryViewHolder, int i) {
         Glide.with(context)
                 .load(imagePaths.get(i))
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(galleryViewHolder.imageView);
         FrameLayout selectedFrame = galleryViewHolder.selectedFrame;
 
