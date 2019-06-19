@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 class ReminderWork(val context: Context, params: WorkerParameters) : Worker(context, params) {
 
     override fun doWork(): Result {
-        MyBroadcastReceiver.generateNotification(context)
+        ReminderNotification.generateNotification(context)
         enqueueReminder()
 
         return Result.success()

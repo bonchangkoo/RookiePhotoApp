@@ -3,10 +3,15 @@ package kr.co.yogiyo.rookiephotoapp
 import android.app.Application
 import android.content.Context
 import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork
+import com.google.firebase.auth.FirebaseAuth
 
 class GlobalApplication : Application() {
 
     var isFromDiary: Boolean = false
+
+    val firebaseAuth: FirebaseAuth by lazy {
+        FirebaseAuth.getInstance()
+    }
 
     override fun onCreate() {
         super.onCreate()

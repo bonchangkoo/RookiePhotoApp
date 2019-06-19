@@ -1,7 +1,12 @@
 package kr.co.yogiyo.rookiephotoapp
 
+import android.content.Context
+import android.content.DialogInterface
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -26,7 +31,7 @@ open class BaseActivity : AppCompatActivity() {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
     }
 
-    fun addProgressBarInto(layout: RelativeLayout) {
+    fun addProgressBarInto(layout: ViewGroup) {
         progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleLarge)
         val params = RelativeLayout.LayoutParams(200, 200)
         params.addRule(RelativeLayout.CENTER_IN_PARENT)
@@ -40,6 +45,27 @@ open class BaseActivity : AppCompatActivity() {
 
     fun hideLoading() {
         progressBar.visibility = View.GONE
+    }
+
+    fun createAlertDialog(context: Context,
+                          title: String? = null, message: String? = null,
+                          positiveButtonText: String? = null, negativeButtonText: String? = null,
+                          onClickListener: DialogInterface.OnClickListener? = null,
+                          onShowListener: DialogInterface.OnShowListener? = null): AlertDialog {
+
+        return AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveButtonText, onClickListener)
+                .setNegativeButton(negativeButtonText, onClickListener)
+                .create().apply {
+                    setOnShowListener(if(onShowListener == null){
+                        DialogInterface.OnShowListener {dialog ->
+                            (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
+                        }
+                    } else onShowListener)
+                }
     }
 
     companion object {

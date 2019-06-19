@@ -8,23 +8,24 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 
 import androidx.work.WorkManager;
 
-import com.google.firebase.auth.FirebaseAuth;
-
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+// TODO : preference엔 databinding이 지원되지 않는다고 해서 observe로 구현해야 할 것 같음
+public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
-    private static final String PREFERENCE_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
-    private static final String SIGN_DIALOG_KEY = "sign_dialog";
-    private static final String SWITCH_REMINDER_KEY = "switch_reminder";
-
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
+    private Preference backupDialogPreference;
+    private Preference restoreDialogPreference;
     private Preference signDialogPreference;
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -35,46 +36,76 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        signDialogPreference = findPreference(SIGN_DIALOG_KEY);
-        findPreference(SWITCH_REMINDER_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        findPreference(SettingsActivity.SWITCH_REMINDER_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                if((Boolean) o) ReminderWork.Companion.enqueueReminder();
+                if ((Boolean) o) ReminderWork.Companion.enqueueReminder();
                 else WorkManager.getInstance().cancelAllWorkByTag(ReminderWork.TAG_OUTPUT);
 
                 return true;
             }
         });
 
-        if (firebaseAuth.getCurrentUser() == null) {
+        signDialogPreference = findPreference(SettingsActivity.SIGN_DIALOG_KEY);
+        backupDialogPreference = findPreference(SettingsActivity.BACKUP_DIALOG_KEY);
+        restoreDialogPreference = findPreference(SettingsActivity.RESTORE_DIALOG_KEY);
+
+        if (GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser() == null) {
             signDialogPreference.setTitle(getString(R.string.text_need_to_signin));
         } else {
-            signDialogPreference.setTitle(firebaseAuth.getCurrentUser().getEmail());
+            signDialogPreference.setTitle(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser().getEmail());
         }
     }
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         DialogFragment dialogFragment = null;
-        if (preference instanceof SignDialogPreference) {
-            if (firebaseAuth.getCurrentUser() == null) {
-                ((SignDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_sign);
-                dialogFragment = new SignDialogFragment();
+        if (preference instanceof SettingsDialogPreference) {
+            if (GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser() == null) {
+                preference = signDialogPreference;
+                ((SettingsDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_sign);
+                dialogFragment = SignDialogFragment.newInstance();
             } else {
-                ((SignDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_signout);
-                dialogFragment = new SignOutDialogFragment();
+                switch (preference.getKey()) {
+                    case SettingsActivity.SIGN_DIALOG_KEY:
+                        ((SettingsDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_signout);
+                        dialogFragment = SignOutDialogFragment.newInstance();
+                        break;
+                    case SettingsActivity.BACKUP_DIALOG_KEY:
+                        ((SettingsDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_backup_restore);
+                        dialogFragment = BackupRestoreDialogFragment.newInstance();
+                        break;
+                    case SettingsActivity.RESTORE_DIALOG_KEY:
+                        ((SettingsDialogPreference) preference).setDialogLayoutResource(R.layout.dialog_fragment_backup_restore);
+                        dialogFragment = BackupRestoreDialogFragment.newInstance();
+                        break;
+                }
             }
 
             Bundle bundle = new Bundle(1);
-            bundle.putString("key", preference.getKey());
+            bundle.putString(SettingsActivity.PREFERENCE_KEY, preference.getKey());
             dialogFragment.setArguments(bundle);
         }
 
         if (dialogFragment != null && getFragmentManager() != null) {
             dialogFragment.setTargetFragment(this, 0);
-            dialogFragment.show(getFragmentManager(), PREFERENCE_DIALOG_TAG);
+            dialogFragment.show(getFragmentManager(), SettingsActivity.PREFERENCE_DIALOG_TAG);
         } else {
             super.onDisplayPreferenceDialog(preference);
+        }
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        switch (preference.getKey()) {
+            case SettingsActivity.BACKUP_DIALOG_KEY:
+                onDisplayPreferenceDialog(backupDialogPreference);
+                return true;
+            case SettingsActivity.RESTORE_DIALOG_KEY:
+                onDisplayPreferenceDialog(restoreDialogPreference);
+                return true;
+            default:
+                return false;
         }
     }
 }

@@ -11,7 +11,7 @@ public class Constants {
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     public static final int REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION = 103;
     public static final int REQUEST_DIARY_PICK_GALLERY = 104;
-    public static final int REQUEST_DIARY_CAPTURE_PHOTO= 105;
+    public static final int REQUEST_DIARY_CAPTURE_PHOTO = 105;
 
     // RESULT
     public static final int RESULT_EDIT_PHOTO = 201;

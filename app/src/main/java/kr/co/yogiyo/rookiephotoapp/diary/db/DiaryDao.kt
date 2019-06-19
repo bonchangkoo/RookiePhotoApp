@@ -27,6 +27,9 @@ interface DiaryDao {
     @Delete
     fun deleteDiary(diary: Diary)
 
+    @Query("SELECT * FROM diaries")
+    fun findDiaries(): Single<List<Diary>>
+
     @Query("SELECT * FROM diaries WHERE date BETWEEN :from AND :to")
     fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>>
 }
