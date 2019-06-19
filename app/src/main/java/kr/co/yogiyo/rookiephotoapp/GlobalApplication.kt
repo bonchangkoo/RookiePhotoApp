@@ -1,7 +1,8 @@
 package kr.co.yogiyo.rookiephotoapp
 
 import android.app.Application
-import kr.co.yogiyo.rookiephotoapp.notification.JobSchedulerStart
+import android.content.Context
+import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork
 
 class GlobalApplication : Application() {
 
@@ -11,7 +12,12 @@ class GlobalApplication : Application() {
         super.onCreate()
         instance = this
         isFromDiary = false
-        JobSchedulerStart.start(applicationContext)
+
+        if (GlobalApplication.globalApplicationContext
+                        .getSharedPreferences(Constants.SHARED_PREFERENCE_FILE_NAME, Context.MODE_PRIVATE)
+                        .getBoolean("switch_reminder", false)) {
+            ReminderWork.enqueueReminder()
+        }
     }
 
     override fun onTerminate() {

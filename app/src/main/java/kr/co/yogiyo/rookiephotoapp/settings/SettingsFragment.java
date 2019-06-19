@@ -6,14 +6,18 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import androidx.work.WorkManager;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     private static final String PREFERENCE_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
     private static final String SIGN_DIALOG_KEY = "sign_dialog";
+    private static final String SWITCH_REMINDER_KEY = "switch_reminder";
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
@@ -32,6 +36,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         signDialogPreference = findPreference(SIGN_DIALOG_KEY);
+        findPreference(SWITCH_REMINDER_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if((Boolean) o) ReminderWork.Companion.enqueueReminder();
+                else WorkManager.getInstance().cancelAllWorkByTag(ReminderWork.TAG_OUTPUT);
+
+                return true;
+            }
+        });
 
         if (firebaseAuth.getCurrentUser() == null) {
             signDialogPreference.setTitle(getString(R.string.text_need_to_signin));

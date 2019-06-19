@@ -26,4 +26,15 @@
             android:summary="@string/text_summary_restore"
             android:title="@string/text_do_restore" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="reminder_settings"
+        android:title="@string/text_reminder_settings">
+
+        <SwitchPreference
+            android:icon="@drawable/baseline_alarm_black_36"
+            android:key="switch_reminder"
+            android:summary="@string/text_summary_reminder"
+            android:title="@string/text_reminder" />
+    </PreferenceCategory>
 </PreferenceScreen>

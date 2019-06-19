@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
-import kr.co.yogiyo.rookiephotoapp.notification.JobSchedulerStart;
 
 public class MainActivity extends AppCompatActivity {
 
