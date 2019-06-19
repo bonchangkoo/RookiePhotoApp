@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -139,6 +140,7 @@ class EditPhotoActivity : BaseActivity() {
             // Crop Gestures는 SCALE만 가능하게 옵션 설정
             val options = UCrop.Options().apply {
                 setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.SCALE)
+                setRootViewBackgroundColor(Color.rgb(253,179,45))
             }
             withOptions(options)
         }

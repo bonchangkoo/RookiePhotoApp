@@ -224,14 +224,6 @@
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </RelativeLayout>
-
-            <Button
-                android:id="@+id/btn_change_camera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:text="@{viewModel.facingButtonLabel}"
-                android:visibility="gone" />
         </RelativeLayout>
 
         <RelativeLayout

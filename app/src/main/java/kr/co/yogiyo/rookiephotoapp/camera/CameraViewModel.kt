@@ -8,22 +8,13 @@ import android.databinding.ObservableInt
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.View
 import com.otaliastudios.cameraview.Flash
 import com.otaliastudios.cameraview.Grid
 import kr.co.yogiyo.rookiephotoapp.R
 
-class CameraViewModel(private var context: Context) : BaseObservable() {
+class CameraViewModel(private val context: Context) : BaseObservable() {
 
-    companion object {
-        val DELAY_DURATIONS = mutableListOf(0, 3, 10)
-
-        // TODO: [Warning] ...Specify type explicitly as nullable or non-nullable...
-        val TAG: String = CameraViewModel::class.java.simpleName
-    }
-
-    val facingButtonLabel: ObservableField<String> = ObservableField(context.getString(R.string.text_change))
     val showMoreButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_more_horiz_black_24))
     val captureSizeButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_crop_square_black_24))
     val goDiaryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(context, R.drawable.baseline_event_black_24))
@@ -41,6 +32,9 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     val textColorByCaptureSize: ObservableInt = ObservableInt(ContextCompat.getColor(context, android.R.color.black))
     val alphaByCaptureSize: ObservableFloat = ObservableFloat(0.7f)
 
+    lateinit var captureNow: () -> Unit
+    lateinit var updateGalleryButton: () -> Unit
+
     private var flashType = Flash.OFF.ordinal
     private var gridType = Grid.OFF.ordinal
     private var delayDurationIndex = 0
@@ -52,12 +46,7 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         Handler()
     }
 
-    lateinit var captureNow: () -> Unit
-    lateinit var updateGalleryButton: CameraViewModel.() -> Unit
-
     fun isCaptureSizeFull() = captureSizeFull
-
-    fun updateFacingButton(label: String) = facingButtonLabel.set(label)
 
     fun updateFlashButton(text: String, drawableId: Int) {
         flashButtonText.set(text)
@@ -68,8 +57,6 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         gridButtonText.set(text)
         gridButtonSrc.set(ContextCompat.getDrawable(context, drawableId))
     }
-
-    fun synchronizeGalleryButton() = updateGalleryButton()
 
     fun updateViewByCaptureSize(fullScreen: Boolean = captureSizeFull) {
         if (captureSizeFull == fullScreen) {
@@ -107,7 +94,6 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     fun getNextFlashType() = ++flashType % Flash.values().size
 
     fun getNextGridType() = ++gridType % Grid.values().size
-    fun getGridType() = gridType % Grid.values().size
 
     fun onClickCaptureButton(view: View) {
         if (isTimerOn()) {
@@ -155,15 +141,15 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
         }
     }
 
+    private fun getGridType() = gridType % Grid.values().size
+
     private fun getNextCaptureDelay() = DELAY_DURATIONS[++delayDurationIndex % DELAY_DURATIONS.size]
 
     private fun getCaptureDelay() = DELAY_DURATIONS[delayDurationIndex % DELAY_DURATIONS.size]
 
     private fun isTimerOn() = delayDurationIndex % DELAY_DURATIONS.size != 0
 
-    private fun makeDecrementTimerFunction(captureID: Int): Runnable {
-        return Runnable { decrementTimer(captureID) }
-    }
+    private fun makeDecrementTimerFunction(captureID: Int) = Runnable { decrementTimer(captureID) }
 
     private fun decrementTimer(captureID: Int) {
         if (captureID != currentCaptureID) {
@@ -176,7 +162,6 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
 
         } else if (captureTimer > 0) {
             delayMessageLabel.set(captureTimer)
-            Log.d(TAG, "$captureTimer")
             timerHandler.postDelayed(makeDecrementTimerFunction(captureID), 1000)
         }
     }
@@ -184,5 +169,10 @@ class CameraViewModel(private var context: Context) : BaseObservable() {
     private fun finishDelayCapture() {
         timerHandler.removeCallbacksAndMessages(null)
         delayVisibility.set(View.GONE)
+    }
+
+    companion object {
+
+        val DELAY_DURATIONS = mutableListOf(0, 3, 10)
     }
 }
