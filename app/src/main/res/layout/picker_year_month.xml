@@ -38,7 +38,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:text="@string/text_cancel"
             android:textAllCaps="false"
-            android:textColor="@color/color_FF0000" />
+            android:textColor="@color/color_FDB32D" />
 
         <Button
             android:id="@+id/btn_confirm"
@@ -48,6 +48,6 @@
             android:background="?selectableItemBackgroundBorderless"
             android:text="@string/text_confirm"
             android:textAllCaps="false"
-            android:textColor="@color/color_FF0000" />
+            android:textColor="@color/color_FDB32D" />
     </LinearLayout>
 </LinearLayout>

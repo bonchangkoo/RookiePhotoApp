@@ -1,31 +1,31 @@
 package kr.co.yogiyo.rookiephotoapp.settings;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import android.widget.ImageButton;
 
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 
 public class SettingsActivity extends BaseActivity implements AuthNavigator {
 
-    private FirebaseAuth firebaseAuth;
+    public static final String PREFERENCE_KEY = "key";
+    public static final String BACKUP_DIALOG_KEY = "backup_dialog";
+    public static final String RESTORE_DIALOG_KEY = "restore_dialog";
+    public static final String SIGN_DIALOG_KEY = "sign_dialog";
+    public static final String PREFERENCE_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
-        // TODO : global application에 구현하면 어떨지 고민
-        firebaseAuth = FirebaseAuth.getInstance();
+        ImageButton backspaceButton = findViewById(R.id.btn_backspace);
+        backspaceButton.setOnClickListener(v -> onBackPressed());
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, SettingsFragment.newInstance())
+                .replace(R.id.list_container, SettingsFragment.newInstance())
                 .commit();
     }
 
@@ -36,18 +36,14 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
             callback.onFail();
             return;
         }
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            showToast(getString(R.string.text_signin_success));
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            callback.onSuccess(user);
-                        } else {
-                            showToast(getString(R.string.text_sign_fail));
-                            callback.onFail();
-                        }
+        GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        showToast(getString(R.string.text_signin_success));
+                        callback.onSuccess(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser());
+                    } else {
+                        showToast(getString(R.string.text_sign_fail));
+                        callback.onFail();
                     }
                 });
     }
@@ -59,18 +55,14 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
             callback.onFail();
             return;
         }
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            showToast(getString(R.string.text_signup_success));
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            callback.onSuccess(user);
-                        } else {
-                            showToast(getString(R.string.text_sign_fail));
-                            callback.onFail();
-                        }
+        GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        showToast(getString(R.string.text_signup_success));
+                        callback.onSuccess(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser());
+                    } else {
+                        showToast(getString(R.string.text_sign_fail));
+                        callback.onFail();
                     }
                 });
     }
@@ -78,9 +70,8 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     @Override
     public void signOut(final SignCallback callback) {
         try {
-            firebaseAuth.signOut();
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            callback.onSuccess(user);
+            GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().signOut();
+            callback.onSuccess(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser());
         } catch (Exception e) {
             e.printStackTrace();
             callback.onFail();

@@ -1,12 +1,9 @@
 package kr.co.yogiyo.rookiephotoapp.diary;
 
-
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -24,12 +21,10 @@ import java.util.Locale;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 
 public class DiaryDetailActivity extends BaseActivity implements View.OnClickListener {
@@ -62,7 +57,7 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initView() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         backImageButton = findViewById(R.id.ib_back);
         diaryDeleteImageButton = findViewById(R.id.ib_diary_delete);
@@ -85,21 +80,11 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
                 onBackPressed();
                 break;
             case R.id.ib_diary_delete:
-                AlertDialog.Builder builder = new AlertDialog.Builder(DiaryDetailActivity.this);
-                builder.setPositiveButton(getString(R.string.text_dialog_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        deleteDiary(diaryIdx);
-                    }
-                });
-                builder.setNegativeButton(getString(R.string.text_dialog_no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.setTitle("다이어리 삭제");
-                dialog.setMessage("정말로 삭제하시겠습니까?");
-                dialog.show();
+                createAlertDialog(DiaryDetailActivity.this, "다이어리 삭제", "정말로 삭제하시겠습니까?",
+                        getString(R.string.text_dialog_ok), getString(R.string.text_dialog_no), (dialog, id) -> {
+                            if (id == DialogInterface.BUTTON_POSITIVE) deleteDiary(diaryIdx);
+                            else dialog.dismiss();
+                        }, null).show();
                 break;
             case R.id.ib_diary_edit:
                 Intent diaryEditActivityIntent = new Intent(this, DiaryEditActivity.class);
@@ -114,17 +99,14 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
         getCompositeDisposable().add(localDiaryViewModel.findDiaryById(diaryIndex)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Diary>() {
-                    @Override
-                    public void accept(Diary diary) {
-                        setDateAndTime(diary.getDate());
-                        Glide.with(DiaryDetailActivity.this)
-                                .load(Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + diary.getImage())
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .skipMemoryCache(true)
-                                .into(detailPhotoImageView);
-                        detailDescriptionTextView.setText(diary.getDescription());
-                    }
+                .subscribe(diary -> {
+                    setDateAndTime(diary.getDate());
+                    Glide.with(DiaryDetailActivity.this)
+                            .load(Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + diary.getImage())
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(detailPhotoImageView);
+                    detailDescriptionTextView.setText(diary.getDescription());
                 }));
     }
 
@@ -153,31 +135,28 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
         getCompositeDisposable().add(localDiaryViewModel.findDiaryById(idx)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Diary>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Diary diary) {
-                        if (diary != null)
-                            localDiaryViewModel.deleteDiary(diary)
-                                    .subscribeOn(Schedulers.single())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new CompletableObserver() {
-                                        @Override
-                                        public void onSubscribe(Disposable d) {
-                                            //Do noting
-                                        }
+                .subscribe(diary -> {
+                    if (diary != null)
+                        localDiaryViewModel.deleteDiary(diary)
+                                .subscribeOn(Schedulers.single())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new CompletableObserver() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
+                                        //Do noting
+                                    }
 
-                                        @Override
-                                        public void onComplete() {
-                                            showToast(R.string.text_diary_detail_deleted);
-                                            finish();
-                                        }
+                                    @Override
+                                    public void onComplete() {
+                                        showToast(R.string.text_diary_detail_deleted);
+                                        finish();
+                                    }
 
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            showToast(getString(R.string.text_cant_delete_diary));
-                                        }
-                                    });
-                    }
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        showToast(getString(R.string.text_cant_delete_diary));
+                                    }
+                                });
                 }));
     }
 }

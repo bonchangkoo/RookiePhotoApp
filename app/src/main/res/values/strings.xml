@@ -9,6 +9,14 @@
     <string name="text_timer_message_format">%d</string>
     <string name="text_timer_button_text_format">%d 초</string>
 
+    <!--MainActivity.java-->
+    <string name="text_denied_permission">단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간</string>
+    <string name="text_settings">설정</string>
+    <string name="text_cancel">취소</string>
+
+    <!--BaseActivity.kt-->
+    <string name="text_confirm">확인</string>
+
     <!--activity_camera.xml-->
     <string name="text_diary">다이어리</string>
     <string name="text_gallery">갤러리</string>
@@ -52,8 +60,25 @@
     <string name="text_signup_success">가입 성공</string>
     <string name="text_sign_fail">사용자 정보를 확인하세요.</string>
 
+    <!--SignOutDialogFragment.java-->
+    <string name="text_signout">로그아웃</string>
+    <string name="text_signout_success">로그아웃 성공</string>
+    <string name="text_signout_fail">로그아웃 실패</string>
+
     <!--dialog_fragment_signout.xml-->
-    <string name="text_ask_signout">로그아웃 하시겠어요?</string>
+    <string name="text_ask_signout">로그아웃 하시겠습니까?</string>
+
+    <!--BackupRestoreDialogFragment.java-->
+    <string name="text_please_wait">잠시만 기다려주세요.</string>
+    <string name="text_no_backup_data">작성한 다이어리가 없습니다.</string>
+    <string name="text_no_restore_data">서버에 저장한 다이어리가 없습니다.</string>
+    <string name="text_network_error">네트워크 연결을 확인하세요.</string>
+    <string name="text_backup_success">백업 성공</string>
+    <string name="text_backup_fail">백업 실패</string>
+    <string name="text_restore_success">복원 성공</string>
+    <string name="text_restore_fail">복원 실패</string>
+    <string name="text_ask_backup">백업 하시겠습니까?</string>
+    <string name="text_ask_restore">복구 하시겠습니까?</string>
 
     <!--preference_settings.xml-->
     <string name="text_user">사용자</string>
@@ -71,8 +96,6 @@
     <!--activity_diary_detail.xml-->
     <string name="text_diary_date">5월 10일</string>
     <string name="text_diary_time">8:00PM</string>
-    <string name="text_diary_test_image">테스트 이미지입니다</string>
-    <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
     <string name="text_diary_content_hint">내용</string>
 
     <!--DiaryEditActivity.java-->
@@ -107,8 +130,4 @@
 
     <!--PreviewActivity.kt-->
     <string name="text_no_save_preview_image">사진을 저장할 수 없습니다</string>
-
-    <!--picker_year_month.xml-->
-    <string name="text_cancel">취소</string>
-    <string name="text_confirm">확인</string>
 </resources>

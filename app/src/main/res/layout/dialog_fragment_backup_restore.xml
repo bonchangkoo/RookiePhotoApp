@@ -16,10 +16,10 @@
         android:layout_height="38dp">
 
         <TextView
+            android:id="@+id/text_ask_backup_restore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/text_ask_signout" />
+            android:layout_alignParentBottom="true" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -44,14 +44,14 @@
             android:id="@+id/text_cancel"
             android:layout_width="44dp"
             android:layout_height="36dp"
-            android:layout_toStartOf="@+id/text_signout"
-            android:layout_toLeftOf="@+id/text_signout"
+            android:layout_toStartOf="@+id/text_ok"
+            android:layout_toLeftOf="@+id/text_ok"
             android:gravity="center"
             android:text="@string/text_dialog_no"
             android:textColor="@color/color_FDB32D" />
 
         <TextView
-            android:id="@+id/text_signout"
+            android:id="@+id/text_ok"
             android:layout_width="44dp"
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
