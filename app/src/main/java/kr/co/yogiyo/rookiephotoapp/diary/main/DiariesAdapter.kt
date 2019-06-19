@@ -51,7 +51,6 @@ class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerV
         Glide.with(context)
                 .load(imageAbsolutePath)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .error(R.drawable.baseline_not_interested_black_36)
                 .skipMemoryCache(true)
                 .into(diariesViewHolder.imageView)
     }
