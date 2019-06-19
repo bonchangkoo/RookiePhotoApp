@@ -73,7 +73,7 @@
     <string name="text_diary_time">8:00PM</string>
     <string name="text_diary_test_image">테스트 이미지입니다</string>
     <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
-    <string name="text_diary_content_hint">내용</string>
+    <string name="text_diary_content_hint">음식에 대해 기록해주세요</string>
 
     <!--DiaryEditActivity.java-->
     <string name="text_diary_add_title">추가</string>

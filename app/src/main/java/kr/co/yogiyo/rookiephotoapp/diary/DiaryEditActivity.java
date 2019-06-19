@@ -227,7 +227,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         editDateTextView.setText(String.format("%s월 %s일", month, day));
         datePickerDialog = new DatePickerDialog
-                (DiaryEditActivity.this, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
+                (DiaryEditActivity.this, R.style.PickerTheme, dateListener,
+                        Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
 
         SimpleDateFormat hourFormat = new SimpleDateFormat("hh", Locale.getDefault());
         SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
@@ -245,8 +246,8 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             applyMerdiemHour = applyMerdiemHour + 12;
         }
 
-        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
-
+        timePickerDialog = new TimePickerDialog
+                (DiaryEditActivity.this, R.style.PickerTheme, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
         updateHour = applyMerdiemHour;
         updateMinute = Integer.valueOf(minute);
     }
