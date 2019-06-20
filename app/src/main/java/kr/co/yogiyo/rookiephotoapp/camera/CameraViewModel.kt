@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.otaliastudios.cameraview.Flash
 import com.otaliastudios.cameraview.Grid
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 
 class CameraViewModel(private val context: Context) : BaseObservable() {
@@ -27,6 +28,8 @@ class CameraViewModel(private val context: Context) : BaseObservable() {
     val delayVisibility: ObservableInt = ObservableInt(View.GONE)
     val delayMessageLabel: ObservableInt = ObservableInt(0)
     val frameControlButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
+    val goDiaryButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
+    val goGalleryButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
     val showMoreLayoutVisibility: ObservableInt = ObservableInt(View.GONE)
     val showCaptureSizeLayoutVisibility: ObservableInt = ObservableInt(View.GONE)
     val textColorByCaptureSize: ObservableInt = ObservableInt(ContextCompat.getColor(context, android.R.color.black))
@@ -103,6 +106,8 @@ class CameraViewModel(private val context: Context) : BaseObservable() {
 
             timerHandler.postDelayed(makeDecrementTimerFunction(++currentCaptureID), 1000)
             frameControlButtonVisibility.set(View.GONE)
+            goDiaryButtonVisibility.set(View.GONE)
+            goGalleryButtonVisibility.set(View.GONE)
         } else {
             captureNow()
         }
@@ -129,6 +134,13 @@ class CameraViewModel(private val context: Context) : BaseObservable() {
         frameControlButtonVisibility.set(View.VISIBLE)
         showMoreLayoutVisibility.set(View.GONE)
         showCaptureSizeLayoutVisibility.set(View.GONE)
+        if(GlobalApplication.globalApplicationContext.isFromDiary){
+            goDiaryButtonVisibility.set(View.INVISIBLE)
+            goGalleryButtonVisibility.set(View.INVISIBLE)
+        } else {
+            goDiaryButtonVisibility.set(View.VISIBLE)
+            goGalleryButtonVisibility.set(View.VISIBLE)
+        }
     }
 
     fun timerCancel(): Boolean {
