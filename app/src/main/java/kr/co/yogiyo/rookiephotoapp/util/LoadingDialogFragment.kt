@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.View
+import kotlinx.android.synthetic.main.dialog_fragment_loading.*
 import kr.co.yogiyo.rookiephotoapp.R
 
 class LoadingDialogFragment : DialogFragment() {

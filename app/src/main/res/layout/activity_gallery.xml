@@ -11,20 +11,23 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?colorAccent"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/color_FDB32D"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
         app:titleTextColor="@android:color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp">
 
             <ImageButton
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
                 android:background="?selectableItemBackgroundBorderless"
@@ -33,7 +36,7 @@
             <Spinner
                 android:id="@+id/spinner_gallery"
                 android:layout_width="176dp"
-                android:layout_height="24dp"
+                android:layout_height="match_parent"
                 android:layout_toEndOf="@+id/btn_close"
                 android:layout_toRightOf="@+id/btn_close"
                 android:dropDownWidth="224dp" />
@@ -41,7 +44,7 @@
             <ImageButton
                 android:id="@+id/btn_done"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="24dp"
                 android:layout_marginLeft="24dp"
                 android:layout_toStartOf="@+id/btn_edit"
@@ -52,15 +55,12 @@
             <ImageButton
                 android:id="@+id/btn_edit"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_edit_white_24" />
         </RelativeLayout>

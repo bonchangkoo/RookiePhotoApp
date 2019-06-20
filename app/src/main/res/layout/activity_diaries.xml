@@ -20,7 +20,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?colorAccent"
+            android:background="@color/color_FDB32D"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp"
             app:titleTextColor="@android:color/white">

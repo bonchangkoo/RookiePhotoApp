@@ -68,7 +68,7 @@ class DiariesViewModel(
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
                         .subscribe({ diaries ->
-                            diariesPublishSubject.onNext(Pair(position, sortDiaries(diaries, true)))
+                            diariesPublishSubject.onNext(Pair(position, sortDiaries(diaries, false)))
                             hideLoadingView
                         }, {
                             hideLoadingView

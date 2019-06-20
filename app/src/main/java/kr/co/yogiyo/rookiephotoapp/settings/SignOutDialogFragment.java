@@ -46,7 +46,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        ((SettingsActivity) context).showLoading(false);
+        // Do nothing
     }
 
     // TODO : 콜백을 RxJava로 바꿀 수 있을지 고민하기
@@ -68,12 +68,14 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
         Preference preference = getPreference();
         preference.setTitle(getString(R.string.text_need_to_signin));
         ((SettingsActivity) context).showToast(getString(R.string.text_signout_success));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 
     @Override
     public void onFail() {
         ((SettingsActivity) context).showToast(getString(R.string.text_signout_fail));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 }

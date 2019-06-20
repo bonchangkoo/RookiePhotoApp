@@ -61,7 +61,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        ((SettingsActivity) context).showLoading(false);
+        // Do nothing
     }
 
     // TODO : 콜백을 RxJava로 바꿀 수 있을지 고민하기
@@ -93,6 +93,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
         Preference preference = getPreference();
         preference.setTitle(user.getEmail());
         ((SettingsActivity) context).showToast(R.string.text_signin_success);
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 
