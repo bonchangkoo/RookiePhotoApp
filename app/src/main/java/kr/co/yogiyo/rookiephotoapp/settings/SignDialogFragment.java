@@ -39,14 +39,12 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        RelativeLayout signinDialogRelative = view.findViewById(R.id.relative_signin_dialog);
         signinButton = view.findViewById(R.id.btn_signin);
         signupButton = view.findViewById(R.id.btn_signup);
         signupRelativeButton = view.findViewById(R.id.relative_signup);
         emailEdit = view.findViewById(R.id.edit_email);
         passwordEdit = view.findViewById(R.id.edit_password);
         showSignFailText = view.findViewById(R.id.text_show_sign_fail);
-        ((SettingsActivity) context).addProgressBarInto(signinDialogRelative);
 
         signinButton.setOnClickListener(this);
         signupButton.setOnClickListener(this);
@@ -56,7 +54,7 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setTitle(getString(R.string.text_signin))
+        builder.setTitle(R.string.text_signin)
                 .setPositiveButton(null, null)
                 .setNegativeButton(null, null);
     }
@@ -72,17 +70,17 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_signin:
-                ((SettingsActivity) context).showLoading();
+                ((SettingsActivity) context).showLoading(true);
                 ((AuthNavigator) context).signInWithEmailAndPassword(
                         emailEdit.getText().toString(), passwordEdit.getText().toString(), this);
                 break;
             case R.id.btn_signup:
-                ((SettingsActivity) context).showLoading();
+                ((SettingsActivity) context).showLoading(true);
                 ((AuthNavigator) context).createUserWithEmailAndPassword(
                         emailEdit.getText().toString(), passwordEdit.getText().toString(), this);
                 break;
             case R.id.relative_signup:
-                getDialog().setTitle(getString(R.string.text_signup));
+                getDialog().setTitle(R.string.text_signup);
                 signinButton.setVisibility(View.GONE);
                 signupRelativeButton.setVisibility(View.GONE);
                 signupButton.setVisibility(View.VISIBLE);
@@ -94,7 +92,8 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     public void onSuccess(FirebaseUser user) {
         Preference preference = getPreference();
         preference.setTitle(user.getEmail());
-        ((SettingsActivity) context).showToast(getString(R.string.text_signin_success));
+        ((SettingsActivity) context).showToast(R.string.text_signin_success);
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 
@@ -102,6 +101,6 @@ public class SignDialogFragment extends PreferenceDialogFragmentCompat
     public void onFail() {
         showSignFailText.setText(getString(R.string.text_sign_fail));
         showSignFailText.setVisibility(View.VISIBLE);
-        ((SettingsActivity) context).hideLoading();
+        ((SettingsActivity) context).showLoading(false);
     }
 }

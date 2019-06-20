@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -30,10 +29,8 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        RelativeLayout signoutDialogRelative = view.findViewById(R.id.relative_signout_dialog);
         TextView cancelText = view.findViewById(R.id.text_cancel);
         TextView signoutText = view.findViewById(R.id.text_signout);
-        ((SettingsActivity) context).addProgressBarInto(signoutDialogRelative);
 
         cancelText.setOnClickListener(this);
         signoutText.setOnClickListener(this);
@@ -60,7 +57,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
                 dismiss();
                 break;
             case R.id.text_signout:
-                ((SettingsActivity) context).showLoading();
+                ((SettingsActivity) context).showLoading(true);
                 ((AuthNavigator) context).signOut(this);
                 break;
         }
@@ -71,12 +68,14 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
         Preference preference = getPreference();
         preference.setTitle(getString(R.string.text_need_to_signin));
         ((SettingsActivity) context).showToast(getString(R.string.text_signout_success));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 
     @Override
     public void onFail() {
         ((SettingsActivity) context).showToast(getString(R.string.text_signout_fail));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 }

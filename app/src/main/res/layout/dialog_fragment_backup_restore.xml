@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_backup_restore_dialog"
     android:layout_width="280dp"
     android:layout_height="108dp"
     android:orientation="vertical"
@@ -49,7 +48,7 @@
             android:layout_toLeftOf="@+id/text_ok"
             android:gravity="center"
             android:text="@string/text_dialog_no"
-            android:textColor="@color/color_FDB32D" />
+            android:textColor="@color/color_fdb32d" />
 
         <TextView
             android:id="@+id/text_ok"
@@ -61,6 +60,6 @@
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="@string/text_dialog_ok"
-            android:textColor="@color/color_FDB32D" />
+            android:textColor="@color/color_fdb32d" />
     </RelativeLayout>
 </RelativeLayout>

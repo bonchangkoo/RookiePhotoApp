@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RookiePhotoApp</string>
+    <string name="app_name">푸앤카레</string>
     <string name="text_flash">플래쉬</string>
     <string name="text_timer">타이머</string>
     <string name="text_timer_message_format">%d</string>
@@ -102,7 +102,10 @@
     <!--activity_diary_detail.xml-->
     <string name="text_diary_date">5월 10일</string>
     <string name="text_diary_time">8:00PM</string>
-    <string name="text_diary_content_hint">내용</string>
+    <string name="text_diary_test_image">테스트 이미지입니다</string>
+    <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
+    <string name="text_diary_content_hint">음식에 대해 기록해주세요</string>
+
 
     <!--DiaryEditActivity.java-->
     <string name="text_diary_add_title">추가</string>
@@ -122,14 +125,6 @@
     <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
     <string name="text_cant_update_diary">다이어리 변경을 하지 못했습니다</string>
     <string name="text_cant_delete_diary">다이어리를 삭제하지 못했습니다</string>
-
-    <!--DiariesActivity.java-->
-    <string name="text_date_now_page">%d.%d</string>
-
-    <!--DiariesAdapter.java-->
-    <string name="text_day_now_diary">%d일</string>
-    <string name="text_time_now_diary">%d:%s</string>
-    <string name="text_yogidiary_path">%s/%s</string>
 
     <!--activity_preview.xml-->
     <string name="text_write_diary">글쓰기</string>

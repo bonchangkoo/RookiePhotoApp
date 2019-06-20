@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -98,7 +97,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initView() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         backImageButton = findViewById(R.id.ib_back);
         toolbarNameTextView = findViewById(R.id.tv_subject);
@@ -234,7 +233,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         editDateTextView.setText(String.format("%s월 %s일", month, day));
         datePickerDialog = new DatePickerDialog
-                (DiaryEditActivity.this, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
+                (DiaryEditActivity.this, R.style.PickerTheme, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
 
         SimpleDateFormat hourFormat = new SimpleDateFormat("hh", Locale.getDefault());
         SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
@@ -252,7 +251,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             applyMerdiemHour = applyMerdiemHour + 12;
         }
 
-        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
+        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, R.style.PickerTheme, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
 
         updateHour = applyMerdiemHour;
         updateMinute = Integer.valueOf(minute);
