@@ -8,7 +8,30 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="PickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.Design.TextInputLayout">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/color_D6D6D6</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="Theme.FDB32D" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/color_fdb32d</item>
+    </style>
+
+    <style name="AppTheme.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="AppTheme.FDB32D">
-        <item name="colorAccent">@color/color_FDB32D</item>
+        <item name="colorAccent">@color/color_fdb32d</item>
     </style>
 </resources>

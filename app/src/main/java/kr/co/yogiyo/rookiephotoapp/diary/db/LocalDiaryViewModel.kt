@@ -6,17 +6,15 @@ import android.arch.lifecycle.AndroidViewModel
 import java.util.Date
 
 import io.reactivex.Completable
-import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Action
 
 class LocalDiaryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val diaryDatabase = DiaryDatabase.getDatabase(application)
 
-    fun insertDiary(date: Date, image: String, description: String): Completable {
+    fun insertDiary(date: Date, image: String?, description: String?): Completable {
         return Completable.fromAction {
             val diary = Diary(date, image, description)
             diaryDatabase?.diaryDao()?.insertDiary(diary)
@@ -32,11 +30,6 @@ class LocalDiaryViewModel(application: Application) : AndroidViewModel(applicati
 
     fun findDiaryById(diaryId: Int): Single<Diary>? {
         return diaryDatabase?.diaryDao()?.findDiaryById(diaryId)
-    }
-
-    // TODO : 날짜 순으로 정렬
-    fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>> {
-        return diaryDatabase?.diaryDao()?.findDiariesBetweenDates(from, to) ?: Flowable.just(arrayListOf())
     }
 
     fun updateDiary(diary: Diary, date: Date, image: String?, description: String?): Completable {

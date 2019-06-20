@@ -3,11 +3,21 @@ package kr.co.yogiyo.rookiephotoapp.camera
 import android.app.Activity
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import com.otaliastudios.cameraview.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.otaliastudios.cameraview.Flash
+import com.otaliastudios.cameraview.Grid
+import com.otaliastudios.cameraview.CameraListener
+import com.otaliastudios.cameraview.CameraUtils
+import com.otaliastudios.cameraview.SizeSelectors
+import com.otaliastudios.cameraview.AspectRatio
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
@@ -18,30 +28,37 @@ import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
+import kr.co.yogiyo.rookiephotoapp.gallery.GalleryFragment
+import java.util.Calendar
 
 class CameraActivity : BaseActivity() {
 
-    private lateinit var binding: ActivityCameraBinding
+    private var backPressedStartTime = 0L
 
-    private val viewModel: CameraViewModel by lazy {
+    private val cameraViewModel: CameraViewModel by lazy {
         CameraViewModel(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_camera)
-        binding.viewModel = viewModel
+        (DataBindingUtil.setContentView(this, R.layout.activity_camera) as ActivityCameraBinding)
+                .viewModel = cameraViewModel
 
         initView()
 
         initCameraView()
 
-        viewModel.initViewModel()
+        cameraViewModel.initViewModel()
     }
 
     override fun onResume() {
         super.onResume()
+        cameraViewModel.run {
+            initButtonVisibility()
+            updateGalleryButton()
+        }
+
         camera.start()
     }
 
@@ -55,11 +72,27 @@ class CameraActivity : BaseActivity() {
         camera.destroy()
     }
 
-    private fun initView() {
+    override fun onBackPressed() {
+        when {
+            cameraViewModel.timerCancel() -> return
+            btn_show_more.hasFocus() -> btn_show_more.clearFocus()
+            btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
+            else -> {
+                backPressedStartTime = Calendar.getInstance().timeInMillis.also {
+                    if (it - backPressedStartTime < 2000) {
+                        super.onBackPressed()
+                    } else {
+                        showSnackbar(relative_root, getString(R.string.text_finish_snackbar))
+                    }
+                }
+            }
+        }
+    }
 
+    private fun initView() {
         if (GlobalApplication.globalApplicationContext.isFromDiary) {
             btn_go_diary.visibility = View.INVISIBLE
-            btn_go_gallery.visibility = View.INVISIBLE
+            relative_go_gallery.visibility = View.INVISIBLE
         }
 
         btn_go_diary.setOnClickListener {
@@ -67,51 +100,133 @@ class CameraActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        btn_flash.setOnClickListener {
-            when (viewModel.getNextFlashType()) {
+        relative_flash.setOnClickListener {
+
+            when (cameraViewModel.getNextFlashType()) {
                 0 -> {
                     camera.flash = Flash.OFF
-                    viewModel.updateFlashButton(Flash.OFF.name)
+                    cameraViewModel.updateFlashButton(getString(R.string.text_flash), R.drawable.baseline_flash_off_white_24)
                 }
                 1 -> {
                     camera.flash = Flash.ON
-                    viewModel.updateFlashButton(Flash.ON.name)
+                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_ON), R.drawable.baseline_flash_on_white_24)
                 }
                 2 -> {
                     camera.flash = Flash.AUTO
-                    viewModel.updateFlashButton(Flash.AUTO.name)
+                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_AUTO), R.drawable.baseline_flash_auto_white_24)
                 }
                 3 -> {
                     camera.flash = Flash.TORCH
-                    viewModel.updateFlashButton(Flash.TORCH.name)
+                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_TORCH), R.drawable.baseline_flash_on_white_24)
                 }
             }
         }
 
-        btn_timer.setOnClickListener {
-            val captureDelayLabel = when (val captureDelay = viewModel.getNextCaptureDelay()) {
-                0 -> getString(R.string.text_timer)
-                else -> getString(R.string.text_timer_button_text_format).format(captureDelay)
-            }
-            viewModel.updateDelayButton(captureDelayLabel)
-        }
-
-        btn_change_camera.setOnClickListener {
-            when {
-                camera.facing == Facing.FRONT -> {
-                    camera.facing = Facing.BACK
-                    viewModel.updateFacingButton(Facing.BACK.name)
-                }
-                else -> {
-                    camera.facing = Facing.FRONT
-                    viewModel.updateFacingButton(Facing.FRONT.name)
-                }
+        relative_go_gallery.run {
+            setOnClickListener {
+                val intent = Intent(this@CameraActivity, GalleryActivity::class.java)
+                startActivity(intent)
             }
         }
 
-        btn_go_gallery.setOnClickListener {
-            val intent = Intent(this, GalleryActivity::class.java)
-            startActivity(intent)
+        btn_one_to_one.setOnClickListener {
+            cameraViewModel.updateViewByCaptureSize(false)
+            setCaptureSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1, 1)
+        }
+
+        btn_three_to_four.setOnClickListener {
+            cameraViewModel.updateViewByCaptureSize(false)
+            setCaptureSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 3, 4)
+        }
+
+        btn_nine_to_sixteen.setOnClickListener {
+            cameraViewModel.updateViewByCaptureSize(true)
+            setCaptureSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 9, 16)
+        }
+
+        relative_grid.setOnClickListener {
+            camera.run {
+                grid = when (cameraViewModel.getNextGridType()) {
+                    0 -> {
+                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid),
+                                if (cameraViewModel.isCaptureSizeFull()) {
+                                    R.drawable.baseline_grid_off_white_36
+                                } else {
+                                    R.drawable.baseline_grid_off_black_36
+                                })
+                        Grid.OFF
+                    }
+                    1 -> {
+                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_three_by_three),
+                                if (cameraViewModel.isCaptureSizeFull()) {
+                                    R.drawable.baseline_grid_on_white_36
+                                } else {
+                                    R.drawable.baseline_grid_on_black_36
+                                })
+                        Grid.DRAW_3X3
+                    }
+                    2 -> {
+                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_four_by_four),
+                                if (cameraViewModel.isCaptureSizeFull()) {
+                                    R.drawable.baseline_grid_on_white_36
+                                } else {
+                                    R.drawable.baseline_grid_on_black_36
+                                })
+                        Grid.DRAW_4X4
+                    }
+                    else -> {
+                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_phi),
+                                if (cameraViewModel.isCaptureSizeFull()) {
+                                    R.drawable.baseline_grid_on_white_36
+                                } else {
+                                    R.drawable.baseline_grid_on_black_36
+                                })
+                        Grid.DRAW_PHI
+                    }
+                }
+            }
+        }
+
+        btn_show_more.run {
+            setOnClickListener {
+                cameraViewModel.updateShowMoreLayout(if (relative_more_control_buttons.visibility == View.VISIBLE) {
+                    clearFocus()
+                    View.GONE
+                } else {
+                    requestFocus()
+                    View.VISIBLE
+                })
+            }
+
+            setOnFocusChangeListener { _, hasFocus ->
+                cameraViewModel.updateShowMoreLayout(if (!hasFocus) View.GONE else View.VISIBLE)
+            }
+        }
+
+        btn_capture_size.run {
+            setOnClickListener {
+                cameraViewModel.updateShowCaptureSizeLayout(if (relative_capture_size_buttons.visibility == View.VISIBLE) {
+                    clearFocus()
+                    View.GONE
+                } else {
+                    requestFocus()
+                    View.VISIBLE
+                })
+            }
+
+            setOnFocusChangeListener { _, hasFocus ->
+                cameraViewModel.updateShowCaptureSizeLayout(if (!hasFocus) View.GONE else View.VISIBLE) }
+        }
+
+        relative_root.run {
+            requestFocus()
+
+            setOnClickListener {
+                when {
+                    btn_show_more.hasFocus() -> btn_show_more.clearFocus()
+                    btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
+                }
+            }
         }
     }
 
@@ -120,6 +235,7 @@ class CameraActivity : BaseActivity() {
             addCameraListener(object : CameraListener() {
                 override fun onPictureTaken(jpeg: ByteArray?) {
                     if (jpeg != null) {
+                        startBlinkAnimation()
                         CameraUtils.decodeBitmap(jpeg, CameraUtils.BitmapCallback { bitmap ->
                             if (bitmap == null) {
                                 finish()
@@ -136,13 +252,14 @@ class CameraActivity : BaseActivity() {
                     }
                 }
 
+                override fun onFocusStart(point: PointF?) {
+                    when {
+                        btn_show_more.hasFocus() -> btn_show_more.clearFocus()
+                        btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
+                        else -> super.onFocusStart(point)
+                    }
+                }
             })
-
-            mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
-
-            val ratio = SizeSelectors.aspectRatio(AspectRatio.of(3, 4), 0f)
-            val result = SizeSelectors.or(ratio, SizeSelectors.biggest())
-            setPictureSize(result)
         }
     }
 
@@ -168,9 +285,21 @@ class CameraActivity : BaseActivity() {
     }
 
     private fun CameraViewModel.initViewModel() {
-        captureNow = {
-            camera.capturePicture()
-            startBlinkAnimation()
+        captureNow = { camera.capturePicture() }
+        updateGalleryButton = {
+            GalleryFragment.loadImages("YogiDiary").run {
+                Glide.with(this@CameraActivity)
+                        .load(if (isEmpty()) null else this[0].pathOfImage)
+                        .error(if (cameraViewModel.isCaptureSizeFull()) {
+                            R.drawable.baseline_collections_white_24
+                        } else {
+                            R.drawable.baseline_collections_black_24
+                        })
+                        .apply(RequestOptions.circleCropTransform())
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(btn_go_gallery)
+            }
         }
     }
 
@@ -193,6 +322,18 @@ class CameraActivity : BaseActivity() {
         frame_dark_screen.run {
             visibility = View.VISIBLE
             startAnimation(blinkAnimation)
+        }
+    }
+
+    private fun setCaptureSize(width: Int, height: Int, x: Int, y: Int) {
+        camera.run {
+            stop()
+            layoutParams.width = width
+            layoutParams.height = height
+            val ratio = SizeSelectors.aspectRatio(AspectRatio.of(x, y), 0f)
+            val result = SizeSelectors.or(ratio, SizeSelectors.biggest())
+            setPictureSize(result)
+            start()
         }
     }
 }
