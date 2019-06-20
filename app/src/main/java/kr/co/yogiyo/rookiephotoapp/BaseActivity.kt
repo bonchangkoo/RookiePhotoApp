@@ -51,9 +51,9 @@ open class BaseActivity : AppCompatActivity() {
                 .create().apply {
                     setOnShowListener(onShowListener ?: DialogInterface.OnShowListener { dialog ->
                         (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
-                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FDB32D))
+                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_fdb32d))
                         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FDB32D))
+                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_fdb32d))
                     })
                 }
     }

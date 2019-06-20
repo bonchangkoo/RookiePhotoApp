@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/edit_password"
         android:text="@string/text_sign_fail"
-        android:textColor="@color/color_FDB32D"
+        android:textColor="@color/color_fdb32d"
         android:visibility="gone" />
 
     <Button
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_show_sign_fail"
         android:layout_marginTop="12dp"
-        android:background="@color/color_FDB32D"
+        android:background="@color/color_fdb32d"
         android:text="@string/text_signin"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_show_sign_fail"
         android:layout_marginTop="12dp"
-        android:background="@color/color_FDB32D"
+        android:background="@color/color_fdb32d"
         android:text="@string/text_signup"
         android:textColor="@android:color/white"
         android:textStyle="bold"
