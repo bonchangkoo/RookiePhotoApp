@@ -403,7 +403,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
         if (!Constants.YOGIDIARY_PATH.exists()) {

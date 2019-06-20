@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimary">#fdb32d</color>
     <color name="colorPrimaryDark">#fdb32d</color>
     <color name="colorAccent">#fdb32d</color>
@@ -11,4 +12,9 @@
     <color name="color_783f04">#783f04</color>
     <color name="color_fdb32d">#fdb32d</color>
     <color name="color_D6D6D6">#D6D6D6</color>
+
+    <color name="ucrop_color_widget_active">#f5f5f5</color>
+    <color name="ucrop_color_active_controls_color">#FFFFFF</color>
+    <color name="ucrop_color_widget_rotate_mid_line">#fdb32d</color>
+    <color name="ucrop_color_widget_background">#fdb32d</color>
 </resources>

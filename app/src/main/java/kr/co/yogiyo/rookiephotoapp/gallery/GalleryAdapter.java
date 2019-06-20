@@ -20,15 +20,15 @@ import kr.co.yogiyo.rookiephotoapp.R;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder> {
 
-    private List<String> imagePaths;
+    private List<LoadImage> loadImages;
 
     private Context context;
 
     private GalleryViewHolder selectedViewHolder;
 
-    public GalleryAdapter(Context context, List<String> imagePaths) {
+    public GalleryAdapter(Context context, List<LoadImage> loadImages) {
         this.context = context;
-        this.imagePaths = imagePaths;
+        this.loadImages = loadImages;
     }
 
     @NonNull
@@ -41,7 +41,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
     @Override
     public void onBindViewHolder(@NonNull final GalleryViewHolder galleryViewHolder, int i) {
         Glide.with(context)
-                .load(imagePaths.get(i))
+                .load(loadImages.get(i).getPathOfImage())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(galleryViewHolder.imageView);
@@ -52,16 +52,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.GalleryV
 
     @Override
     public int getItemCount() {
-        return imagePaths.size();
+        return loadImages.size();
     }
 
-    public void setImages(List<String> images) {
-        this.imagePaths = images;
+    public void setImages(List<LoadImage> images) {
+        this.loadImages = images;
     }
 
     public Uri getSelectedImageUri() {
         if (selectedViewHolder != null) {
-            return Uri.fromFile(new File(imagePaths.get(selectedViewHolder.getAdapterPosition())));
+            return Uri.fromFile(new File(loadImages.get(selectedViewHolder.getAdapterPosition()).getPathOfImage()));
         }
         return null;
     }

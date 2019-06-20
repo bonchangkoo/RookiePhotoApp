@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".camera.CameraActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.FullScreen" />
         <activity android:name=".BaseActivity" />
         <activity
             android:name=".camera.capture.PreviewActivity"

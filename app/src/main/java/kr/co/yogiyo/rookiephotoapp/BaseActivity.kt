@@ -1,10 +1,12 @@
 package kr.co.yogiyo.rookiephotoapp
 
+import android.support.design.widget.Snackbar
 import android.content.Context
 import android.content.DialogInterface
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import io.reactivex.disposables.CompositeDisposable
 import kr.co.yogiyo.rookiephotoapp.util.LoadingDialogFragment
@@ -26,6 +28,10 @@ open class BaseActivity : AppCompatActivity() {
 
     fun showToast(stringId: Int) {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
+    }
+
+    fun showSnackbar(view: View, toastMessage: String?) {
+        Snackbar.make(view, toastMessage.toString(), Snackbar.LENGTH_SHORT).show()
     }
 
     fun showLoading(visible: Boolean) {
