@@ -8,4 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.FDB32D">
+        <item name="colorAccent">@color/color_FDB32D</item>
+    </style>
 </resources>
