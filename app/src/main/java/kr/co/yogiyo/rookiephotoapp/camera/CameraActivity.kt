@@ -79,7 +79,8 @@ class CameraActivity : BaseActivity() {
             btn_capture_size.hasFocus() -> btn_capture_size.clearFocus()
             else -> {
                 backPressedStartTime = Calendar.getInstance().timeInMillis.also {
-                    if (it - backPressedStartTime < 2000) {
+                    if (it - backPressedStartTime < 2000 ||
+                            GlobalApplication.globalApplicationContext.isFromDiary) {
                         super.onBackPressed()
                     } else {
                         showSnackbar(relative_root, getString(R.string.text_finish_snackbar))
@@ -90,10 +91,6 @@ class CameraActivity : BaseActivity() {
     }
 
     private fun initView() {
-        if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            btn_go_diary.visibility = View.INVISIBLE
-            relative_go_gallery.visibility = View.INVISIBLE
-        }
 
         btn_go_diary.setOnClickListener {
             val intent = Intent(this, DiariesActivity::class.java)
