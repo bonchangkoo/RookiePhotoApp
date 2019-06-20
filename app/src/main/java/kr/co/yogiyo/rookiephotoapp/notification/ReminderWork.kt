@@ -12,7 +12,7 @@ class ReminderWork(val context: Context, params: WorkerParameters) : Worker(cont
 
     override fun doWork(): Result {
         ReminderNotification.generateNotification(context)
-        enqueueReminder()
+        // TODO : 반복 실행 코드, enqueueReminder()
 
         return Result.success()
     }
@@ -28,9 +28,8 @@ class ReminderWork(val context: Context, params: WorkerParameters) : Worker(cont
         fun enqueueReminder() {
             val currentDate = Calendar.getInstance()
             val dueDate = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 12)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
+                // TODO : 시간 설정 코드 set(Calendar.HOUR_OF_DAY, 12), set(Calendar.MINUTE, 0), set(Calendar.SECOND, 0)
+                add(Calendar.SECOND, 2)
                 set(Calendar.MILLISECOND, 0)
             }
             if (dueDate.before(currentDate)) {
