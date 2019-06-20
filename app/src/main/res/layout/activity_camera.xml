@@ -32,7 +32,7 @@
                 android:keepScreenOn="true"
                 app:cameraGesturePinch="zoom"
                 app:cameraGestureTap="focusWithMarker"
-                app:cameraPictureSizeAspectRatio="1:1"
+                app:cameraPictureSizeAspectRatio="3:4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
