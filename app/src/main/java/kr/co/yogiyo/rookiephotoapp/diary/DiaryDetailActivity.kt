@@ -34,19 +34,19 @@ class DiaryDetailActivity : BaseActivity() {
     private fun initialize() {
         val dao = DiaryDatabase.getDatabase(this)!!.diaryDao()
         val repository = DiaryRepository.getInstance(dao)
-        val factory = DiaryDetailViewModelFactory(repository)
+        val viewModelFactory = DiaryDetailViewModelFactory(repository)
 
         activityDiaryDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_diary_detail)
-        diaryDetailViewModel = ViewModelProviders.of(this, factory).get(DiaryDetailViewModel::class.java)
+        diaryDetailViewModel = ViewModelProviders.of(this, viewModelFactory).get(DiaryDetailViewModel::class.java)
         activityDiaryDetailBinding.viewModel = diaryDetailViewModel
     }
 
     private fun DiaryDetailViewModel.initViewModel() {
-        compeleteDelete = {
+        diaryDeleteComplete = {
             showToast(R.string.text_diary_detail_deleted)
             finish()
         }
-        errorDelete = {
+        diaryDeleteError = {
             showToast(getString(R.string.text_cant_delete_diary))
         }
     }

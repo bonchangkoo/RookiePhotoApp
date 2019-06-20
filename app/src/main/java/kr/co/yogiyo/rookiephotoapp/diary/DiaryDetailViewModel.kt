@@ -4,10 +4,8 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.databinding.ObservableField
 import android.net.Uri
-import io.reactivex.CompletableObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryRepository
@@ -19,13 +17,13 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    var dateTextLabel: ObservableField<String> = ObservableField(String.format("%s월 %s일", 1, 1))
-    var timeTextLabel: ObservableField<String> = ObservableField(String.format("%s:%s%s", 12, 0, "AM"))
-    var detailImageUri: ObservableField<Uri> = ObservableField()
-    var descriptionTextLabel: ObservableField<String> = ObservableField("내용")
+    val dateTextLabel: ObservableField<String> = ObservableField(String.format("%s월 %s일", 1, 1))
+    val timeTextLabel: ObservableField<String> = ObservableField(String.format("%s:%s%s", 12, 0, "AM"))
+    val detailImageUri: ObservableField<Uri> = ObservableField()
+    val descriptionTextLabel: ObservableField<String> = ObservableField("내용")
 
-    lateinit var compeleteDelete: () -> Unit
-    lateinit var errorDelete: () -> Unit
+    lateinit var diaryDeleteComplete: () -> Unit
+    lateinit var diaryDeleteError: () -> Unit
 
     fun loadViewData(diaryIndex: Int) {
         compositeDisposable.add(dairyRepository.findDiaryById(diaryIndex)
@@ -41,29 +39,18 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
     fun deleteDiary(idx: Int) {
         compositeDisposable.add(dairyRepository.findDiaryById(idx)
                 .subscribeOn(Schedulers.single())
+                .flatMapCompletable {
+                    dairyRepository.deleteDiary(it)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { diary ->
-                    diary.run {
-                        dairyRepository.deleteDiary(this)
-                                .subscribeOn(Schedulers.single())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(object : CompletableObserver {
-                                    override fun onSubscribe(d: Disposable) {
-                                        //Do noting
-                                    }
+                .subscribe({
+                    diaryDeleteComplete()
+                }, {
+                    diaryDeleteError()
+                }))
 
-                                    override fun onComplete() {
-                                        compeleteDelete()
-                                    }
-
-                                    override fun onError(e: Throwable) {
-                                        errorDelete()
-                                    }
-                                })
-                    }
-                })
     }
-
+    
 
     private fun setDateAndTime(dateAndTime: Date) {
 

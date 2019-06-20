@@ -15,9 +15,7 @@ import java.util.*
 fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
 
     if (!Constants.YOGIDIARY_PATH.exists()) {
-        if (!Constants.YOGIDIARY_PATH.mkdirs()) {
-            return false
-        }
+        return (!Constants.YOGIDIARY_PATH.mkdirs())
     }
 
     val downloadsDirectoryPath = "${Constants.YOGIDIARY_PATH.path}/"
@@ -51,9 +49,7 @@ fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
 fun Context?.copyFileToDownloads(croppedFileUri: Uri): Boolean {
 
     if (!Constants.YOGIDIARY_PATH.exists()) {
-        if (!Constants.YOGIDIARY_PATH.mkdirs()) {
-            return false
-        }
+        return (!Constants.YOGIDIARY_PATH.mkdirs())
     }
 
     val downloadsDirectoryPath = Constants.YOGIDIARY_PATH.path + "/"
