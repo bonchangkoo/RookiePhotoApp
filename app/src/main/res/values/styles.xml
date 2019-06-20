@@ -23,4 +23,7 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <style name="Theme.FDB32D" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/color_fdb32d</item>
+    </style>
 </resources>

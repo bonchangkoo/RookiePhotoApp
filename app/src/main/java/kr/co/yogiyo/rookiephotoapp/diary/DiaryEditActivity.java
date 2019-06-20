@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -98,7 +97,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void initView() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         backImageButton = findViewById(R.id.ib_back);
         toolbarNameTextView = findViewById(R.id.tv_subject);

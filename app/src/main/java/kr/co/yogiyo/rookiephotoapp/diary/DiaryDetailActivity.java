@@ -1,6 +1,5 @@
 package kr.co.yogiyo.rookiephotoapp.diary;
 
-
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;

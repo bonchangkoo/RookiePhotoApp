@@ -5,18 +5,15 @@ import android.content.DialogInterface
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
 import android.widget.Toast
 import io.reactivex.disposables.CompositeDisposable
+import kr.co.yogiyo.rookiephotoapp.util.LoadingDialogFragment
 
 open class BaseActivity : AppCompatActivity() {
 
-    val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private val loadingDialogFragment by lazy { LoadingDialogFragment() }
 
-    private lateinit var progressBar: ProgressBar
+    val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onDestroy() {
         super.onDestroy()
@@ -31,20 +28,13 @@ open class BaseActivity : AppCompatActivity() {
         Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
     }
 
-    fun addProgressBarInto(layout: ViewGroup) {
-        progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleLarge)
-        val params = RelativeLayout.LayoutParams(200, 200)
-        params.addRule(RelativeLayout.CENTER_IN_PARENT)
-        layout.addView(progressBar, params)
-        progressBar.visibility = View.GONE
-    }
-
-    fun showLoading() {
-        progressBar.visibility = View.VISIBLE
-    }
-
-    fun hideLoading() {
-        progressBar.visibility = View.GONE
+    fun showLoading(visible: Boolean) {
+        with(loadingDialogFragment) {
+            when {
+                visible -> show(this@BaseActivity.supportFragmentManager, "show_loading")
+                else -> dismiss()
+            }
+        }
     }
 
     fun createAlertDialog(context: Context,
@@ -59,12 +49,12 @@ open class BaseActivity : AppCompatActivity() {
                 .setPositiveButton(positiveButtonText, onClickListener)
                 .setNegativeButton(negativeButtonText, onClickListener)
                 .create().apply {
-                    setOnShowListener(if(onShowListener == null){
-                        DialogInterface.OnShowListener {dialog ->
-                            (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
-                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_FF0000))
-                        }
-                    } else onShowListener)
+                    setOnShowListener(onShowListener ?: DialogInterface.OnShowListener { dialog ->
+                        (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_fdb32d))
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                                .setTextColor(ContextCompat.getColor(this@BaseActivity, R.color.color_fdb32d))
+                    })
                 }
     }
 
