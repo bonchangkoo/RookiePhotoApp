@@ -134,13 +134,16 @@ class CameraViewModel(private val context: Context) : BaseObservable() {
         frameControlButtonVisibility.set(View.VISIBLE)
         showMoreLayoutVisibility.set(View.GONE)
         showCaptureSizeLayoutVisibility.set(View.GONE)
-        if(GlobalApplication.globalApplicationContext.isFromDiary){
-            goDiaryButtonVisibility.set(View.INVISIBLE)
-            goGalleryButtonVisibility.set(View.INVISIBLE)
+        goDiaryButtonVisibility.set(if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            View.INVISIBLE
         } else {
-            goDiaryButtonVisibility.set(View.VISIBLE)
-            goGalleryButtonVisibility.set(View.VISIBLE)
-        }
+            View.VISIBLE
+        })
+        goGalleryButtonVisibility.set(if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            View.INVISIBLE
+        } else {
+            View.VISIBLE
+        })
     }
 
     fun timerCancel(): Boolean {
