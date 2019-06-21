@@ -291,6 +291,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                                 @Override
                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                     isPhotoUpdate = true;
+                                    isBitmap = false;
                                     return false;
                                 }
                             })
