@@ -56,7 +56,12 @@ class CameraActivity : BaseActivity() {
         super.onResume()
         cameraViewModel.run {
             initButtonVisibility()
-            updateGalleryButton()
+            if(!GlobalApplication.globalApplicationContext.isFromDiary){
+                updateGalleryButton()
+            } else {
+                btn_go_diary.visibility = View.GONE
+                relative_go_gallery.visibility = View.GONE
+            }
         }
 
         camera.start()

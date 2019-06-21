@@ -14,6 +14,7 @@ public class SettingsActivity extends BaseActivity implements AuthNavigator {
     public static final String RESTORE_DIALOG_KEY = "restore_dialog";
     public static final String SIGN_DIALOG_KEY = "sign_dialog";
     public static final String PREFERENCE_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG";
+    public static final String SWITCH_REMINDER_KEY = "switch_reminder";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

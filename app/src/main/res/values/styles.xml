@@ -30,4 +30,8 @@
     <style name="AppTheme.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="AppTheme.FDB32D">
+        <item name="colorAccent">@color/color_fdb32d</item>
+    </style>
 </resources>

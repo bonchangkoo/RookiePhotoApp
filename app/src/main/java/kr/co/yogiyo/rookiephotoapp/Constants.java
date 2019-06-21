@@ -19,4 +19,8 @@ public class Constants {
 
     // PATH
     public static final File FOONCARE_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "FooNCaRe");
+
+    // SHARED PREFERENCE FILE NAME
+    public static final String SHARED_PREFERENCE_FILE_NAME = "kr.co.yogiyo.rookiephotoapp_preferences";
+
 }

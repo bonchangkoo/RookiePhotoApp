@@ -74,7 +74,7 @@
                 android:layout_toStartOf="@+id/btn_date_now_page"
                 android:layout_toLeftOf="@+id/btn_date_now_page"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_navigate_before_black_48" />
+                android:src="@mipmap/ic_pre_arrow" />
 
             <Button
                 android:id="@+id/btn_date_now_page"
@@ -85,6 +85,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:gravity="center"
                 android:text="@{viewModel.nowPageYearMonth}"
+                android:textColor="@color/color_783f04"
                 android:textSize="20sp" />
 
             <ImageButton
@@ -95,7 +96,7 @@
                 android:layout_toEndOf="@+id/btn_date_now_page"
                 android:layout_toRightOf="@+id/btn_date_now_page"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_navigate_next_black_48" />
+                android:src="@mipmap/ic_next_arrow" />
         </RelativeLayout>
 
         <android.support.v4.view.ViewPager
