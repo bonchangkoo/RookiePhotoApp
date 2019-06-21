@@ -160,10 +160,10 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                         .flatMapIterable(diaries -> diaries)
                         .flatMap((Function<Diary, Publisher<ResponseBody>>) diary -> {
                             if (diary.getImage() != null) {
-                                File imageFile = new File(Constants.YOGIDIARY_PATH, diary.getImage());
+                                File imageFile = new File(Constants.FOONCARE_PATH, diary.getImage());
                                 if (imageFile.isFile()) {
                                     imageCompressor.setDestinationDirectoryPath(
-                                            Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
+                                            Constants.FOONCARE_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
                                             .compressToFile(imageFile);
                                 }
                             }
@@ -261,13 +261,13 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
     }
 
     private boolean writeResponseBodyToDisk(String imageFileName, ResponseBody body) {
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (!Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (!Constants.FOONCARE_PATH.mkdirs()) {
                 return false;
             }
         }
 
-        File restoredImageFile = new File(Constants.YOGIDIARY_PATH, imageFileName);
+        File restoredImageFile = new File(Constants.FOONCARE_PATH, imageFileName);
 
         try (InputStream inputStream = body.byteStream();
              OutputStream outputStream = new FileOutputStream(restoredImageFile)) {

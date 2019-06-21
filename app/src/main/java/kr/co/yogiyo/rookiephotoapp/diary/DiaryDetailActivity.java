@@ -21,12 +21,10 @@ import java.util.Locale;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kr.co.yogiyo.rookiephotoapp.BaseActivity;
 import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
-import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel;
 
 public class DiaryDetailActivity extends BaseActivity implements View.OnClickListener {
@@ -104,7 +102,7 @@ public class DiaryDetailActivity extends BaseActivity implements View.OnClickLis
                 .subscribe(diary -> {
                     setDateAndTime(diary.getDate());
                     Glide.with(DiaryDetailActivity.this)
-                            .load(Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + diary.getImage())
+                            .load(Constants.FOONCARE_PATH.getAbsolutePath() + File.separator + diary.getImage())
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true)
                             .into(detailPhotoImageView);

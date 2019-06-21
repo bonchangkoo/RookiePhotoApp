@@ -14,7 +14,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
-import kr.co.yogiyo.rookiephotoapp.Constants.YOGIDIARY_PATH
+import kr.co.yogiyo.rookiephotoapp.Constants.FOONCARE_PATH
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
@@ -120,13 +120,13 @@ class EditResultActivity : BaseActivity() {
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri) {
 
-        if (!YOGIDIARY_PATH.exists()) {
-            if (!YOGIDIARY_PATH.mkdirs()) {
+        if (!FOONCARE_PATH.exists()) {
+            if (!FOONCARE_PATH.mkdirs()) {
                 return finish()
             }
         }
 
-        val downloadsDirectoryPath = YOGIDIARY_PATH.path + "/"
+        val downloadsDirectoryPath = FOONCARE_PATH.path + "/"
         val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
 
         val saveFile = File(downloadsDirectoryPath, filename)

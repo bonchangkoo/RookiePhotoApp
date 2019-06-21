@@ -47,7 +47,7 @@ class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerV
             descriptionText.text = diary.description
         }
 
-        val imageAbsolutePath = "${Constants.YOGIDIARY_PATH.absolutePath}/${diary.image}"
+        val imageAbsolutePath = "${Constants.FOONCARE_PATH.absolutePath}/${diary.image}"
         Glide.with(context)
                 .load(imageAbsolutePath)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
