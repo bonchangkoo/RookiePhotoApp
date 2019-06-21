@@ -48,7 +48,7 @@ object ReminderNotification {
                         PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_foo_and_care)
+                .setSmallIcon(R.mipmap.ic_foo_notification_foreground)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
                 .setContentTitle(context.getString(R.string.text_ask_food_title))
                 .setContentText(context.getString(R.string.text_ask_food_message))
