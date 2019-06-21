@@ -211,7 +211,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             setDateAndTime(diary.getDate());
                             photoFileName = diary.getImage();
                             Glide.with(DiaryEditActivity.this)
-                                    .load(Constants.YOGIDIARY_PATH + File.separator + photoFileName)
+                                    .load(Constants.FOONCARE_PATH + File.separator + photoFileName)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .skipMemoryCache(true)
                                     .into(editPhotoImageButton);
@@ -405,15 +405,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (Constants.FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.FOONCARE_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);
@@ -432,15 +432,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void bitmapToDownloads(Bitmap bitmap, long time) throws Exception {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (Constants.FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.FOONCARE_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);

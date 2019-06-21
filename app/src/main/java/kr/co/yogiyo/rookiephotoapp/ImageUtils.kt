@@ -13,13 +13,13 @@ import java.util.*
 @Throws(Exception::class)
 fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
 
-    if (!Constants.YOGIDIARY_PATH.exists()) {
-        if (!Constants.YOGIDIARY_PATH.mkdirs()) {
+    if (!Constants.FOONCARE_PATH.exists()) {
+        if (!Constants.FOONCARE_PATH.mkdirs()) {
             return false
         }
     }
 
-    val downloadsDirectoryPath = "${Constants.YOGIDIARY_PATH.path}/"
+    val downloadsDirectoryPath = "${Constants.FOONCARE_PATH.path}/"
     val filename = String.format(Locale.getDefault(), "%d%s", Calendar.getInstance().timeInMillis, ".jpg")
 
     val file = File(downloadsDirectoryPath, filename)
