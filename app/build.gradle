@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -91,4 +92,7 @@ dependencies {
 
     // WorkManager library
     implementation "android.arch.work:work-runtime:1.0.1"
+
+    // multidex
+    implementation 'com.android.support:multidex:1.0.3'
 }

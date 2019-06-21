@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp
 
 import android.app.Application
 import android.content.Context
+import android.support.multidex.MultiDex
 import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork
 import com.google.firebase.auth.FirebaseAuth
 
@@ -11,6 +12,11 @@ class GlobalApplication : Application() {
 
     val firebaseAuth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
     override fun onCreate() {
