@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.activity_diaries.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
@@ -54,6 +55,20 @@ class DiariesActivity : BaseActivity() {
             adapter = DiariesFragmentPagerAdapter(this@DiariesActivity, this@DiariesActivity.supportFragmentManager)
             currentItem = FIRST_PAGE
             offscreenPageLimit = 3
+
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(p0: Int) {
+                    // Do nothing
+                }
+
+                override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+                    // Do nothing
+                }
+
+                override fun onPageSelected(position: Int) {
+                    diariesViewModel.updateNowPageYearMonth(position)
+                }
+            })
         }
 
         btn_start_camera.setOnClickListener {
