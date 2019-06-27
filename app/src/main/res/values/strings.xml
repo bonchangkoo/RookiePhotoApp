@@ -132,7 +132,7 @@
     <string name="text_start_camera">촬영하기</string>
     <string name="text_start_diary_add">작성하기</string>
     <string name="text_ask_food_title">어떤 음식을 드셨나요?</string>
-    <string name="text_ask_food_message">궁금해요!</string>
+    <string name="text_ask_food_message">궁금해요!🤔</string>
 
     <!--activity_preview.xml-->
     <string name="text_write_diary">글쓰기</string>
