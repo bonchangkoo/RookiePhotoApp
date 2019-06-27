@@ -54,9 +54,7 @@ class CameraActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        cameraViewModel.run {
-            cameraViewModel.initControlView()
-        }
+        cameraViewModel.initControlView()
 
         camera.start()
     }
