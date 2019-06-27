@@ -55,8 +55,7 @@ class CameraActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         cameraViewModel.run {
-            initButtonVisibility()
-            updateGalleryButton()
+            cameraViewModel.initControlView()
         }
 
         camera.start()
