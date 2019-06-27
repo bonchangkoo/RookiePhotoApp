@@ -21,7 +21,7 @@ import java.util.GregorianCalendar
 
 class DiariesAdapter(val context: Context, var diaries: List<Diary>) : RecyclerView.Adapter<DiariesAdapter.DiariesViewHolder>() {
 
-    private val hourMinuteFormat by lazy { SimpleDateFormat("KK:mm\na", Locale.getDefault()) }
+    private val hourMinuteFormat by lazy { SimpleDateFormat("hh:mma", Locale.getDefault()) }
     private val dayFormat by lazy { SimpleDateFormat("dd일", Locale.getDefault()) }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): DiariesViewHolder {
