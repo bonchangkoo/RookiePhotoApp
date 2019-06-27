@@ -85,7 +85,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
 
-        diaryIdx = getIntent().getIntExtra("DIARY_IDX", -1);
+        diaryIdx = getIntent().getIntExtra(Constants.DIARY_IDX, -1);
 
         initView();
         setViewData(diaryIdx);

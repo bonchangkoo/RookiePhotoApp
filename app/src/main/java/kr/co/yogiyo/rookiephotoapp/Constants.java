@@ -6,6 +6,8 @@ import java.io.File;
 
 public class Constants {
 
+    public static final String DIARY_IDX = "DIARY_IDX";
+
     // REQUEST
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     public static final int REQUEST_DIARY_PICK_GALLERY = 104;

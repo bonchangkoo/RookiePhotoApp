@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_diary_detail.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
+import kr.co.yogiyo.rookiephotoapp.Constants.DIARY_IDX
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityDiaryDetailBinding
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase
@@ -21,13 +22,15 @@ class DiaryDetailActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        diaryIdx = intent.getIntExtra("DIARY_IDX", 0)
+        diaryIdx = intent.getIntExtra(DIARY_IDX, 0)
 
         initialize()
         initView()
 
-        diaryDetailViewModel.loadViewData(diaryIdx)
-        diaryDetailViewModel.initViewModel()
+        diaryDetailViewModel.run {
+            loadViewData((diaryIdx))
+            initViewModel()
+        }
 
     }
 
@@ -72,7 +75,7 @@ class DiaryDetailActivity : BaseActivity() {
 
         ib_diary_edit.setOnClickListener {
             val diaryEditActivityIntent = Intent(this, DiaryEditActivity::class.java).apply {
-                putExtra("DIARY_IDX", diaryIdx)
+                putExtra(DIARY_IDX, diaryIdx)
             }
             startActivity(diaryEditActivityIntent)
             finish()

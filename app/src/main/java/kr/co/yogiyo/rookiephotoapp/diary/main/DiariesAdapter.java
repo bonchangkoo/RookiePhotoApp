@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import kr.co.yogiyo.rookiephotoapp.Constants;
 import kr.co.yogiyo.rookiephotoapp.R;
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailActivity;
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary;
@@ -98,7 +99,7 @@ public class DiariesAdapter extends RecyclerView.Adapter<DiariesAdapter.DiariesV
                 public void onClick(View v) {
                     Log.d(DiariesAdapter.class.getSimpleName(), diaries.get(getAdapterPosition()).getIdx() + "");
                     Intent intent = new Intent(context, DiaryDetailActivity.class);
-                    intent.putExtra("DIARY_IDX", diaries.get(getAdapterPosition()).getIdx());
+                    intent.putExtra(Constants.DIARY_IDX, diaries.get(getAdapterPosition()).getIdx());
                     context.startActivity(intent);
                 }
             });

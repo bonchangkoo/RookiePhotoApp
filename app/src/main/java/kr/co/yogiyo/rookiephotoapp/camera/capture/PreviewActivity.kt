@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.*
+import kr.co.yogiyo.rookiephotoapp.Constants.DIARY_IDX
 import kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
@@ -60,7 +61,7 @@ class PreviewActivity : BaseActivity() {
                 startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
 
                 val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
-                    putExtra("DIARY_IDX", -1)
+                    putExtra(DIARY_IDX, -1)
                     putExtra("FROM_PREVIEW", true)
                 }
                 startActivity(startDiaryEditActivityIntent)
