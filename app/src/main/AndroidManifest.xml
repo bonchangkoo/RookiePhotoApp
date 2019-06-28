@@ -19,9 +19,6 @@
             android:name=".gallery.GalleryActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".diary.main.DiariesActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".MainActivity"
             android:noHistory="true">
             <intent-filter>
@@ -52,6 +49,9 @@
         <activity
             android:name=".diary.DiaryEditActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".diary.main.DiariesActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".diary.DiaryDetailActivity"

@@ -8,6 +8,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.GregorianCalendar
@@ -15,7 +16,7 @@ import java.util.Calendar
 import java.util.Date
 
 class DiariesViewModel(
-        private val diariesRepository: DiariesRepository,
+        private val diaryRepository: DiaryRepository,
         application: Application
 ) : AndroidViewModel(application) {
 
@@ -64,7 +65,7 @@ class DiariesViewModel(
 
         showLoadingView
         compositeDisposable.add(
-                diariesRepository.findDiariesBetweenDates(fromCalendar.time, toCalendar.time)
+                diaryRepository.findDiariesBetweenDates(fromCalendar.time, toCalendar.time)
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
                         .subscribe({ diaries ->
