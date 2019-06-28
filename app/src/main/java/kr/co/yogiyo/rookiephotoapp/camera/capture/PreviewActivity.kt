@@ -22,13 +22,11 @@ import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
 
-
 class PreviewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPreviewBinding
     private lateinit var previewViewModel: PreviewViewModel
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,7 +90,6 @@ class PreviewActivity : BaseActivity() {
         btn_edit.setOnClickListener {
             editCapturedPhoto()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -109,7 +106,6 @@ class PreviewActivity : BaseActivity() {
             }
         }
     }
-
 
     private fun editCapturedPhoto() {
 

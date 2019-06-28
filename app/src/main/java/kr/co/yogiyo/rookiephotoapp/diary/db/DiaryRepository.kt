@@ -1,6 +1,7 @@
 package kr.co.yogiyo.rookiephotoapp.diary.db
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Single
 import java.util.*
 
@@ -15,6 +16,10 @@ class DiaryRepository private constructor(private val diaryDao: DiaryDao) {
 
     fun findDiaryById(diaryId: Int): Single<Diary> {
         return diaryDao.findDiaryById(diaryId)
+    }
+
+    fun findDiariesBetweenDates(from: Date, to: Date): Flowable<List<Diary>> {
+        return diaryDao.findDiariesBetweenDates(from, to)
     }
 
 

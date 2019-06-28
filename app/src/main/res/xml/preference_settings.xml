@@ -5,7 +5,7 @@
         android:key="user_auth"
         android:title="@string/text_user">
 
-        <kr.co.yogiyo.rookiephotoapp.settings.SignDialogPreference
+        <kr.co.yogiyo.rookiephotoapp.settings.SettingsDialogPreference
             android:icon="@drawable/baseline_account_circle_black_36"
             android:key="sign_dialog" />
     </PreferenceCategory>
@@ -14,15 +14,15 @@
         android:key="backup_restore"
         android:title="@string/text_backup_restore">
 
-        <Preference
+        <kr.co.yogiyo.rookiephotoapp.settings.SettingsDialogPreference
             android:icon="@drawable/baseline_cloud_upload_black_36"
-            android:key="backup"
+            android:key="backup_dialog"
             android:summary="@string/text_summary_backup"
             android:title="@string/text_do_backup" />
 
-        <Preference
+        <kr.co.yogiyo.rookiephotoapp.settings.SettingsDialogPreference
             android:icon="@drawable/baseline_cloud_download_black_36"
-            android:key="restore"
+            android:key="restore_dialog"
             android:summary="@string/text_summary_restore"
             android:title="@string/text_do_restore" />
     </PreferenceCategory>

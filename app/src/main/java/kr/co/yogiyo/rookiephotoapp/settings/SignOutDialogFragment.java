@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -17,6 +16,10 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
 
     private Context context;
 
+    public static SignOutDialogFragment newInstance() {
+        return new SignOutDialogFragment();
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -26,10 +29,8 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        RelativeLayout signoutDialogRelative = view.findViewById(R.id.relative_signout_dialog);
         TextView cancelText = view.findViewById(R.id.text_cancel);
         TextView signoutText = view.findViewById(R.id.text_signout);
-        ((SettingsActivity) context).addProgressBarInto(signoutDialogRelative);
 
         cancelText.setOnClickListener(this);
         signoutText.setOnClickListener(this);
@@ -38,7 +39,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        builder.setTitle("로그아웃")
+        builder.setTitle(getString(R.string.text_signout))
                 .setPositiveButton(null, null)
                 .setNegativeButton(null, null);
     }
@@ -49,8 +50,6 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     }
 
     // TODO : 콜백을 RxJava로 바꿀 수 있을지 고민하기
-    // TODO : 취소할 때 로그인/회원가입 요청 취소할 수 있는지 조사
-    // TODO : 구글 로그인 실패 A non-recoverable sign in failure occurred (status code: 12500)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -58,7 +57,7 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
                 dismiss();
                 break;
             case R.id.text_signout:
-                ((SettingsActivity) context).showLoading();
+                ((SettingsActivity) context).showLoading(true);
                 ((AuthNavigator) context).signOut(this);
                 break;
         }
@@ -68,13 +67,15 @@ public class SignOutDialogFragment extends PreferenceDialogFragmentCompat
     public void onSuccess(FirebaseUser user) {
         Preference preference = getPreference();
         preference.setTitle(getString(R.string.text_need_to_signin));
-        ((SettingsActivity) context).showToast("로그아웃 성공");
+        ((SettingsActivity) context).showToast(getString(R.string.text_signout_success));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 
     @Override
     public void onFail() {
-        ((SettingsActivity) context).showToast("로그아웃 실패");
+        ((SettingsActivity) context).showToast(getString(R.string.text_signout_fail));
+        ((SettingsActivity) context).showLoading(false);
         dismiss();
     }
 }

@@ -11,7 +11,7 @@ public class Constants {
     // REQUEST
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     public static final int REQUEST_DIARY_PICK_GALLERY = 104;
-    public static final int REQUEST_DIARY_CAPTURE_PHOTO= 105;
+    public static final int REQUEST_DIARY_CAPTURE_PHOTO = 105;
 
     // RESULT
     public static final int RESULT_EDIT_PHOTO = 201;
@@ -19,5 +19,4 @@ public class Constants {
 
     // PATH
     public static final File YOGIDIARY_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
-
 }
