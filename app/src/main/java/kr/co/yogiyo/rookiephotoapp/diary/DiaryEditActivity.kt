@@ -62,7 +62,7 @@ class DiaryEditActivity : BaseActivity() {
 
     private var photoFileName: String? = null
     private var isPhotoUpdate = false
-    private var isBitmap = false
+    private var isBitmapOrUri = URI_TYPE
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +90,7 @@ class DiaryEditActivity : BaseActivity() {
 
     private fun initView() {
         setSupportActionBar(toolbar)
-        
+
         ib_back.setOnClickListener {
             onBackPressed()
         }
@@ -237,7 +237,7 @@ class DiaryEditActivity : BaseActivity() {
             dateAndTime = currentTime
 
             if (intent.hasExtra("FROM_PREVIEW")) {
-                isBitmap = true
+                isBitmapOrUri = BITMAP_TYPE
                 selectedBitmap = PreviewActivity.capturedImageBitmap
                 Glide.with(this)
                         .load(selectedBitmap)
@@ -303,14 +303,14 @@ class DiaryEditActivity : BaseActivity() {
 
                             override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
                                 isPhotoUpdate = true
-                                isBitmap = false
+                                isBitmapOrUri = URI_TYPE
                                 return false
                             }
                         })
                         .into(ib_diary_edit_photo)
             }
             Constants.RESULT_CAPTURED_PHOTO -> if (requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO && data != null) {
-                isBitmap = true
+                isBitmapOrUri = BITMAP_TYPE
                 selectedBitmap = loadBitmapFromInternalStorage(applicationContext)
                 Glide.with(this@DiaryEditActivity)
                         .load(selectedBitmap)
@@ -348,7 +348,7 @@ class DiaryEditActivity : BaseActivity() {
                     })
 
             try {
-                if (isBitmap) {
+                if (isBitmapOrUri == BITMAP_TYPE) {
                     bitmapToDownloads(selectedBitmap, time.time)
                 } else {
                     copyFileToDownloads(selectedUri, time.time)
@@ -430,8 +430,7 @@ class DiaryEditActivity : BaseActivity() {
                             if (isPhotoUpdate) {
                                 image = time.time.toString() + ".jpg"
                                 try {
-                                    if (isBitmap) {
-
+                                    if (isBitmapOrUri == BITMAP_TYPE) {
                                         bitmapToDownloads(selectedBitmap, time.time)
                                     } else {
                                         copyFileToDownloads(selectedUri, time.time)
@@ -481,5 +480,8 @@ class DiaryEditActivity : BaseActivity() {
 
         private var diaryIdx: Int = 0
         private var selectedBitmap: Bitmap? = null
+        
+        private val BITMAP_TYPE: Boolean = true
+        private val URI_TYPE: Boolean = false
     }
 }
