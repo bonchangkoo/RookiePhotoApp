@@ -7,16 +7,15 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.text.Editable
 import android.util.Log
-import android.view.View
-import android.widget.ImageButton
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -35,7 +34,10 @@ import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
+import kr.co.yogiyo.rookiephotoapp.databinding.ActivityDiaryEditBinding
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryRepository
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
 import java.io.File
@@ -44,18 +46,12 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DiaryEditActivity : BaseActivity(), View.OnClickListener {
+class DiaryEditActivity : BaseActivity() {
+
+    private lateinit var activityDiaryEditBinding: ActivityDiaryEditBinding
+    private lateinit var activityDiaryEditViewModel: DiaryEditViewModel
 
     private var localDiaryViewModel: LocalDiaryViewModel? = null
-
-    private var backImageButton: ImageButton? = null
-    private var toolbarNameTextView: TextView? = null
-    private var diarySaveImageButton: ImageButton? = null
-
-    private var editDateTextView: TextView? = null
-    private var editTimeTextView: TextView? = null
-    private var editPhotoImageButton: ImageButton? = null
-    private var editDescriptionTextView: TextView? = null
 
     private var datePickerDialog: DatePickerDialog? = null
     private var timePickerDialog: TimePickerDialog? = null
@@ -67,6 +63,81 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
     private var photoFileName: String? = null
     private var isPhotoUpdate = false
     private var isBitmap = false
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel::class.java)
+
+        diaryIdx = intent.getIntExtra(Constants.DIARY_IDX, -1)
+
+        initialize()
+        initView()
+        setViewData(diaryIdx)
+    }
+
+    private fun initialize() {
+
+        val dao = DiaryDatabase.getDatabase(this)!!.diaryDao()
+        val repository = DiaryRepository.getInstance(dao)
+        val viewModelFactory = DiaryEditViewModelFactory(repository)
+
+        activityDiaryEditBinding = DataBindingUtil.setContentView(this, R.layout.activity_diary_edit)
+        activityDiaryEditViewModel = ViewModelProviders.of(this, viewModelFactory).get(DiaryEditViewModel::class.java)
+        activityDiaryEditBinding.viewModel = activityDiaryEditViewModel
+    }
+
+    private fun initView() {
+        setSupportActionBar(toolbar)
+        
+        ib_back.setOnClickListener {
+            onBackPressed()
+        }
+
+        if (diaryIdx == DIARY_ADD) {
+            tv_subject.setText(R.string.text_diary_add_title)
+        }
+
+
+        ib_diary_save.setOnClickListener {
+            saveViewData()
+            finish()
+        }
+
+        tv_diary_edit_date.setOnClickListener {
+            datePickerDialog!!.show()
+        }
+
+        tv_diary_edit_time.setOnClickListener {
+            timePickerDialog!!.show()
+        }
+
+        // TODO : 나눌 필요가 있는 것 같음
+        ib_diary_edit_photo.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(this@DiaryEditActivity)
+            alertDialog.setTitle("선택하시오")
+            val selectStr = arrayOf("사진 촬영", "사진 선택")
+            alertDialog.setItems(selectStr) { dialog, which ->
+                GlobalApplication.globalApplicationContext.isFromDiary = true
+
+                if (which == 0) {
+                    val photoCaptureIntent = Intent(this@DiaryEditActivity, CameraActivity::class.java)
+                    startActivityForResult(photoCaptureIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
+                } else if (which == 1) {
+                    val doStartEditPhotoActivityIntent = Intent(this@DiaryEditActivity, GalleryActivity::class.java)
+                    if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                        startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
+                    } else {
+                        startActivity(doStartEditPhotoActivityIntent)
+                    }
+                }
+            }
+            val dialog = alertDialog.create()
+            dialog.show()
+        }
+
+    }
 
 
     private var dateAndTime: Date
@@ -91,7 +162,8 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
             val month = monthFormat.format(dateAndTime)
             val day = dayFormat.format(dateAndTime)
 
-            editDateTextView!!.text = String.format("%s월 %s일", month, day)
+
+            tv_diary_edit_date.text = String.format("%s월 %s일", month, day)
             datePickerDialog = DatePickerDialog(this@DiaryEditActivity, R.style.PickerTheme, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day))
 
             val hourFormat = SimpleDateFormat("hh", Locale.getDefault())
@@ -102,7 +174,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
             val minute = minuteFormat.format(dateAndTime)
             val meridiem = meridiemFormat.format(dateAndTime)
 
-            editTimeTextView!!.text = String.format("%s:%s%s", hour, minute, meridiem)
+            tv_diary_edit_time.text = String.format("%s:%s%s", hour, minute, meridiem)
 
             var applyMerdiemHour = Integer.valueOf(hour)
 
@@ -116,7 +188,10 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
             updateMinute = Integer.valueOf(minute)
         }
 
-    private val dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth -> editDateTextView!!.text = String.format(Locale.getDefault(), "%d월 %d일", month + 1, dayOfMonth) }
+    private val dateListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+        tv_diary_edit_date.text = String.format(Locale.getDefault(), "%d월 %d일", month + 1, dayOfMonth)
+
+    }
 
     private val timeListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
         var hourOfDay = hourOfDay
@@ -142,77 +217,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
             minuteStr = "" + minute
         }
 
-        editTimeTextView!!.text = String.format(Locale.getDefault(), "%d:%s%s", hourOfDay, minuteStr, meridiem)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_diary_edit)
-
-        localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel::class.java)
-
-        diaryIdx = intent.getIntExtra(Constants.DIARY_IDX, -1)
-
-        initView()
-        setViewData(diaryIdx)
-    }
-
-    private fun initView() {
-        setSupportActionBar(toolbar)
-
-        backImageButton = findViewById(R.id.ib_back)
-        toolbarNameTextView = findViewById(R.id.tv_subject)
-        if (diaryIdx == DIARY_ADD) {
-            toolbarNameTextView!!.setText(R.string.text_diary_add_title)
-        }
-        diarySaveImageButton = findViewById(R.id.ib_diary_save)
-
-        backImageButton!!.setOnClickListener(this)
-        diarySaveImageButton!!.setOnClickListener(this)
-
-        editDateTextView = findViewById(R.id.tv_diary_edit_date)
-        editTimeTextView = findViewById(R.id.tv_diary_edit_time)
-        editPhotoImageButton = findViewById(R.id.ib_diary_edit_photo)
-        editDescriptionTextView = findViewById(R.id.et_diary_edit_description)
-
-        editDateTextView!!.setOnClickListener(this)
-        editTimeTextView!!.setOnClickListener(this)
-        editPhotoImageButton!!.setOnClickListener(this)
-        editDescriptionTextView!!.setOnClickListener(this)
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.ib_back -> onBackPressed()
-            R.id.ib_diary_save -> {
-                saveViewData()
-                finish()
-            }
-            R.id.tv_diary_edit_date -> datePickerDialog!!.show()
-            R.id.tv_diary_edit_time -> timePickerDialog!!.show()
-            R.id.ib_diary_edit_photo -> {
-                val alertDialog = AlertDialog.Builder(this@DiaryEditActivity)
-                alertDialog.setTitle("선택하시오")
-                val selectStr = arrayOf("사진 촬영", "사진 선택")
-                alertDialog.setItems(selectStr) { dialog, which ->
-                    GlobalApplication.globalApplicationContext.isFromDiary = true
-
-                    if (which == 0) {
-                        val photoCaptureIntent = Intent(this@DiaryEditActivity, CameraActivity::class.java)
-                        startActivityForResult(photoCaptureIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
-                    } else if (which == 1) {
-                        val doStartEditPhotoActivityIntent = Intent(this@DiaryEditActivity, GalleryActivity::class.java)
-                        if (GlobalApplication.globalApplicationContext.isFromDiary) {
-                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_CAPTURE_PHOTO)
-                        } else {
-                            startActivity(doStartEditPhotoActivityIntent)
-                        }
-                    }
-                }
-                val dialog = alertDialog.create()
-                dialog.show()
-            }
-        }
+        tv_diary_edit_time.text = String.format(Locale.getDefault(), "%d:%s%s", hourOfDay, minuteStr, meridiem)
     }
 
     override fun onBackPressed() {
@@ -238,7 +243,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                         .load(selectedBitmap)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
-                        .into(editPhotoImageButton!!)
+                        .into(ib_diary_edit_photo)
 
             } else if (intent.data != null) {
                 val uri = intent.data
@@ -247,7 +252,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                         .load(selectedUri)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
-                        .into(editPhotoImageButton!!)
+                        .into(ib_diary_edit_photo)
                 GlobalApplication.globalApplicationContext.isFromDiary = true
             }
         } else {
@@ -261,8 +266,8 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                                 .load(Constants.YOGIDIARY_PATH.toString() + File.separator + photoFileName)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
-                                .into(editPhotoImageButton!!)
-                        editDescriptionTextView!!.text = diary.description
+                                .into(ib_diary_edit_photo)
+                        et_diary_edit_description.text = Editable.Factory.getInstance().newEditable(diary.description)
                     })
         }
     }
@@ -302,7 +307,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                                 return false
                             }
                         })
-                        .into(editPhotoImageButton!!)
+                        .into(ib_diary_edit_photo)
             }
             Constants.RESULT_CAPTURED_PHOTO -> if (requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO && data != null) {
                 isBitmap = true
@@ -311,7 +316,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                         .load(selectedBitmap)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
-                        .into(editPhotoImageButton!!)
+                        .into(ib_diary_edit_photo)
                 isPhotoUpdate = true
             }
         }
@@ -319,7 +324,8 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
 
     private fun saveViewData() {
         if (diaryIdx == DIARY_ADD) {
-            val updateDescription = editDescriptionTextView!!.text.toString()
+
+            val updateDescription = et_diary_edit_description.text.toString()
 
             val time = dateAndTime
 
@@ -419,7 +425,7 @@ class DiaryEditActivity : BaseActivity(), View.OnClickListener {
                         if (t != null) {
                             val time = dateAndTime
                             var image = photoFileName
-                            val updatedDescription = editDescriptionTextView!!.text.toString()
+                            val updatedDescription = et_diary_edit_description.text.toString()
 
                             if (isPhotoUpdate) {
                                 image = time.time.toString() + ".jpg"
