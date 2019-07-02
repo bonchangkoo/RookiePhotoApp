@@ -18,6 +18,7 @@ fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
         if (!Constants.FOONCARE_PATH.mkdirs()) {
             return false
         }
+
     }
 
     val downloadsDirectoryPath = "${Constants.FOONCARE_PATH.path}/"
@@ -55,6 +56,7 @@ fun Context?.copyFileToDownloads(croppedFileUri: Uri): Boolean {
     }
 
     val downloadsDirectoryPath = Constants.FOONCARE_PATH.path + "/"
+
     val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
 
     val saveFile = File(downloadsDirectoryPath, filename)

@@ -32,6 +32,7 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
                 .subscribe { diary ->
                     setDateAndTime(diary.date!!)
                     detailImageUri.set(Uri.fromFile(File(Constants.FOONCARE_PATH, diary.image)))
+
                     descriptionTextLabel.set(diary.description)
                 })
     }
