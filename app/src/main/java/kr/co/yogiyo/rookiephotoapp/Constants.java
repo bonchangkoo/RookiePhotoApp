@@ -18,5 +18,5 @@ public class Constants {
     public static final int RESULT_CAPTURED_PHOTO = 202;
 
     // PATH
-    public static final File YOGIDIARY_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
+    public static final File FOONCARE_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "FooNCaRe");
 }

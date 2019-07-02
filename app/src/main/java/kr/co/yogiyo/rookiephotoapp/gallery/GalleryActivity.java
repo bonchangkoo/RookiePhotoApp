@@ -135,13 +135,13 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
 
         cursor.close();
 
-        if (mapOfAllImageFolders.containsKey("YogiDiary")) {
+        if (mapOfAllImageFolders.containsKey("FooNCaRe")) {
             listOfAllImageFolders.add("");
         }
 
         for (String key : mapOfAllImageFolders.keySet()) {
 
-            if (key.equals("YogiDiary")) {
+            if (key.equals("FooNCaRe")) {
                 listOfAllImageFolders.set(0, String.format(getString(R.string.spinner_folder_name_count),
                         key, mapOfAllImageFolders.get(key)));
                 continue;
