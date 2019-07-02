@@ -19,9 +19,6 @@
             android:name=".gallery.GalleryActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".diary.main.DiariesActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".MainActivity"
             android:noHistory="true">
             <intent-filter>
@@ -51,10 +48,13 @@
             android:theme="@style/Theme.FDB32D" />
         <activity
             android:name=".diary.DiaryEditActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".diary.DiaryDetailActivity"
+            android:name=".diary.main.DiariesActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".diary.DiaryDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

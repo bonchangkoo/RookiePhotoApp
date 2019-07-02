@@ -4,14 +4,15 @@ import android.app.Application
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryDatabase
+import kr.co.yogiyo.rookiephotoapp.diary.db.DiaryRepository
 
-class DiariesViewModelFactory(private val diariesRepository: DiariesRepository
+class DiariesViewModelFactory(private val diaryRepository: DiaryRepository
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>) =
             with(modelClass) {
                 when {
-                    isAssignableFrom(DiariesViewModel::class.java) -> DiariesViewModel(diariesRepository, Application())
+                    isAssignableFrom(DiariesViewModel::class.java) -> DiariesViewModel(diaryRepository, Application())
                     else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }
             } as T
@@ -23,7 +24,7 @@ class DiariesViewModelFactory(private val diariesRepository: DiariesRepository
         fun getInstance(application: Application) =
                 INSTANCE ?: synchronized(DiariesViewModelFactory::class.java) {
                     INSTANCE ?: DiariesViewModelFactory(
-                            DiariesRepository.getInstance(DiaryDatabase.getDatabase(application)!!.diaryDao())
+                            DiaryRepository.getInstance(DiaryDatabase.getDatabase(application)!!.diaryDao())
                     )
                 }
     }

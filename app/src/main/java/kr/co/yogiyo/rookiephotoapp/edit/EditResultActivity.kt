@@ -9,21 +9,14 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.activity_edit_result.*
-import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants
-import kr.co.yogiyo.rookiephotoapp.Constants.FOONCARE_PATH
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
-import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.*
+import kr.co.yogiyo.rookiephotoapp.Constants.*
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.util.Calendar
-import java.util.Locale
 
 class EditResultActivity : BaseActivity() {
 
@@ -40,66 +33,53 @@ class EditResultActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_result)
 
-        setView()
-        setSettingAndResultActionBar()
+        initView()
     }
 
-    // UCropView setting
-    private fun setView() {
-        editPhotoUri?.let {
-            iv_edited_photo.setImageURI(it)
-        }
-    }
-
-    private fun setSettingAndResultActionBar() {
+    private fun initView() {
         setSupportActionBar(toolbar)
-        supportActionBar?.run {
-            if (!GlobalApplication.globalApplicationContext.isFromDiary) {
-                setDisplayHomeAsUpEnabled(true)
-                setHomeAsUpIndicator(R.mipmap.diary_add) // 왼쪽에 아이콘 배치(홈 아이콘 대체)
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_edit_result, menu)
-        val downloadItem = menu.findItem(R.id.menu_download)
 
         if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            downloadItem.setIcon(R.mipmap.diary_save)
-        }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_download -> {
-                if (GlobalApplication.globalApplicationContext.isFromDiary) {
+            ib_diary_add.visibility = View.INVISIBLE
+            ib_download.run {
+                setImageResource(R.mipmap.diary_save)
+                setOnClickListener {
                     Intent(this@EditResultActivity, EditPhotoActivity::class.java).apply {
                         data = editPhotoUri
                         setResult(Constants.RESULT_EDIT_PHOTO, this)
                         finish()
                     }
-                } else {
-                    saveCroppedImage()
                 }
-            } // 이미지 저장
-            android.R.id.home -> {
+            }
+        } else {
+            ib_diary_add.setOnClickListener {
                 startActivity(Intent(this@EditResultActivity, DiariesActivity::class.java))
-
                 val startDiaryEditActivityIntent = Intent(this@EditResultActivity, DiaryEditActivity::class.java).apply {
-                    putExtra("DIARY_IDX", -1)
+                    putExtra(DIARY_IDX, -1)
                     data = editPhotoUri
                 }
                 startActivity(startDiaryEditActivityIntent)
                 finish()
             }
+            ib_download.setOnClickListener {
+                saveCroppedImage()
+            }
         }
-        return super.onOptionsItemSelected(item)
+
+        editPhotoUri?.let {
+            Glide.with(this)
+                    .load(it)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(iv_edited_photo)
+        }
+
+
     }
 
     private fun saveCroppedImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission(this@EditResultActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && ActivityCompat.checkSelfPermission
+                (this@EditResultActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this@EditResultActivity,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION)
@@ -107,7 +87,10 @@ class EditResultActivity : BaseActivity() {
             editPhotoUri?.let {
                 if ("file" == it.scheme) {
                     try {
-                        copyFileToDownloads(it)
+                        if (applicationContext.copyFileToDownloads(it)) {
+                            showToast(R.string.notification_image_saved)
+                        }
+                        finish()
                     } catch (e: Exception) {
                         showToast(e.message)
                         Log.e(TAG, it.toString(), e)
@@ -117,39 +100,9 @@ class EditResultActivity : BaseActivity() {
         }
     }
 
-    @Throws(Exception::class)
-    private fun copyFileToDownloads(croppedFileUri: Uri) {
-
-        if (!FOONCARE_PATH.exists()) {
-            if (!FOONCARE_PATH.mkdirs()) {
-                return finish()
-            }
-        }
-
-        val downloadsDirectoryPath = FOONCARE_PATH.path + "/"
-        val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
-
-        val saveFile = File(downloadsDirectoryPath, filename)
-
-        val inStream = FileInputStream(File(croppedFileUri.path))
-        val outStream = FileOutputStream(saveFile)
-        val inChannel = inStream.channel
-        val outChannel = outStream.channel
-        inChannel.transferTo(0, inChannel.size(), outChannel)
-        inStream.close()
-        outStream.close()
-
-        sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)))
-
-        showToast(R.string.notification_image_saved)
-        finish()
-    }
-
     companion object {
 
         private val TAG = EditResultActivity::class.java.simpleName
-
-        private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
 
         fun startWithUri(context: Context, uri: Uri) {
             val intent = Intent(context, EditResultActivity::class.java).apply {

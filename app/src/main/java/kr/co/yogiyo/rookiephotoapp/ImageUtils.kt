@@ -7,6 +7,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
@@ -45,6 +46,31 @@ fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+fun Context?.copyFileToDownloads(croppedFileUri: Uri): Boolean {
+
+    if (!Constants.FOONCARE_PATH.exists()) {
+        return (!Constants.FOONCARE_PATH.mkdirs())
+    }
+
+    val downloadsDirectoryPath = Constants.FOONCARE_PATH.path + "/"
+    val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
+
+    val saveFile = File(downloadsDirectoryPath, filename)
+
+    val inStream = FileInputStream(File(croppedFileUri.path))
+    val outStream = FileOutputStream(saveFile)
+    val inChannel = inStream.channel
+    val outChannel = outStream.channel
+    inChannel.transferTo(0, inChannel.size(), outChannel)
+    inStream.close()
+    outStream.close()
+
+    this?.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(saveFile)))
+
+    return true
+
 }
 
 // Bitmap을 Uri로 변환하는 함수

@@ -130,26 +130,27 @@ class CameraViewModel(private val context: Context) : BaseObservable() {
         })
     }
 
-    fun initButtonVisibility() {
+    fun initControlView() {
         frameControlButtonVisibility.set(View.VISIBLE)
         showMoreLayoutVisibility.set(View.GONE)
         showCaptureSizeLayoutVisibility.set(View.GONE)
-        goDiaryButtonVisibility.set(if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            View.INVISIBLE
-        } else {
-            View.VISIBLE
-        })
-        goGalleryButtonVisibility.set(if (GlobalApplication.globalApplicationContext.isFromDiary) {
-            View.INVISIBLE
-        } else {
-            View.VISIBLE
-        })
+        when {
+            GlobalApplication.globalApplicationContext.isFromDiary -> {
+                goDiaryButtonVisibility.set(View.INVISIBLE)
+                goGalleryButtonVisibility.set(View.INVISIBLE)
+            }
+            else -> {
+                goDiaryButtonVisibility.set(View.VISIBLE)
+                goGalleryButtonVisibility.set(View.VISIBLE)
+                updateGalleryButton()
+            }
+        }
     }
 
     fun timerCancel(): Boolean {
         return if (timerHandler.hasMessages(0)) {
             finishDelayCapture()
-            initButtonVisibility()
+            initControlView()
             true
         } else {
             false
