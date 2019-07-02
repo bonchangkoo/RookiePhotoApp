@@ -18,7 +18,6 @@ fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
         if (!Constants.FOONCARE_PATH.mkdirs()) {
             return false
         }
-
     }
 
     val downloadsDirectoryPath = "${Constants.FOONCARE_PATH.path}/"
