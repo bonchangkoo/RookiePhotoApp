@@ -6,8 +6,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import androidx.work.WorkManager;
+
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
+import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork;
 
 // TODO : preference엔 databinding이 지원되지 않는다고 해서 observe로 구현해야 할 것 같음
 public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
@@ -33,6 +36,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        findPreference(SettingsActivity.SWITCH_REMINDER_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if ((Boolean) o) ReminderWork.Companion.enqueueReminder();
+                else WorkManager.getInstance().cancelAllWorkByTag(ReminderWork.TAG_OUTPUT);
+
+                return true;
+            }
+        });
+
         signDialogPreference = findPreference(SettingsActivity.SIGN_DIALOG_KEY);
         backupDialogPreference = findPreference(SettingsActivity.BACKUP_DIALOG_KEY);
         restoreDialogPreference = findPreference(SettingsActivity.RESTORE_DIALOG_KEY);
@@ -96,5 +109,3 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         }
     }
 }
-
-

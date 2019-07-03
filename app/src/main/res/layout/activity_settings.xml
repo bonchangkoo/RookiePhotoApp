@@ -18,15 +18,11 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_height="match_parent">
 
             <ImageButton
                 android:id="@+id/btn_backspace"
-                android:layout_width="wrap_content"
+                android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/baseline_keyboard_backspace_white_24" />
