@@ -9,7 +9,7 @@ import java.util.*
 @Entity(tableName = "diaries")
 class Diary(@field:PrimaryKey(autoGenerate = true)
             val idx: Int, @field:ColumnInfo(name = "date")
-            var date: Date?, @field:ColumnInfo(name = "image")
+            var date: Date, @field:ColumnInfo(name = "image")
             var image: String?, @field:ColumnInfo(name = "description")
             var description: String?) {
 

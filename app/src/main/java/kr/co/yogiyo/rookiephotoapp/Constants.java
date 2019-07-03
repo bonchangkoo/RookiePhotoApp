@@ -6,10 +6,10 @@ import java.io.File;
 
 public class Constants {
 
+    public static final String DIARY_IDX = "DIARY_IDX";
+
     // REQUEST
-    public static final int REQUEST_PICK_GALLERY = 101;
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
-    public static final int REQUEST_STORAGE_READ_AND_WRITE_ACCESS_PERMISSION = 103;
     public static final int REQUEST_DIARY_PICK_GALLERY = 104;
     public static final int REQUEST_DIARY_CAPTURE_PHOTO = 105;
 
@@ -18,7 +18,7 @@ public class Constants {
     public static final int RESULT_CAPTURED_PHOTO = 202;
 
     // PATH
-    public static final File YOGIDIARY_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "YogiDiary");
+    public static final File FOONCARE_PATH = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "FooNCaRe");
 
     // SHARED PREFERENCE FILE NAME
     public static final String SHARED_PREFERENCE_FILE_NAME = "kr.co.yogiyo.rookiephotoapp_preferences";

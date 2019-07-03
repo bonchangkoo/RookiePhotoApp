@@ -1,13 +1,18 @@
 <resources>
-    <string name="app_name">RookiePhotoApp</string>
-    <string name="text_back">x/뒤로</string>
+    <string name="app_name">푸앤카레</string>
     <string name="text_flash">플래쉬</string>
     <string name="text_timer">타이머</string>
-    <string name="text_warning">가로로 촬영해주세요</string>
-    <string name="text_capture">찰칵</string>
-    <string name="text_change">카메라 전환</string>
     <string name="text_timer_message_format">%d</string>
-    <string name="text_timer_button_text_format">%d 초</string>
+
+    <!--CameraActivity.kt-->
+    <string name="text_flash_TORCH">TORCH</string>
+    <string name="text_flash_AUTO">AUTO</string>
+    <string name="text_flash_ON">ON</string>
+    <string name="text_grid">그리드</string>
+    <string name="text_grid_three_by_three">3X3</string>
+    <string name="text_grid_phi">PHI</string>
+    <string name="text_grid_four_by_four">4X4</string>
+    <string name="text_finish_snackbar">\'뒤로\' 버튼을 한 번 더 누르면 종료합니다.</string>
 
     <!--MainActivity.java-->
     <string name="text_denied_permission">단말기의 [설정] > [권한]에서 접근 권한을 ON으로 설정해주세요.\n\n* 카메라\n* 저장공간</string>
@@ -20,6 +25,9 @@
     <!--activity_camera.xml-->
     <string name="text_diary">다이어리</string>
     <string name="text_gallery">갤러리</string>
+    <string name="text_capture_size_one_to_one">1:1</string>
+    <string name="text_capture_size_three_to_four">3:4</string>
+    <string name="text_capture_size_nine_to_sixteen">9:16</string>
 
     <!--EditPhotoActivity.java-->
     <string name="toast_cannot_retrieve_selected_image">선택한 사진을 불러올 수 없습니다</string>
@@ -42,8 +50,6 @@
     <string name="text_preview_back">뒤로</string>
     <string name="text_edit">편집</string>
 
-    <string name="text_flash_button_text_format">플래쉬 %s</string>
-    <string name="text_facing_button_text_format">%s</string>
     <string name="text_mkdir_success">폴더 생성 성공</string>
     <string name="text_mkdir_fail">폴더 생성 실패</string>
     <string name="text_edited_photo">편집한 사진</string>
@@ -99,7 +105,10 @@
     <!--activity_diary_detail.xml-->
     <string name="text_diary_date">5월 10일</string>
     <string name="text_diary_time">8:00PM</string>
-    <string name="text_diary_content_hint">내용</string>
+    <string name="text_diary_test_image">테스트 이미지입니다</string>
+    <string name="text_diary_content">맛있었다!\n꿀맛꿀맛...!\n또 가고싶어지네~~~\nJMT</string>
+    <string name="text_diary_content_hint">음식에 대해 기록해주세요</string>
+
 
     <!--DiaryEditActivity.java-->
     <string name="text_diary_add_title">추가</string>
@@ -114,6 +123,8 @@
     <string name="text_toolbar_edit">편집</string>
     <string name="text_photo_description">photo</string>
     <string name="text_toolbar_detail">상세</string>
+    <string name="text_diary_delete">다이어리 삭제</string>
+    <string name="test_diary_delete_question">정말로 삭제하시겠습니까?</string>
 
     <!--LocalDiaryRepository.java-->
     <string name="text_cant_add_diary">다이어리 추가를 하지 못했습니다</string>
@@ -139,4 +150,5 @@
 
     <!--PreviewActivity.kt-->
     <string name="text_no_save_preview_image">사진을 저장할 수 없습니다</string>
+
 </resources>

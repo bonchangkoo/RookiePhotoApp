@@ -8,12 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -22,7 +21,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,14 +90,14 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
 
-        diaryIdx = getIntent().getIntExtra("DIARY_IDX", -1);
+        diaryIdx = getIntent().getIntExtra(Constants.DIARY_IDX, -1);
 
         initView();
         setViewData(diaryIdx);
     }
 
     private void initView() {
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         backImageButton = findViewById(R.id.ib_back);
         toolbarNameTextView = findViewById(R.id.tv_subject);
@@ -116,7 +119,6 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         editPhotoImageButton.setOnClickListener(this);
         editDescriptionTextView.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -185,13 +187,18 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                 selectedBitmap = PreviewActivity.capturedImageBitmap;
                 Glide.with(this)
                         .load(selectedBitmap)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .into(editPhotoImageButton);
 
             } else if (getIntent().getData() != null) {
                 Uri uri = getIntent().getData();
                 selectedUri = uri;
-                editPhotoImageButton.setImageURI(uri);
+                Glide.with(this)
+                        .load(selectedUri)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .into(editPhotoImageButton);
                 GlobalApplication.getGlobalApplicationContext().setFromDiary(true);
             }
         } else {
@@ -204,8 +211,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
                             setDateAndTime(diary.getDate());
                             photoFileName = diary.getImage();
                             Glide.with(DiaryEditActivity.this)
-                                    .load(Constants.YOGIDIARY_PATH + File.separator + photoFileName)
-                                    .error(ContextCompat.getDrawable(DiaryEditActivity.this, R.mipmap.diary_photo_add))
+                                    .load(Constants.FOONCARE_PATH + File.separator + photoFileName)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                                     .skipMemoryCache(true)
                                     .into(editPhotoImageButton);
@@ -227,7 +233,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
         editDateTextView.setText(String.format("%s월 %s일", month, day));
         datePickerDialog = new DatePickerDialog
-                (DiaryEditActivity.this, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
+                (DiaryEditActivity.this, R.style.PickerTheme, dateListener, Integer.valueOf(year), Integer.valueOf(month) - 1, Integer.valueOf(day));
 
         SimpleDateFormat hourFormat = new SimpleDateFormat("hh", Locale.getDefault());
         SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
@@ -245,7 +251,7 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             applyMerdiemHour = applyMerdiemHour + 12;
         }
 
-        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
+        timePickerDialog = new TimePickerDialog(DiaryEditActivity.this, R.style.PickerTheme, timeListener, applyMerdiemHour, Integer.valueOf(minute), false);
 
         updateHour = applyMerdiemHour;
         updateMinute = Integer.valueOf(minute);
@@ -271,20 +277,36 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
             case RESULT_OK:
                 if ((requestCode == Constants.REQUEST_DIARY_PICK_GALLERY || requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     selectedUri = data.getData();
-                    if (selectedUri != null) {
-                        editPhotoImageButton.setImageURI(null);
-                        editPhotoImageButton.setImageURI(selectedUri);
-                        isPhotoUpdate = true;
-                    } else {
-                        showToast(R.string.toast_cannot_retrieve_selected_image);
-                    }
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedUri)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    showToast(R.string.toast_cannot_retrieve_selected_image);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    isPhotoUpdate = true;
+                                    isBitmap = false;
+                                    return false;
+                                }
+                            })
+                            .into(editPhotoImageButton);
                 }
                 break;
             case Constants.RESULT_CAPTURED_PHOTO:
                 if ((requestCode == Constants.REQUEST_DIARY_CAPTURE_PHOTO) && data != null) {
                     isBitmap = true;
                     selectedBitmap = loadBitmapFromInternalStorage(getApplicationContext());
-                    editPhotoImageButton.setImageBitmap(selectedBitmap);
+                    Glide.with(DiaryEditActivity.this)
+                            .load(selectedBitmap)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(editPhotoImageButton);
                     isPhotoUpdate = true;
                 }
                 break;
@@ -382,18 +404,17 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
     private void copyFileToDownloads(Uri croppedFileUri, long time) throws Exception {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (Constants.FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.FOONCARE_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);
@@ -412,15 +433,15 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
 
     private void bitmapToDownloads(Bitmap bitmap, long time) throws Exception {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (Constants.FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success));
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail));
             }
         }
 
-        String downloadsDirectoryPath = Constants.YOGIDIARY_PATH.getPath() + "/";
+        String downloadsDirectoryPath = Constants.FOONCARE_PATH.getPath() + "/";
         String filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg");
 
         File saveFile = new File(downloadsDirectoryPath, filename);

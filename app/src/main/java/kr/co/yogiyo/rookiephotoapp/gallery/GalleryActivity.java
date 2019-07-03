@@ -55,8 +55,8 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY) {
-                Intent intent = new Intent(GalleryActivity.this, DiaryEditActivity.class);
-                intent.setData(data.getData());
+                Intent intent = new Intent(GalleryActivity.this, DiaryEditActivity.class)
+                        .setData(data.getData());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -135,13 +135,13 @@ public class GalleryActivity extends BaseActivity implements View.OnClickListene
 
         cursor.close();
 
-        if (mapOfAllImageFolders.containsKey("YogiDiary")) {
+        if (mapOfAllImageFolders.containsKey("FooNCaRe")) {
             listOfAllImageFolders.add("");
         }
 
         for (String key : mapOfAllImageFolders.keySet()) {
 
-            if (key.equals("YogiDiary")) {
+            if (key.equals("FooNCaRe")) {
                 listOfAllImageFolders.set(0, String.format(getString(R.string.spinner_folder_name_count),
                         key, mapOfAllImageFolders.get(key)));
                 continue;

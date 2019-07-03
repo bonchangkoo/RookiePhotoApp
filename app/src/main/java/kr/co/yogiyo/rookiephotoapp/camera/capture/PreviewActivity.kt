@@ -14,18 +14,18 @@ import android.support.v4.app.ActivityCompat
 import android.view.View
 import kotlinx.android.synthetic.main.activity_preview.*
 import kr.co.yogiyo.rookiephotoapp.*
+import kr.co.yogiyo.rookiephotoapp.Constants.DIARY_IDX
+import kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityPreviewBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
 
-
 class PreviewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPreviewBinding
     private lateinit var previewViewModel: PreviewViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,7 @@ class PreviewActivity : BaseActivity() {
                 startActivity(Intent(this@PreviewActivity, DiariesActivity::class.java))
 
                 val startDiaryEditActivityIntent = Intent(this@PreviewActivity, DiaryEditActivity::class.java).apply {
-                    putExtra("DIARY_IDX", -1)
+                    putExtra(DIARY_IDX, -1)
                     putExtra("FROM_PREVIEW", true)
                 }
                 startActivity(startDiaryEditActivityIntent)
@@ -90,7 +90,6 @@ class PreviewActivity : BaseActivity() {
         btn_edit.setOnClickListener {
             editCapturedPhoto()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,7 +106,6 @@ class PreviewActivity : BaseActivity() {
             }
         }
     }
-
 
     private fun editCapturedPhoto() {
 
@@ -137,9 +135,6 @@ class PreviewActivity : BaseActivity() {
     }
 
     companion object {
-
         lateinit var capturedImageBitmap: Bitmap
-        private const val REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102
-
     }
 }

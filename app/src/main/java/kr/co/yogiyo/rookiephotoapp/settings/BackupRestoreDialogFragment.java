@@ -10,7 +10,6 @@ import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -90,25 +89,23 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        RelativeLayout backupRestoreDialogRelative = view.findViewById(R.id.relative_backup_restore_dialog);
         askBackupRestoreText = view.findViewById(R.id.text_ask_backup_restore);
         cancelText = view.findViewById(R.id.text_cancel);
         okText = view.findViewById(R.id.text_ok);
-        ((SettingsActivity) context).addProgressBarInto(backupRestoreDialogRelative);
 
         String preferenceKey = getArguments().getString(SettingsActivity.PREFERENCE_KEY);
         switch (preferenceKey) {
             case SettingsActivity.BACKUP_DIALOG_KEY:
                 askBackupRestoreText.setText(getString(R.string.text_ask_backup));
                 okText.setOnClickListener(v -> {
-                    setLoadingDialog();
+                    setLoadingDialog(true);
                     executeBackup(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser());
                 });
                 break;
             case SettingsActivity.RESTORE_DIALOG_KEY:
                 askBackupRestoreText.setText(getString(R.string.text_ask_restore));
                 okText.setOnClickListener(v -> {
-                    setLoadingDialog();
+                    setLoadingDialog(true);
                     executeRestore(GlobalApplication.getGlobalApplicationContext().getFirebaseAuth().getCurrentUser());
                 });
                 break;
@@ -163,10 +160,10 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                         .flatMapIterable(diaries -> diaries)
                         .flatMap((Function<Diary, Publisher<ResponseBody>>) diary -> {
                             if (diary.getImage() != null) {
-                                File imageFile = new File(Constants.YOGIDIARY_PATH, diary.getImage());
+                                File imageFile = new File(Constants.FOONCARE_PATH, diary.getImage());
                                 if (imageFile.isFile()) {
                                     imageCompressor.setDestinationDirectoryPath(
-                                            Constants.YOGIDIARY_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
+                                            Constants.FOONCARE_PATH.getAbsolutePath() + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
                                             .compressToFile(imageFile);
                                 }
                             }
@@ -180,9 +177,6 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                                 throw new Exception();
                             }
                         }, throwable -> {
-                            ((SettingsActivity) context).hideLoading();
-                            BackupRestoreDialogFragment.this.getDialog().dismiss();
-
                             if (NO_DATA.equals(throwable.getMessage())) {
                                 ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_backup_data),
                                         getString(R.string.text_confirm), null, null, null).show();
@@ -194,13 +188,14 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                                         getString(R.string.text_confirm), null, null, null).show();
                             }
 
+                            setLoadingDialog(false);
+
                             Log.d(TAG, throwable.getMessage());
                         }, () -> {
-                            ((SettingsActivity) context).hideLoading();
-                            BackupRestoreDialogFragment.this.getDialog().dismiss();
-
                             ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_backup_success),
                                     getString(R.string.text_confirm), null, null, null).show();
+
+                            setLoadingDialog(false);
                         })
         );
     }
@@ -242,9 +237,6 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(writtenToDisk -> Log.d(TAG, "success = " + writtenToDisk),
                                 throwable -> {
-                                    ((SettingsActivity) context).hideLoading();
-                                    BackupRestoreDialogFragment.this.getDialog().dismiss();
-
                                     if (throwable.getMessage().equals(NO_DATA) || throwable.getMessage().contains(NO_BACKUP_HISTORY)) {
                                         ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_no_restore_data),
                                                 getString(R.string.text_confirm), null, null, null).show();
@@ -256,25 +248,26 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
                                                 getString(R.string.text_confirm), null, null, null).show();
                                     }
 
+                                    setLoadingDialog(false);
+
                                     Log.d(TAG, throwable.getMessage());
                                 }, () -> {
-                                    ((SettingsActivity) context).hideLoading();
-                                    BackupRestoreDialogFragment.this.getDialog().dismiss();
-
                                     ((SettingsActivity) context).createAlertDialog(context, null, getString(R.string.text_restore_success),
                                             getString(R.string.text_confirm), null, null, null).show();
+
+                                    setLoadingDialog(false);
                                 })
         );
     }
 
     private boolean writeResponseBodyToDisk(String imageFileName, ResponseBody body) {
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (!Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (!Constants.FOONCARE_PATH.mkdirs()) {
                 return false;
             }
         }
 
-        File restoredImageFile = new File(Constants.YOGIDIARY_PATH, imageFileName);
+        File restoredImageFile = new File(Constants.FOONCARE_PATH, imageFileName);
 
         try (InputStream inputStream = body.byteStream();
              OutputStream outputStream = new FileOutputStream(restoredImageFile)) {
@@ -302,10 +295,12 @@ public class BackupRestoreDialogFragment extends PreferenceDialogFragmentCompat 
         }
     }
 
-    private void setLoadingDialog() {
-        ((SettingsActivity) context).showLoading();
-        askBackupRestoreText.setText(getString(R.string.text_please_wait));
-        cancelText.setVisibility(View.GONE);
-        okText.setVisibility(View.GONE);
+    private void setLoadingDialog(boolean visible) {
+        ((SettingsActivity) context).showLoading(visible);
+        if (visible) {
+            getDialog().hide();
+        } else {
+            dismiss();
+        }
     }
 }

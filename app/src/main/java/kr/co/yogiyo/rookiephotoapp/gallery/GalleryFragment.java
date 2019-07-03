@@ -15,8 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication;
 import kr.co.yogiyo.rookiephotoapp.R;
 
 public class GalleryFragment extends Fragment {
@@ -53,7 +56,7 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         galleryRecycler = view.findViewById(R.id.recycler_gallery);
-        galleryAdapter = new GalleryAdapter(context, new ArrayList<String>());
+        galleryAdapter = new GalleryAdapter(context, new ArrayList<LoadImage>());
         gridLayoutManager = new GridLayoutManager(context, 3);
         galleryRecycler.setHasFixedSize(true);
         galleryRecycler.setAdapter(galleryAdapter);
@@ -75,20 +78,24 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    public List<String> getImagesPath(String folderName) {
-        List<String> listOfAllImages = new ArrayList<>();
+    public static List<LoadImage> loadImages(String folderName) {
+        List<LoadImage> listOfAllImages = new ArrayList<>();
         String pathOfImage;
+        long modifiedDateOfImage;
 
         Uri uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+        String[] projection = {MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.DATE_MODIFIED,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        Cursor cursor = GlobalApplication.getGlobalApplicationContext().getContentResolver().query(uri, projection, null, null, null);
 
         if (cursor == null) {
             return listOfAllImages;
         }
 
         int columnIndexData = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        int columnIndexDateModified = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
         int columnIndexFolderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
 
         while (cursor.moveToNext()) {
@@ -96,11 +103,19 @@ public class GalleryFragment extends Fragment {
                 continue;
             }
             pathOfImage = cursor.getString(columnIndexData);
+            modifiedDateOfImage = cursor.getLong(columnIndexDateModified);
 
-            listOfAllImages.add(pathOfImage);
+            listOfAllImages.add(new LoadImage(pathOfImage, modifiedDateOfImage));
         }
 
         cursor.close();
+
+        Collections.sort(listOfAllImages, new Comparator<LoadImage>() {
+            @Override
+            public int compare(LoadImage o1, LoadImage o2) {
+                return (int) (o2.getModifiedDateOfImage() - o1.getModifiedDateOfImage());
+            }
+        });
 
         return listOfAllImages;
     }
@@ -110,8 +125,8 @@ public class GalleryFragment extends Fragment {
     }
 
     private void loadGallery(String folderName) {
-        List<String> images = getImagesPath(folderName);
-        galleryAdapter.setImages(images);
+        List<LoadImage> loadImages = loadImages(folderName);
+        galleryAdapter.setImages(loadImages);
         galleryAdapter.notifyDataSetChanged();
     }
 }
