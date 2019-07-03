@@ -54,10 +54,7 @@ class CameraActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        cameraViewModel.run {
-            initButtonVisibility()
-            updateGalleryButton()
-        }
+        cameraViewModel.initControlView()
 
         camera.start()
     }
@@ -284,7 +281,7 @@ class CameraActivity : BaseActivity() {
     private fun CameraViewModel.initViewModel() {
         captureNow = { camera.capturePicture() }
         updateGalleryButton = {
-            GalleryFragment.loadImages("YogiDiary").run {
+            GalleryFragment.loadImages("FooNCaRe").run {
                 Glide.with(this@CameraActivity)
                         .load(if (isEmpty()) null else this[0].pathOfImage)
                         .error(if (cameraViewModel.isCaptureSizeFull()) {

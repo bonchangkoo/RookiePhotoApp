@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".diary.DiaryDetailActivity">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="kr.co.yogiyo.rookiephotoapp.diary.DiaryDetailViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".diary.DiaryDetailActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -80,6 +89,7 @@
                 android:layout_height="300dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/diary_image_view_border"
+                android:src="@{viewModel.detailImageUri}"
                 android:contentDescription="@string/text_diary_test_image"
                 android:scaleType="fitCenter" />
 
@@ -97,7 +107,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/text_diary_date"
+                    android:text="@{viewModel.dateTextLabel}"
                     android:textColor="@color/color_783f04"
                     android:textSize="25sp"
                     android:textStyle="bold" />
@@ -108,7 +118,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="15dp"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/text_diary_time"
+                    android:text="@{viewModel.timeTextLabel}"
                     android:textColor="@color/color_783f04"
                     android:textSize="25sp"
                     android:textStyle="bold" />
@@ -142,7 +152,7 @@
                 android:layout_marginRight="30dp"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="@string/text_diary_content"
+                android:text="@{viewModel.descriptionTextLabel}"
                 android:textColor="@android:color/black"
                 android:textSize="17sp" />
 
@@ -160,3 +170,5 @@
     </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>
+
+</layout>

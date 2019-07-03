@@ -23,11 +23,11 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun showToast(toastMessage: String?) {
-        Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
     }
 
     fun showToast(stringId: Int) {
-        Toast.makeText(this, stringId, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, stringId, Toast.LENGTH_SHORT).show()
     }
 
     fun showSnackbar(view: View, toastMessage: String?) {
