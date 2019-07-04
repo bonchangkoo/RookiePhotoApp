@@ -13,7 +13,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, application: Application) : AndroidViewModel(application) {
+class DiaryDetailViewModel(private val diaryRepository: DiaryRepository, application: Application) : AndroidViewModel(application) {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -26,7 +26,7 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
     lateinit var diaryDeleteError: () -> Unit
 
     fun loadViewData(diaryIndex: Int) {
-        compositeDisposable.add(dairyRepository.findDiaryById(diaryIndex)
+        compositeDisposable.add(diaryRepository.findDiaryById(diaryIndex)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { diary ->
@@ -37,10 +37,10 @@ class DiaryDetailViewModel(private val dairyRepository: DiaryRepository, applica
     }
 
     fun deleteDiary(idx: Int) {
-        compositeDisposable.add(dairyRepository.findDiaryById(idx)
+        compositeDisposable.add(diaryRepository.findDiaryById(idx)
                 .subscribeOn(Schedulers.single())
                 .flatMapCompletable {
-                    dairyRepository.deleteDiary(it)
+                    diaryRepository.deleteDiary(it)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
