@@ -14,11 +14,11 @@ import java.util.ArrayList
 
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.queryImages
 
 class GalleryFragment : Fragment() {
 
     private val galleryAdapter by lazy { GalleryAdapter(context, ArrayList()) }
-    private val gridLayoutManager by lazy { GridLayoutManager(context, 3) }
 
     val selectedImageUri: Uri?
         get() = galleryAdapter.selectedImageUri
@@ -32,7 +32,7 @@ class GalleryFragment : Fragment() {
         recycler_gallery.run {
             setHasFixedSize(true)
             adapter = galleryAdapter
-            layoutManager = gridLayoutManager
+            layoutManager = GridLayoutManager(context, 3)
         }
     }
 
@@ -64,9 +64,12 @@ class GalleryFragment : Fragment() {
 
         fun loadImages(folderName: String?): List<LoadImage> {
             val listOfAllImages = ArrayList<LoadImage>()
-            GlobalApplication.globalApplicationContext.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.DATE_MODIFIED, MediaStore.Images.Media.BUCKET_DISPLAY_NAME),
-                    null, null, null)?.run {
+
+            queryImages(projection = arrayOf(
+                    MediaStore.MediaColumns.DATA,
+                    MediaStore.Images.Media.DATE_MODIFIED,
+                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            ))?.run {
                 val columnIndexData = getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
                 val columnIndexDateModified = getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
                 val columnIndexFolderName = getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)

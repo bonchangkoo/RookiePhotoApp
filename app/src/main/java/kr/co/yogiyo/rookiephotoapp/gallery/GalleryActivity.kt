@@ -13,14 +13,15 @@ import android.widget.ArrayAdapter
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.activity_gallery.*
-
-import java.util.ArrayList
-import java.util.HashMap
-
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.queryImages
+
+import java.util.ArrayList
+import java.util.HashMap
+
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.edit.EditPhotoActivity
 
@@ -33,15 +34,18 @@ class GalleryActivity : BaseActivity() {
         setupCheckPermission()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY) {
-                Intent(this@GalleryActivity, DiaryEditActivity::class.java)
-                        .setData(data?.data).let {
-                            setResult(Activity.RESULT_OK, it)
-                        }
-                finish()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+
+        intent?.run {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == Constants.REQUEST_DIARY_PICK_GALLERY) {
+                    Intent(this@GalleryActivity, DiaryEditActivity::class.java)
+                            .setData(data).let {
+                                setResult(Activity.RESULT_OK, it)
+                            }
+                    finish()
+                }
             }
         }
     }
@@ -61,21 +65,16 @@ class GalleryActivity : BaseActivity() {
         val mapOfAllImageFolders = HashMap<String, Int>()
         var countOfAllImages = 0
 
-        contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME),
-                null, null, null)?.run {
-            getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME).let { columnIndexFolderName ->
-                while (moveToNext()) {
-                    countOfAllImages++
-                    getString(columnIndexFolderName).let { folderName ->
-                        mapOfAllImageFolders.run {
-                            set(folderName, get(folderName)?.let {
-                                it + 1
-                            } ?: 1)
-                        }
-                    }
-                }
+        queryImages(projection = arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))?.run {
+            val columnIndexFolderName = getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+
+            while(moveToNext()){
+                countOfAllImages++
+                val folderName = getString(columnIndexFolderName)
+
+                mapOfAllImageFolders[folderName]?.plus(1) ?: mapOfAllImageFolders.set(folderName, 1)
             }
+
             close()
         } ?: return ArrayList()
 

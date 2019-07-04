@@ -18,12 +18,15 @@ import java.io.File
 
 import kr.co.yogiyo.rookiephotoapp.R
 
+// TODO : ViewModel 갖는 형태로 수정
 class GalleryAdapter(private val context: Context?, private var loadImages: List<LoadImage>) : RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
 
     private var selectedViewHolder: GalleryViewHolder? = null
 
     val selectedImageUri: Uri?
-        get() = Uri.fromFile(File(loadImages[selectedViewHolder!!.adapterPosition].pathOfImage))
+        get() = selectedViewHolder?.run {
+            Uri.fromFile(File(loadImages[adapterPosition].pathOfImage))
+        }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): GalleryViewHolder {
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_gallery_image, viewGroup, false)
