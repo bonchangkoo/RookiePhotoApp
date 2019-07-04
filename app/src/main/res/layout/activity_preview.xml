@@ -66,6 +66,7 @@
                 android:layout_marginRight="150dp"
                 android:layout_marginBottom="30dp"
                 android:background="@mipmap/photo_save"
+                app:layout_constraintDimensionRatio="H, 1:1"
                 app:layout_constraintEnd_toStartOf="@+id/btn_add_diary"
                 app:layout_constraintStart_toEndOf="@+id/btn_edit" />
 
