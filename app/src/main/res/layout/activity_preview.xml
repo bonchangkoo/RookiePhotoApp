@@ -48,10 +48,16 @@
                 android:id="@+id/btn_add_diary"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_margin="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginBottom="20dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawableTop="@mipmap/diary_add_gray_"
                 android:drawablePadding="-5dp"
+                android:padding="10dp"
                 android:text="@string/text_write_diary"
                 android:textColor="#8F9699"
                 android:textStyle="bold"
@@ -59,7 +65,7 @@
 
             <Button
                 android:id="@+id/btn_save_photo"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="150dp"
                 android:layout_marginTop="30dp"
@@ -74,18 +80,22 @@
                 android:id="@+id/btn_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_margin="30dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="2"
                 android:background="?selectableItemBackgroundBorderless"
                 android:drawableTop="@mipmap/photo_edit"
                 android:drawablePadding="-5dp"
+                android:padding="10dp"
                 android:text="@string/text_edit"
                 android:textColor="#8F9699"
                 android:textStyle="bold"
                 app:layout_constraintRight_toRightOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
-
-
     </LinearLayout>
 </layout>
