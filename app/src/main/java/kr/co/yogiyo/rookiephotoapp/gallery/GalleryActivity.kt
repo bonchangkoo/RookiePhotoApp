@@ -53,11 +53,11 @@ class GalleryActivity : BaseActivity() {
     fun setControlButtonEnabled(selectedImage: Boolean) {
         btn_edit.run {
             isEnabled = selectedImage
-            alpha = if(selectedImage) 1.0F else 0.5F
+            alpha = if (selectedImage) 1.0F else 0.5F
         }
         btn_done.run {
             isEnabled = selectedImage
-            alpha = if(selectedImage) 1.0F else 0.5F
+            alpha = if (selectedImage) 1.0F else 0.5F
         }
     }
 
@@ -68,23 +68,24 @@ class GalleryActivity : BaseActivity() {
         queryImages(projection = arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))?.run {
             val columnIndexFolderName = getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
 
-            while(moveToNext()){
+            while (moveToNext()) {
                 countOfAllImages++
-                val folderName = getString(columnIndexFolderName)
-
-                mapOfAllImageFolders[folderName]?.plus(1) ?: mapOfAllImageFolders.set(folderName, 1)
+                getString(columnIndexFolderName).let { folderName ->
+                    mapOfAllImageFolders[folderName] = mapOfAllImageFolders[folderName]?.plus(1)
+                            ?: 1
+                }
             }
 
             close()
         } ?: return ArrayList()
 
         return ArrayList<String>().apply {
-            if (mapOfAllImageFolders.containsKey("YogiDiary")) {
+            if (mapOfAllImageFolders.containsKey("FooNCaRe")) {
                 add("")
             }
 
             for (key in mapOfAllImageFolders.keys) {
-                if (key == "YogiDiary") {
+                if (key == "FooNCaRe") {
                     set(0, String.format(getString(R.string.spinner_folder_name_count),
                             key, mapOfAllImageFolders[key]))
                 } else {
@@ -106,9 +107,9 @@ class GalleryActivity : BaseActivity() {
         btn_close.setOnClickListener { onBackPressed() }
 
         btn_edit.setOnClickListener {
-            supportFragmentManager.findFragmentById(R.id.frame_gallery).let {nowFragment ->
+            supportFragmentManager.findFragmentById(R.id.frame_gallery).let { nowFragment ->
                 if (nowFragment is GalleryFragment) {
-                    nowFragment.selectedImageUri?.let {uriForEdit ->
+                    nowFragment.selectedImageUri?.let { uriForEdit ->
                         setControlButtonEnabled(false)
                         val doStartEditPhotoActivityIntent = Intent(this@GalleryActivity, EditPhotoActivity::class.java).apply {
                             putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
@@ -128,7 +129,7 @@ class GalleryActivity : BaseActivity() {
         btn_done.setOnClickListener {
             supportFragmentManager.findFragmentById(R.id.frame_gallery).let { nowFragment ->
                 if (nowFragment is GalleryFragment) {
-                    nowFragment.selectedImageUri?.let {originalUri ->
+                    nowFragment.selectedImageUri?.let { originalUri ->
                         Intent(this@GalleryActivity, DiaryEditActivity::class.java).apply {
                             data = originalUri
                             setResult(Activity.RESULT_OK, this)

@@ -14,8 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.*
-import kr.co.yogiyo.rookiephotoapp.Constants.DIARY_IDX
-import kr.co.yogiyo.rookiephotoapp.Constants.REQUEST_STORAGE_WRITE_ACCESS_PERMISSION
+import kr.co.yogiyo.rookiephotoapp.Constants.*
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 

@@ -94,8 +94,11 @@
     <string name="text_summary_restore">백업한 다이어리 및 사진 파일을 복원할 수 있습니다.</string>
     <string name="text_do_backup">백업하기</string>
     <string name="text_do_restore">복원하기</string>
+    <string name="text_reminder_settings">알림 설정</string>
+    <string name="text_reminder">알림</string>
+    <string name="text_summary_reminder">설정한 시간마다 알림이 오도록 설정할 수 있습니다.</string>
 
-    <!--GalleryActivity.java-->
+    <!--GalleryActivity.kt-->
     <string name="spinner_folder_name_count">"%s (%d)"</string>
     <string name="spinner_folder_all">All</string>
 
@@ -135,6 +138,12 @@
     <string name="text_day_now_diary">%d일</string>
     <string name="text_time_now_diary">%d:%s</string>
     <string name="text_yogidiary_path">%s/%s</string>
+
+    <!--ReminderNotification.kt-->
+    <string name="text_start_camera">촬영하기</string>
+    <string name="text_start_diary_add">작성하기</string>
+    <string name="text_ask_food_title">어떤 음식을 드셨나요?</string>
+    <string name="text_ask_food_message">궁금해요!🤔</string>
 
     <!--activity_preview.xml-->
     <string name="text_write_diary">글쓰기</string>
