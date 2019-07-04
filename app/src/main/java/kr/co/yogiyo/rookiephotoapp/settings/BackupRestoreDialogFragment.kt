@@ -122,10 +122,10 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
                         .flatMapIterable { diaries -> diaries }
                         .flatMap { diary: Diary ->
                             if (diary.image != null) {
-                                val imageFile = File(Constants.YOGIDIARY_PATH, diary.image)
+                                val imageFile = File(Constants.FOONCARE_PATH, diary.image)
                                 if (imageFile.isFile) {
                                     imageCompressor.setDestinationDirectoryPath(
-                                            Constants.YOGIDIARY_PATH.absolutePath + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
+                                            Constants.FOONCARE_PATH.absolutePath + File.separator + DiaryBackupRestore.COMPRESSED_FOLDER_NAME)
                                             .compressToFile(imageFile)
                                 }
                             }
@@ -220,13 +220,13 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
     }
 
     private fun writeResponseBodyToDisk(imageFileName: String, body: ResponseBody): Boolean {
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (!Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!Constants.FOONCARE_PATH.exists()) {
+            if (!Constants.FOONCARE_PATH.mkdirs()) {
                 return false
             }
         }
 
-        val restoredImageFile = File(Constants.YOGIDIARY_PATH, imageFileName)
+        val restoredImageFile = File(Constants.FOONCARE_PATH, imageFileName)
 
         try {
             body.byteStream().use { inputStream ->

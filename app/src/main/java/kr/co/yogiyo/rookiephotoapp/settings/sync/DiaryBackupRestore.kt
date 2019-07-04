@@ -33,7 +33,7 @@ class DiaryBackupRestore {
             addFormDataPart("diary_id", diary.idx.toString())
             addFormDataPart("date", serverDateFormat.format(diary.date))
             diary.image?.let { diaryImage ->
-                File(Constants.YOGIDIARY_PATH, COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
+                File(Constants.FOONCARE_PATH, COMPRESSED_FOLDER_NAME + File.separator + diaryImage).let { imageFile ->
                     if (imageFile.isFile) {
                         addFormDataPart("image", imageFile.name, RequestBody.create(MEDIA_TYPE_IMAGE, imageFile))
                     }
