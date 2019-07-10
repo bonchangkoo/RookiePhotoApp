@@ -22,14 +22,12 @@ class DiariesFragment : Fragment() {
 
     private lateinit var diariesAdapter: DiariesAdapter
 
-    private val diariesObservable by lazy { diariesViewModel.diariesObservable }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         diariesViewModel = ViewModelProviders.of(activity!!, DiariesViewModelFactory.getInstance(GlobalApplication.globalApplicationContext))
                 .get(DiariesViewModel::class.java)
         compositeDisposable.add(
-                diariesObservable
+                diariesViewModel.diariesObservable
                         .filter { it.first == arguments!!.getInt(POSITION) }
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
@@ -59,30 +57,14 @@ class DiariesFragment : Fragment() {
         return view
     }
 
-    // TODO: 이전에 데이터베이스 접근 또는 API 호출 이력이 있으면 무시하도록 구현 -> Fragment마다 호출하던 data load를 activity에서 한 번만 호출하도록 수정해야 합니다.
-    override fun onResume() {
-        super.onResume()
-        if (userVisibleHint) {
-            diariesViewModel.run {
-                updateNowPageYearMonth(arguments!!.getInt(POSITION))
-                loadNowPageDiaries(arguments!!.getInt(POSITION))
-            }
-        }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        diariesViewModel.loadNowPageDiaries(arguments!!.getInt(POSITION))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isResumed && isVisibleToUser) {
-            diariesViewModel.run {
-                updateNowPageYearMonth(arguments!!.getInt(POSITION))
-                loadNowPageDiaries(arguments!!.getInt(POSITION))
-            }
-        }
     }
 
     companion object {
