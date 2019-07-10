@@ -9,6 +9,7 @@ import android.support.v7.preference.PreferenceDialogFragmentCompat
 import android.util.Log
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.gson.JsonParser
 
 import java.io.File
 import java.io.FileOutputStream
@@ -17,8 +18,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 import id.zelory.compressor.Compressor
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
@@ -26,7 +29,6 @@ import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.diary.db.Diary
 import kr.co.yogiyo.rookiephotoapp.diary.db.LocalDiaryViewModel
 import kr.co.yogiyo.rookiephotoapp.settings.sync.DiaryBackupRestore
-import kr.co.yogiyo.rookiephotoapp.settings.sync.RestoredDiary
 import okhttp3.ResponseBody
 
 class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
@@ -76,7 +78,7 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
         super.onActivityCreated(savedInstanceState)
 
         dialog.setOnShowListener { dialog ->
-            arguments?.let {arguments ->
+            arguments?.let { arguments ->
                 (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                     setLoadingDialog(true)
                     when (arguments.getString(SettingsActivity.PREFERENCE_KEY)) {
@@ -103,24 +105,32 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
                 localDiaryViewModel.findDiaries().toFlowable()
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
-                        .map { diaries ->
+                        .flatMap { diaries ->
                             if (diaries.isEmpty()) {
                                 throw Exception(NO_DATA)
+                            } else {
+                                val flowableDiaries = Flowable.just(diaries)
+                                Flowable.zip(
+                                        flowableDiaries,
+                                        diaryBackupRestore.executePostClearDiary(currentUser!!),
+                                        BiFunction<List<Diary>,
+                                                ResponseBody,
+                                                Pair<Flowable<List<Diary>>, ResponseBody>> { _, responseBody ->
+                                            Pair(flowableDiaries, responseBody)
+                                        }
+                                )
                             }
-
-                            compositeDisposable.add(
-                                    diaryBackupRestore.executePostClearDiary(currentUser!!)
-                                            .subscribe({
-                                                // Do nothing
-                                            }, {
-                                                // Do nothing
-                                            })
-                            )
-
-                            diaries
+                        }
+                        .flatMap {
+                            if (JsonParser().parse(it.second.string()).asJsonObject
+                                            .get(SERVER_RESPONSE_KEY).asString != SERVER_RESPONSE_CLEAR_SUCCESS) {
+                                throw Exception(FAILED_TO_CONNECT)
+                            } else {
+                                it.first
+                            }
                         }
                         .flatMapIterable { diaries -> diaries }
-                        .flatMap { diary: Diary ->
+                        .flatMap { diary ->
                             if (diary.image != null) {
                                 val imageFile = File(Constants.FOONCARE_PATH, diary.image)
                                 if (imageFile.isFile) {
@@ -139,14 +149,16 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
                                 throw Exception()
                             }
                         }, { throwable ->
-                            when {
-                                NO_DATA == throwable.message -> (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_no_backup_data),
-                                        getString(R.string.text_confirm), null, null, null).show()
-                                throwable.message!!.contains(FAILED_TO_CONNECT) -> (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_network_error),
-                                        getString(R.string.text_confirm), null, null, null).show()
-                                else -> (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_backup_fail),
-                                        getString(R.string.text_confirm), null, null, null).show()
-                            }
+                            val errorMessageResource = throwable.message?.let { message ->
+                                when {
+                                    message == NO_DATA -> R.string.text_no_backup_data
+                                    message.contains(FAILED_TO_CONNECT) -> R.string.text_network_error
+                                    else -> R.string.text_backup_fail
+                                }
+                            } ?: R.string.text_backup_fail
+
+                            (context as SettingsActivity).createAlertDialog(context!!, null, getString(errorMessageResource),
+                                    getString(R.string.text_confirm), null, null, null).show()
 
                             setLoadingDialog(false)
 
@@ -174,19 +186,19 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
                         }
                         .map { restoredDiary ->
                             val date = serverDateFormat.parse(restoredDiary.datetime)
-
-                            var image: String? = null
-                            if (restoredDiary.image != null) {
-                                image = restoredDiary.image!!.substring(restoredDiary.image!!.lastIndexOf(File.separator) + 1)
-                            }
+                            val image: String? = restoredDiary.image?.substring(restoredDiary.image!!.lastIndexOf(File.separator) + 1)
 
                             localDiaryViewModel.insertDiary(restoredDiary.diaryId, date, image, restoredDiary.description)
                                     .subscribe()
 
                             restoredDiary
                         }
-                        .filter { (_, _, _, _, image) -> image != null }
-                        .flatMap { restoredDiary: RestoredDiary -> diaryBackupRestore.executeGetImage(restoredDiary.image!!.substring(restoredDiary.image!!.indexOf(File.separator) + 1)) }
+                        .filter {
+                            it.image != null
+                        }
+                        .flatMap { restoredDiary ->
+                            diaryBackupRestore.executeGetImage(restoredDiary.image!!.substring(restoredDiary.image!!.indexOf(File.separator) + 1))
+                        }
                         .map { pair ->
                             val imageFileName = pair.first.substring(pair.first.lastIndexOf(File.separator) + 1)
                             val writtenToDisk = this@BackupRestoreDialogFragment.writeResponseBodyToDisk(imageFileName, pair.second)
@@ -196,16 +208,16 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ writtenToDisk -> Log.d(TAG, "success = $writtenToDisk") },
                                 { throwable ->
-                                    if (throwable.message == NO_DATA || throwable.message!!.contains(NO_BACKUP_HISTORY)) {
-                                        (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_no_restore_data),
-                                                getString(R.string.text_confirm), null, null, null).show()
-                                    } else if (throwable.message!!.contains(FAILED_TO_CONNECT)) {
-                                        (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_network_error),
-                                                getString(R.string.text_confirm), null, null, null).show()
-                                    } else {
-                                        (context as SettingsActivity).createAlertDialog(context!!, null, getString(R.string.text_restore_fail),
-                                                getString(R.string.text_confirm), null, null, null).show()
-                                    }
+                                    val errorMessageResource = throwable.message?.let { message ->
+                                        when {
+                                            message == NO_DATA || message.contains(NO_BACKUP_HISTORY) -> R.string.text_no_restore_data
+                                            message.contains(FAILED_TO_CONNECT) -> R.string.text_network_error
+                                            else -> R.string.text_restore_fail
+                                        }
+                                    } ?: R.string.text_restore_fail
+
+                                    (context as SettingsActivity).createAlertDialog(context!!, null, getString(errorMessageResource),
+                                            getString(R.string.text_confirm), null, null, null).show()
 
                                     setLoadingDialog(false)
 
@@ -273,6 +285,8 @@ class BackupRestoreDialogFragment : PreferenceDialogFragmentCompat() {
         private const val NO_BACKUP_HISTORY = "Expected BEGIN_ARRAY but was BEGIN_OBJECT"
         private const val FAILED_TO_CONNECT = "Failed to connect"
         private const val ERROR_MESSAGE = "error_message"
+        private const val SERVER_RESPONSE_KEY = "message"
+        private const val SERVER_RESPONSE_CLEAR_SUCCESS = "clear success"
 
         fun newInstance(): BackupRestoreDialogFragment {
             return BackupRestoreDialogFragment()
