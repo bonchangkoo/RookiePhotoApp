@@ -97,10 +97,6 @@
     <string name="text_reminder">알림</string>
     <string name="text_summary_reminder">설정한 시간마다 알림이 오도록 설정할 수 있습니다.</string>
 
-    <!--GalleryActivity.kt-->
-    <string name="spinner_folder_name_count">"%s (%d)"</string>
-    <string name="spinner_folder_all">All</string>
-
     <!--activity_diary_detail.xml-->
     <string name="text_diary_date">5월 10일</string>
     <string name="text_diary_time">8:00PM</string>

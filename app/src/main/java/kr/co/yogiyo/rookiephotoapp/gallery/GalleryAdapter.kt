@@ -1,47 +1,38 @@
 package kr.co.yogiyo.rookiephotoapp.gallery
 
-import android.content.Context
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.item_gallery_image.view.*
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 
-import java.io.File
-
 import kr.co.yogiyo.rookiephotoapp.R
 
-// TODO : ViewModel 갖는 형태로 수정
-class GalleryAdapter(private val context: Context?, private var loadImages: List<LoadImage>) : RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
+class GalleryAdapter(
+        private var loadImages: List<LoadImage>
+) : RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
 
-    private var selectedViewHolder: GalleryViewHolder? = null
-
-    val selectedImageUri: Uri?
-        get() = selectedViewHolder?.run {
-            Uri.fromFile(File(loadImages[adapterPosition].pathOfImage))
-        }
+    private lateinit var galleryViewModel: GalleryViewModel
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): GalleryViewHolder {
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_gallery_image, viewGroup, false)
-        return GalleryViewHolder(context ?: GlobalApplication.globalApplicationContext, view)
+        return GalleryViewHolder(view)
     }
 
-    override fun onBindViewHolder(galleryViewHolder: GalleryViewHolder, i: Int) {
-        Glide.with(context ?: GlobalApplication.globalApplicationContext)
-                .load(loadImages[i].pathOfImage)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(galleryViewHolder.imageView)
-        val selectedFrame = galleryViewHolder.selectedFrame
+    override fun onBindViewHolder(galleryViewHolder: GalleryViewHolder, position: Int) {
+        galleryViewHolder.itemView.run {
+            Glide.with(context ?: GlobalApplication.globalApplicationContext)
+                    .load(loadImages[position].pathOfImage)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(image_view)
 
-        selectedFrame.visibility = View.GONE
+            frame_selected.visibility = if (loadImages[position].selected) View.VISIBLE else View.GONE
+        }
     }
 
     override fun getItemCount(): Int {
@@ -50,38 +41,25 @@ class GalleryAdapter(private val context: Context?, private var loadImages: List
 
     fun setImages(images: List<LoadImage>) {
         this.loadImages = images
-        if (context is GalleryActivity){
-            context.setControlButtonEnabled(false)
+    }
+
+    fun setViewModel(viewModel: GalleryViewModel) {
+        galleryViewModel = viewModel.apply {
+            setSelection = { position, selected ->
+                loadImages[position].selected = selected
+                notifyItemChanged(position)
+            }
         }
     }
 
-    inner class GalleryViewHolder(context: Context, itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val imageView: ImageView = itemView.image_view
-        val selectedFrame: FrameLayout = itemView.frame_selected
+    inner class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
             itemView.setOnClickListener {
-                if (context is GalleryActivity) {
-                    when (selectedViewHolder) {
-                        null -> {
-                            selectedViewHolder = this@GalleryViewHolder
-                            selectedFrame.visibility = View.VISIBLE
-                            context.setControlButtonEnabled(true)
-                        }
-                        this@GalleryViewHolder -> {
-                            selectedFrame.visibility = View.GONE
-                            selectedViewHolder = null
-                            context.setControlButtonEnabled(false)
-                        }
-                        else -> {
-                            selectedViewHolder!!.selectedFrame.visibility = View.GONE
-                            selectedViewHolder = this@GalleryViewHolder
-                            selectedFrame.visibility = View.VISIBLE
-                            context.setControlButtonEnabled(true)
-                        }
-                    }
-                }
+                galleryViewModel.onImageSelected(
+                        adapterPosition,
+                        loadImages[adapterPosition].pathOfImage
+                )
             }
         }
     }

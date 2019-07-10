@@ -20,15 +20,15 @@ import com.otaliastudios.cameraview.SizeSelectors
 import com.otaliastudios.cameraview.AspectRatio
 import kotlinx.android.synthetic.main.activity_camera.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
-import kr.co.yogiyo.rookiephotoapp.Constants
-import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
+import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
 import kr.co.yogiyo.rookiephotoapp.diary.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.gallery.GalleryActivity
-import kr.co.yogiyo.rookiephotoapp.gallery.GalleryFragment
+import kr.co.yogiyo.rookiephotoapp.GlobalApplication
+import kr.co.yogiyo.rookiephotoapp.loadImages
 import java.util.Calendar
 
 class CameraActivity : BaseActivity() {
@@ -281,7 +281,7 @@ class CameraActivity : BaseActivity() {
     private fun CameraViewModel.initViewModel() {
         captureNow = { camera.capturePicture() }
         updateGalleryButton = {
-            GalleryFragment.loadImages("FooNCaRe").run {
+            loadImages("FooNCaRe").run {
                 Glide.with(this@CameraActivity)
                         .load(if (isEmpty()) null else this[0].pathOfImage)
                         .error(if (cameraViewModel.isCaptureSizeFull()) {
