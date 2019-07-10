@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
@@ -80,4 +81,12 @@ fun Context?.getImageUri(bitmap: Bitmap): Uri {
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
     val path = MediaStore.Images.Media.insertImage(this?.contentResolver, bitmap, "Image", null)
     return Uri.parse(path)
+}
+
+fun queryImages(
+        uri:Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection: Array<String>? = null, selection: String? = null,
+        selectionArgs: Array<String>? = null, sortOrder: String? = null
+): Cursor? {
+    return GlobalApplication.globalApplicationContext.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)
 }
