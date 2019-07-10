@@ -26,7 +26,7 @@ class PreviewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPreviewBinding
     private lateinit var previewViewModel: PreviewViewModel
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
