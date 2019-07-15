@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="kr.co.yogiyo.rookiephotoapp.camera.capture.PreviewViewModel" />
+            type="kr.co.yogiyo.rookiephotoapp.ui.camera.preview.PreviewViewModel" />
     </data>
 
 
