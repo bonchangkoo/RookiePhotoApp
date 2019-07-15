@@ -31,35 +31,7 @@ import java.io.File
 class GalleryActivity : BaseActivity() {
 
     private val galleryViewModel by lazy {
-        ViewModelProviders.of(this).get(GalleryViewModel::class.java).apply {
-            startDoneButtonAction = { imagePath ->
-                if (!File(imagePath).isFile) {
-                    showToast(R.string.toast_cannot_retrieve_selected_image)
-                } else {
-                    Intent(this@GalleryActivity, DiaryEditActivity::class.java).apply {
-                        data = Uri.fromFile(File(imagePath))
-                        setResult(Activity.RESULT_OK, this)
-                    }
-                    finish()
-                }
-            }
-            startEditButtonAction = { imagePath ->
-                if (!File(imagePath).isFile) {
-                    showToast(R.string.toast_cannot_retrieve_selected_image)
-                } else {
-                    val doStartEditPhotoActivityIntent = Intent(this@GalleryActivity, EditPhotoActivity::class.java).apply {
-                        putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
-                        data = Uri.fromFile(File(imagePath))
-                    }
-                    if (GlobalApplication.globalApplicationContext.isFromDiary) {
-                        startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY)
-                    } else {
-                        startActivity(doStartEditPhotoActivityIntent)
-                        finish()
-                    }
-                }
-            }
-        }
+        ViewModelProviders.of(this).get(GalleryViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +94,37 @@ class GalleryActivity : BaseActivity() {
         }
     }
 
+    private fun GalleryViewModel.initViewModel() {
+        startDoneButtonAction = { imagePath ->
+            if (!File(imagePath).isFile) {
+                showToast(R.string.toast_cannot_retrieve_selected_image)
+            } else {
+                Intent(this@GalleryActivity, DiaryEditActivity::class.java).apply {
+                    data = Uri.fromFile(File(imagePath))
+                    setResult(Activity.RESULT_OK, this)
+                }
+                finish()
+            }
+        }
+
+        startEditButtonAction = { imagePath ->
+            if (!File(imagePath).isFile) {
+                showToast(R.string.toast_cannot_retrieve_selected_image)
+            } else {
+                val doStartEditPhotoActivityIntent = Intent(this@GalleryActivity, EditPhotoActivity::class.java).apply {
+                    putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
+                    data = Uri.fromFile(File(imagePath))
+                }
+                if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                    startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY)
+                } else {
+                    startActivity(doStartEditPhotoActivityIntent)
+                    finish()
+                }
+            }
+        }
+    }
+
     private fun setupCheckPermission() {
         val permissionListener = object : PermissionListener {
             override fun onPermissionGranted() {
@@ -133,6 +136,8 @@ class GalleryActivity : BaseActivity() {
                         .commit()
 
                 initView()
+
+                galleryViewModel.initViewModel()
             }
 
             override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
