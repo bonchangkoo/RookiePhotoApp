@@ -30,6 +30,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_diary_edit.*
 import kr.co.yogiyo.rookiephotoapp.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.Constants.FOONCARE_PATH
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity
@@ -263,7 +264,7 @@ class DiaryEditActivity : BaseActivity() {
                         dateAndTime = diary.date
                         photoFileName = diary.image
                         Glide.with(this@DiaryEditActivity)
-                                .load(Constants.YOGIDIARY_PATH.toString() + File.separator + photoFileName)
+                                .load(FOONCARE_PATH.toString() + File.separator + photoFileName)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                                 .skipMemoryCache(true)
                                 .into(ib_diary_edit_photo)
@@ -365,15 +366,15 @@ class DiaryEditActivity : BaseActivity() {
     @Throws(Exception::class)
     private fun copyFileToDownloads(croppedFileUri: Uri?, time: Long) {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!FOONCARE_PATH.exists()) {
+            if (FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success))
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail))
             }
         }
 
-        val downloadsDirectoryPath = Constants.YOGIDIARY_PATH.path + "/"
+        val downloadsDirectoryPath = FOONCARE_PATH.path + "/"
         val filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg")
 
         val saveFile = File(downloadsDirectoryPath, filename)
@@ -393,15 +394,15 @@ class DiaryEditActivity : BaseActivity() {
     @Throws(Exception::class)
     private fun bitmapToDownloads(bitmap: Bitmap?, time: Long) {
 
-        if (!Constants.YOGIDIARY_PATH.exists()) {
-            if (Constants.YOGIDIARY_PATH.mkdirs()) {
+        if (!FOONCARE_PATH.exists()) {
+            if (FOONCARE_PATH.mkdirs()) {
                 Log.d(TAG, getString(R.string.text_mkdir_success))
             } else {
                 Log.d(TAG, getString(R.string.text_mkdir_fail))
             }
         }
 
-        val downloadsDirectoryPath = Constants.YOGIDIARY_PATH.path + "/"
+        val downloadsDirectoryPath = FOONCARE_PATH.path + "/"
         val filename = String.format(Locale.getDefault(), "%d%s", time, ".jpg")
 
         val saveFile = File(downloadsDirectoryPath, filename)

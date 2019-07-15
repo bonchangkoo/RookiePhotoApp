@@ -281,7 +281,7 @@ class CameraActivity : BaseActivity() {
     private fun CameraViewModel.initViewModel() {
         captureNow = { camera.capturePicture() }
         updateGalleryButton = {
-            GalleryFragment.loadImages("YogiDiary").run {
+            GalleryFragment.loadImages("FooNCaRe").run {
                 Glide.with(this@CameraActivity)
                         .load(if (isEmpty()) null else this[0].pathOfImage)
                         .error(if (cameraViewModel.isCaptureSizeFull()) {

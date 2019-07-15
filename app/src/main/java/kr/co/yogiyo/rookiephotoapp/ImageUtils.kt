@@ -2,6 +2,7 @@ package kr.co.yogiyo.rookiephotoapp
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
@@ -14,11 +15,13 @@ import java.util.*
 @Throws(Exception::class)
 fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
 
-    if (!Constants.YOGIDIARY_PATH.exists()) {
-        return (!Constants.YOGIDIARY_PATH.mkdirs())
+    if (!Constants.FOONCARE_PATH.exists()) {
+        if (!Constants.FOONCARE_PATH.mkdirs()) {
+            return false
+        }
     }
 
-    val downloadsDirectoryPath = "${Constants.YOGIDIARY_PATH.path}/"
+    val downloadsDirectoryPath = "${Constants.FOONCARE_PATH.path}/"
     val filename = String.format(Locale.getDefault(), "%d%s", Calendar.getInstance().timeInMillis, ".jpg")
 
     val file = File(downloadsDirectoryPath, filename)
@@ -48,11 +51,12 @@ fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
 
 fun Context?.copyFileToDownloads(croppedFileUri: Uri): Boolean {
 
-    if (!Constants.YOGIDIARY_PATH.exists()) {
-        return (!Constants.YOGIDIARY_PATH.mkdirs())
+    if (!Constants.FOONCARE_PATH.exists()) {
+        return (!Constants.FOONCARE_PATH.mkdirs())
     }
 
-    val downloadsDirectoryPath = Constants.YOGIDIARY_PATH.path + "/"
+    val downloadsDirectoryPath = Constants.FOONCARE_PATH.path + "/"
+
     val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
 
     val saveFile = File(downloadsDirectoryPath, filename)
@@ -77,4 +81,12 @@ fun Context?.getImageUri(bitmap: Bitmap): Uri {
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
     val path = MediaStore.Images.Media.insertImage(this?.contentResolver, bitmap, "Image", null)
     return Uri.parse(path)
+}
+
+fun queryImages(
+        uri:Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection: Array<String>? = null, selection: String? = null,
+        selectionArgs: Array<String>? = null, sortOrder: String? = null
+): Cursor? {
+    return GlobalApplication.globalApplicationContext.contentResolver.query(uri, projection, selection, selectionArgs, sortOrder)
 }
