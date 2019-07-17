@@ -30,9 +30,8 @@ import java.io.File
 
 class GalleryActivity : BaseActivity() {
 
-    private val galleryViewModel by lazy {
-        ViewModelProviders.of(this).get(GalleryViewModel::class.java)
-    }
+    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var binding: ActivityGalleryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +62,11 @@ class GalleryActivity : BaseActivity() {
         btn_close.setOnClickListener { onBackPressed() }
 
         btn_edit.setOnClickListener {
-            galleryViewModel.onClickEditButton()
+            galleryViewModel.startEditButtonAction()
         }
 
         btn_done.setOnClickListener {
-            galleryViewModel.onClickDoneButton()
+            galleryViewModel.startDoneButtonAction()
         }
 
         setSupportActionBar(toolbar)
@@ -95,7 +94,7 @@ class GalleryActivity : BaseActivity() {
     }
 
     private fun GalleryViewModel.initViewModel() {
-        startDoneButtonAction = { imagePath ->
+        returnResult = { imagePath ->
             if (!File(imagePath).isFile) {
                 showToast(R.string.toast_cannot_retrieve_selected_image)
             } else {
@@ -107,7 +106,7 @@ class GalleryActivity : BaseActivity() {
             }
         }
 
-        startEditButtonAction = { imagePath ->
+        sendResult = { imagePath ->
             if (!File(imagePath).isFile) {
                 showToast(R.string.toast_cannot_retrieve_selected_image)
             } else {
@@ -128,8 +127,9 @@ class GalleryActivity : BaseActivity() {
     private fun setupCheckPermission() {
         val permissionListener = object : PermissionListener {
             override fun onPermissionGranted() {
-                (DataBindingUtil.setContentView(this@GalleryActivity, R.layout.activity_gallery) as ActivityGalleryBinding)
-                        .viewModel = galleryViewModel
+                galleryViewModel = ViewModelProviders.of(this@GalleryActivity).get(GalleryViewModel::class.java)
+                binding = DataBindingUtil.setContentView(this@GalleryActivity, R.layout.activity_gallery) as ActivityGalleryBinding
+                binding.viewModel = galleryViewModel
 
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.frame_gallery, GalleryFragment.newInstance())

@@ -13,20 +13,21 @@ class GalleryViewModel : ViewModel() {
     }
 
     lateinit var setSelection: (Int, Boolean) -> Unit
-    lateinit var startDoneButtonAction: (String?) -> Unit
-    lateinit var startEditButtonAction: (String?) -> Unit
+    lateinit var returnResult: (String?) -> Unit
+    lateinit var sendResult: (String?) -> Unit
 
     private var recentImagePath: String? = null
 
-    fun onClickDoneButton() {
-        startDoneButtonAction(recentImagePath)
+    fun startDoneButtonAction() {
+        returnResult(recentImagePath)
     }
 
-    fun onClickEditButton() {
-        startEditButtonAction(recentImagePath)
+    fun startEditButtonAction() {
+        sendResult(recentImagePath)
     }
 
     fun onItemSelected(itemName: String) {
+        recentPosition.set(-1)
         loadImagesPublishSubject.onNext(loadImages(itemName))
     }
 

@@ -26,7 +26,7 @@ class GalleryFragment : Fragment() {
     }
 
     private val galleryAdapter by lazy {
-        GalleryAdapter(ArrayList())
+        GalleryAdapter(ArrayList(), galleryViewModel)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +51,7 @@ class GalleryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recycler_gallery.run {
             setHasFixedSize(true)
-            adapter = galleryAdapter.apply {
-                setViewModel(galleryViewModel)
-            }
+            adapter = galleryAdapter
             layoutManager = GridLayoutManager(context, 3)
         }
     }

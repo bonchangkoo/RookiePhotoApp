@@ -13,10 +13,18 @@ import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
 
 class GalleryAdapter(
-        private var loadImages: List<LoadImage>
+        private var loadImages: List<LoadImage>,
+        private val galleryViewModel: GalleryViewModel
 ) : RecyclerView.Adapter<GalleryAdapter.GalleryViewHolder>() {
 
-    private lateinit var galleryViewModel: GalleryViewModel
+    init {
+        galleryViewModel.run {
+            setSelection = { position, selected ->
+                loadImages[position].selected = selected
+                notifyItemChanged(position)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): GalleryViewHolder {
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_gallery_image, viewGroup, false)
@@ -41,15 +49,6 @@ class GalleryAdapter(
 
     fun setImages(images: List<LoadImage>) {
         this.loadImages = images
-    }
-
-    fun setViewModel(viewModel: GalleryViewModel) {
-        galleryViewModel = viewModel.apply {
-            setSelection = { position, selected ->
-                loadImages[position].selected = selected
-                notifyItemChanged(position)
-            }
-        }
     }
 
     inner class GalleryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
