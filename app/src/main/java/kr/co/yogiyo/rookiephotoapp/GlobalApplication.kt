@@ -3,7 +3,7 @@ package kr.co.yogiyo.rookiephotoapp
 import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDex
-import kr.co.yogiyo.rookiephotoapp.notification.ReminderWork
+import kr.co.yogiyo.rookiephotoapp.ui.setting.notification.ReminderWork
 import com.google.firebase.auth.FirebaseAuth
 
 class GlobalApplication : Application() {

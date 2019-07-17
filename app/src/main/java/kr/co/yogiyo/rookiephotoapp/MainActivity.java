@@ -12,7 +12,8 @@ import com.gun0912.tedpermission.TedPermission;
 import java.util.ArrayList;
 import java.util.List;
 
-import kr.co.yogiyo.rookiephotoapp.camera.CameraActivity;
+import kr.co.yogiyo.rookiephotoapp.ui.camera.capture.CameraActivity;
+
 
 public class MainActivity extends AppCompatActivity {
 

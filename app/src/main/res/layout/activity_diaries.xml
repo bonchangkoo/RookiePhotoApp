@@ -7,14 +7,14 @@
 
         <variable
             name="viewModel"
-            type="kr.co.yogiyo.rookiephotoapp.diary.main.DiariesViewModel" />
+            type="kr.co.yogiyo.rookiephotoapp.ui.diary.main.DiariesViewModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".diary.main.DiariesActivity">
+        tools:context=".ui.diary.main.DiariesActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
