@@ -15,10 +15,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.activity_edit_result.*
 import kr.co.yogiyo.rookiephotoapp.*
 import kr.co.yogiyo.rookiephotoapp.Constants.*
-import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.ui.diary.main.DiariesActivity
 import kr.co.yogiyo.rookiephotoapp.ui.base.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.ui.camera.edit.EditPhotoActivity
+import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.utils.copyFileToDownloads
 
 class EditResultActivity : BaseActivity() {

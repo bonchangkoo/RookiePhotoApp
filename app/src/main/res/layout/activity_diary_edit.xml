@@ -1,138 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.diary.edit.DiaryEditActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditViewModel" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/color_fdb32d"
-        app:contentInsetLeft="0dp"
-        app:contentInsetStart="0dp"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".diary.DiaryEditActivity">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/ib_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:src="@mipmap/back" />
-
-            <TextView
-                android:id="@+id/tv_subject"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_toRightOf="@id/ib_back"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="편집"
-                android:textColor="@android:color/white"
-                android:textSize="24sp" />
-
-            <ImageButton
-                android:id="@+id/ib_diary_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_margin="8dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:src="@mipmap/diary_save" />
-
-        </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/color_fdb32d"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <ImageButton
-                android:id="@+id/ib_diary_edit_photo"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_margin="5dp"
-                android:background="@color/color_E7E7E7"
-                android:contentDescription="@string/text_photo_description"
-                android:scaleType="fitCenter"
-                android:src="@mipmap/diary_photo_add" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/ib_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@mipmap/back" />
+
+                <TextView
+                    android:id="@+id/tv_subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/ib_back"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="편집"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp" />
+
+                <ImageButton
+                    android:id="@+id/ib_diary_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="8dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@mipmap/diary_save" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tv_diary_edit_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:background="@drawable/round_corner"
-                    android:text="@string/text_diary_date"
-                    android:textColor="@color/color_783f04"
-                    android:textSize="25sp" />
+                <ImageButton
+                    android:id="@+id/ib_diary_edit_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="5dp"
+                    android:background="@color/color_E7E7E7"
+                    android:contentDescription="@string/text_photo_description"
+                    android:scaleType="fitCenter"
+                    android:src="@mipmap/diary_photo_add" />
 
-                <TextView
-                    android:id="@+id/tv_diary_edit_time"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:background="@drawable/round_corner"
-                    android:text="@string/text_diary_time"
-                    android:textColor="@color/color_783f04"
-                    android:textSize="25sp" />
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_diary_edit_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/round_corner"
+                        android:text="@{viewModel.dateTextLabel}"
+                        android:textColor="@color/color_783f04"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/tv_diary_edit_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/round_corner"
+                        android:text="@{viewModel.timeTextLabel}"
+                        android:textColor="@color/color_783f04"
+                        android:textSize="25sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="100dp"
+                    android:layout_marginRight="100dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/color_D6D6D6" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/et_diary_edit_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:hint="@string/text_diary_content_hint"
+                        android:text="@={viewModel.descriptionTextLabel}"
+                        android:theme="@style/EditTextStyle" />
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginLeft="100dp"
-                android:layout_marginRight="100dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/color_D6D6D6" />
+        </android.support.v4.widget.NestedScrollView>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:gravity="center"
-                app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
-                android:padding="10dp">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/et_diary_edit_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:gravity="center"
-                    android:theme="@style/EditTextStyle"
-                    android:hint="@string/text_diary_content_hint"
-                    />
-            </android.support.design.widget.TextInputLayout>
-
-        </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
-</LinearLayout>
+    </LinearLayout>
+</layout>

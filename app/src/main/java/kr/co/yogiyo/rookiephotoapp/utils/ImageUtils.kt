@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import kr.co.yogiyo.rookiephotoapp.Constants
+import kr.co.yogiyo.rookiephotoapp.Constants.FOONCARE_PATH
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -15,7 +17,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 @Throws(Exception::class)
-fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
+fun Context?.bitmapToDownloads(bitmap: Bitmap, imageFileName: Long? = null): Boolean {
 
     if (!Constants.FOONCARE_PATH.exists()) {
         if (!Constants.FOONCARE_PATH.mkdirs()) {
@@ -23,9 +25,10 @@ fun Context?.bitmapToDownloads(bitmap: Bitmap): Boolean {
         }
     }
 
-    val downloadsDirectoryPath = "${Constants.FOONCARE_PATH.path}/"
-    val filename = String.format(Locale.getDefault(), "%d%s", Calendar.getInstance().timeInMillis, ".jpg")
+    val downloadsDirectoryPath = "${FOONCARE_PATH.path}/"
+    val timeValueOfFileName: Long = imageFileName ?: Calendar.getInstance().timeInMillis
 
+    val filename = String.format(Locale.getDefault(), "%d%s", timeValueOfFileName, ".jpg")
     val file = File(downloadsDirectoryPath, filename)
 
     FileOutputStream(file).use {
@@ -51,17 +54,37 @@ fun Context?.saveBitmapToInternalStorage(bitmap: Bitmap) {
     }
 }
 
-fun Context?.copyFileToDownloads(croppedFileUri: Uri): Boolean {
+
+fun Context?.loadBitmapFromInternalStorage(): Bitmap? {
+    val fileInputStream: FileInputStream
+    var bitmap: Bitmap? = null
+    try {
+        fileInputStream = this!!.openFileInput("temp.jpg")
+        bitmap = BitmapFactory.decodeStream(fileInputStream)
+        fileInputStream.close()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return bitmap
+}
+
+fun Context?.copyFileToDownloads(croppedFileUri: Uri, imageFileName: Long? = null): Boolean {
 
     if (!Constants.FOONCARE_PATH.exists()) {
-        return (!Constants.FOONCARE_PATH.mkdirs())
+        if (!Constants.FOONCARE_PATH.mkdirs()) {
+            return false
+        }
     }
 
     val downloadsDirectoryPath = Constants.FOONCARE_PATH.path + "/"
+    val timeValueOfFileName = imageFileName ?: Calendar.getInstance().timeInMillis
 
-    val filename = String.format(Locale.getDefault(), "%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri.lastPathSegment)
+    val fileName = if (imageFileName != null) String.format(Locale.getDefault(), "%d%s", timeValueOfFileName, ".jpg") else {
+        String.format(Locale.getDefault(), "%d_%s", timeValueOfFileName, croppedFileUri.lastPathSegment)
+    }
 
-    val saveFile = File(downloadsDirectoryPath, filename)
+    val saveFile = File(downloadsDirectoryPath, fileName)
 
     val inStream = FileInputStream(File(croppedFileUri.path))
     val outStream = FileOutputStream(saveFile)
@@ -86,7 +109,7 @@ fun Context?.getImageUri(bitmap: Bitmap): Uri {
 }
 
 fun queryImages(
-        uri:Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         projection: Array<String>? = null, selection: String? = null,
         selectionArgs: Array<String>? = null, sortOrder: String? = null
 ): Cursor? {

@@ -47,14 +47,14 @@
             android:name=".ui.setting.SettingsActivity"
             android:theme="@style/Theme.FDB32D" />
         <activity
-            android:name=".ui.diary.edit.DiaryEditActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".ui.diary.main.DiariesActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".ui.diary.detail.DiaryDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ui.diary.edit.DiaryEditActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>

@@ -9,21 +9,17 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.activity_gallery.*
-import kr.co.yogiyo.rookiephotoapp.ui.base.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
-import kr.co.yogiyo.rookiephotoapp.utils.queryImages
-
-import java.util.ArrayList
-import java.util.HashMap
-
-import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
+import kr.co.yogiyo.rookiephotoapp.ui.base.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.ui.camera.edit.EditPhotoActivity
+import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
+import kr.co.yogiyo.rookiephotoapp.utils.queryImages
+import java.util.*
 
 class GalleryActivity : BaseActivity() {
 
