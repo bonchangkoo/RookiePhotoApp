@@ -5,17 +5,18 @@
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
-            type="kr.co.yogiyo.rookiephotoapp.gallery.GalleryViewModel" />
+            type="kr.co.yogiyo.rookiephotoapp.ui.camera.gallery.GalleryViewModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".gallery.GalleryActivity">
+        tools:context=".ui.camera.gallery.GalleryActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -59,10 +60,10 @@
                     android:layout_marginLeft="24dp"
                     android:layout_toStartOf="@+id/btn_edit"
                     android:layout_toLeftOf="@+id/btn_edit"
+                    android:alpha="@{(viewModel.recentPosition &lt; 0) ? 0.5f : 1.0f}"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/baseline_done_white_24"
                     android:clickable="@{(viewModel.recentPosition &lt; 0) ? false : true}"
-                    android:alpha="@{(viewModel.recentPosition &lt; 0) ? 0.5f : 1.0f}" />
+                    android:src="@drawable/baseline_done_white_24" />
 
                 <ImageButton
                     android:id="@+id/btn_edit"
@@ -73,10 +74,10 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginStart="16dp"
                     android:layout_marginLeft="16dp"
+                    android:alpha="@{(viewModel.recentPosition &lt; 0) ? 0.5f : 1.0f}"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/baseline_edit_white_24"
                     android:clickable="@{(viewModel.recentPosition &lt; 0) ? false : true}"
-                    android:alpha="@{(viewModel.recentPosition &lt; 0) ? 0.5f : 1.0f}"  />
+                    android:src="@drawable/baseline_edit_white_24" />
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
