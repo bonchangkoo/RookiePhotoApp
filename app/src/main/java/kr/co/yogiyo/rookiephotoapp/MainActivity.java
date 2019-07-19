@@ -14,7 +14,6 @@ import java.util.List;
 
 import kr.co.yogiyo.rookiephotoapp.ui.camera.capture.CameraActivity;
 
-
 public class MainActivity extends AppCompatActivity {
 
     @Override

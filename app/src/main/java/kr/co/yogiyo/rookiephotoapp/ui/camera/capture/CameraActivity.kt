@@ -20,11 +20,11 @@ import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.databinding.ActivityCameraBinding
 import kr.co.yogiyo.rookiephotoapp.ui.base.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.ui.camera.gallery.GalleryActivity
-import kr.co.yogiyo.rookiephotoapp.ui.camera.gallery.GalleryFragment
 import kr.co.yogiyo.rookiephotoapp.ui.camera.preview.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.ui.diary.main.DiariesActivity
-import java.util.*
+import kr.co.yogiyo.rookiephotoapp.utils.loadImages
+import java.util.Calendar
 
 class CameraActivity : BaseActivity() {
 
@@ -277,7 +277,7 @@ class CameraActivity : BaseActivity() {
     private fun CameraViewModel.initViewModel() {
         captureNow = { camera.capturePicture() }
         updateGalleryButton = {
-            GalleryFragment.loadImages("FooNCaRe").run {
+            loadImages("FooNCaRe").run {
                 Glide.with(this@CameraActivity)
                         .load(if (isEmpty()) null else this[0].pathOfImage)
                         .error(if (cameraViewModel.isCaptureSizeFull()) {

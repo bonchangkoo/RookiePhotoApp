@@ -2,10 +2,12 @@ package kr.co.yogiyo.rookiephotoapp.ui.camera.gallery
 
 import android.Manifest
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,24 +15,26 @@ import android.widget.ArrayAdapter
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.activity_gallery.*
+import kr.co.yogiyo.rookiephotoapp.utils.getFolderNames
+import kr.co.yogiyo.rookiephotoapp.databinding.ActivityGalleryBinding
 import kr.co.yogiyo.rookiephotoapp.ui.base.BaseActivity
 import kr.co.yogiyo.rookiephotoapp.Constants
 import kr.co.yogiyo.rookiephotoapp.GlobalApplication
 import kr.co.yogiyo.rookiephotoapp.R
-import kr.co.yogiyo.rookiephotoapp.utils.queryImages
+import kr.co.yogiyo.rookiephotoapp.ui.camera.edit.EditPhotoActivity
 
 import java.util.ArrayList
-import java.util.HashMap
 
 import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
-import kr.co.yogiyo.rookiephotoapp.ui.camera.edit.EditPhotoActivity
+import java.io.File
 
 class GalleryActivity : BaseActivity() {
 
+    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var binding: ActivityGalleryBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_gallery)
-
         setupCheckPermission()
     }
 
@@ -50,55 +54,6 @@ class GalleryActivity : BaseActivity() {
         }
     }
 
-    fun setControlButtonEnabled(selectedImage: Boolean) {
-        btn_edit.run {
-            isEnabled = selectedImage
-            alpha = if (selectedImage) 1.0F else 0.5F
-        }
-        btn_done.run {
-            isEnabled = selectedImage
-            alpha = if (selectedImage) 1.0F else 0.5F
-        }
-    }
-
-    private fun getFolderNames(): List<String> {
-        val mapOfAllImageFolders = HashMap<String, Int>()
-        var countOfAllImages = 0
-
-        queryImages(projection = arrayOf(MediaStore.Images.Media.BUCKET_DISPLAY_NAME))?.run {
-            val columnIndexFolderName = getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-
-            while (moveToNext()) {
-                countOfAllImages++
-                getString(columnIndexFolderName).let { folderName ->
-                    mapOfAllImageFolders[folderName] = mapOfAllImageFolders[folderName]?.plus(1)
-                            ?: 1
-                }
-            }
-
-            close()
-        } ?: return ArrayList()
-
-        return ArrayList<String>().apply {
-            if (mapOfAllImageFolders.containsKey("FooNCaRe")) {
-                add("")
-            }
-
-            for (key in mapOfAllImageFolders.keys) {
-                if (key == "FooNCaRe") {
-                    set(0, String.format(getString(R.string.spinner_folder_name_count),
-                            key, mapOfAllImageFolders[key]))
-                } else {
-                    add(String.format(getString(R.string.spinner_folder_name_count),
-                            key, mapOfAllImageFolders[key])
-                    )
-                }
-            }
-            add(String.format(getString(R.string.spinner_folder_name_count),
-                    getString(R.string.spinner_folder_all), countOfAllImages))
-        }
-    }
-
     private fun initView() {
         if (!GlobalApplication.globalApplicationContext.isFromDiary) {
             btn_done.visibility = View.GONE
@@ -107,57 +62,28 @@ class GalleryActivity : BaseActivity() {
         btn_close.setOnClickListener { onBackPressed() }
 
         btn_edit.setOnClickListener {
-            supportFragmentManager.findFragmentById(R.id.frame_gallery).let { nowFragment ->
-                if (nowFragment is GalleryFragment) {
-                    nowFragment.selectedImageUri?.let { uriForEdit ->
-                        setControlButtonEnabled(false)
-                        val doStartEditPhotoActivityIntent = Intent(this@GalleryActivity, EditPhotoActivity::class.java).apply {
-                            putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
-                            data = uriForEdit
-                        }
-                        if (GlobalApplication.globalApplicationContext.isFromDiary) {
-                            startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY)
-                        } else {
-                            startActivity(doStartEditPhotoActivityIntent)
-                            finish()
-                        }
-                    } ?: showToast(R.string.toast_cannot_retrieve_selected_image)
-                }
-            }
+            galleryViewModel.startEditButtonAction()
         }
 
         btn_done.setOnClickListener {
-            supportFragmentManager.findFragmentById(R.id.frame_gallery).let { nowFragment ->
-                if (nowFragment is GalleryFragment) {
-                    nowFragment.selectedImageUri?.let { originalUri ->
-                        Intent(this@GalleryActivity, DiaryEditActivity::class.java).apply {
-                            data = originalUri
-                            setResult(Activity.RESULT_OK, this)
-                        }
-                        finish()
-                    } ?: showToast(R.string.toast_cannot_retrieve_selected_image)
-                }
-            }
+            galleryViewModel.startDoneButtonAction()
         }
+
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // TODO : Spinner 에 보여지는 텍스트 2가지로 구분하는게 좋을 것 같음 -> 폴더명... (이미지 수)
-        val gallerySpinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, getFolderNames()).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-
         spinner_gallery.run {
-            adapter = gallerySpinnerAdapter
+            adapter = ArrayAdapter(this@GalleryActivity,
+                    android.R.layout.simple_spinner_item,
+                    getFolderNames()).apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            }
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    setControlButtonEnabled(false)
-
-                    val item = parent.getItemAtPosition(position).toString().substring(0, parent.getItemAtPosition(position).toString().lastIndexOf(" "))
-
-                    supportFragmentManager.beginTransaction()
-                            .replace(R.id.frame_gallery, GalleryFragment.newInstance(item))
-                            .commit()
+                    val folderName = parent.getItemAtPosition(position).toString()
+                            .substring(0, parent.getItemAtPosition(position).toString().lastIndexOf(" "))
+                    galleryViewModel.onItemSelected(folderName)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -167,10 +93,51 @@ class GalleryActivity : BaseActivity() {
         }
     }
 
+    private fun GalleryViewModel.initViewModel() {
+        returnResult = { imagePath ->
+            if (!File(imagePath).isFile) {
+                showToast(R.string.toast_cannot_retrieve_selected_image)
+            } else {
+                Intent(this@GalleryActivity, DiaryEditActivity::class.java).apply {
+                    data = Uri.fromFile(File(imagePath))
+                    setResult(Activity.RESULT_OK, this)
+                }
+                finish()
+            }
+        }
+
+        sendResult = { imagePath ->
+            if (!File(imagePath).isFile) {
+                showToast(R.string.toast_cannot_retrieve_selected_image)
+            } else {
+                val doStartEditPhotoActivityIntent = Intent(this@GalleryActivity, EditPhotoActivity::class.java).apply {
+                    putExtra(getString(R.string.edit_photo_category_number), EDIT_SELECTED_PHOTO)
+                    data = Uri.fromFile(File(imagePath))
+                }
+                if (GlobalApplication.globalApplicationContext.isFromDiary) {
+                    startActivityForResult(doStartEditPhotoActivityIntent, Constants.REQUEST_DIARY_PICK_GALLERY)
+                } else {
+                    startActivity(doStartEditPhotoActivityIntent)
+                    finish()
+                }
+            }
+        }
+    }
+
     private fun setupCheckPermission() {
         val permissionListener = object : PermissionListener {
             override fun onPermissionGranted() {
+                galleryViewModel = ViewModelProviders.of(this@GalleryActivity).get(GalleryViewModel::class.java)
+                binding = DataBindingUtil.setContentView(this@GalleryActivity, R.layout.activity_gallery) as ActivityGalleryBinding
+                binding.viewModel = galleryViewModel
+
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.frame_gallery, GalleryFragment.newInstance())
+                        .commit()
+
                 initView()
+
+                galleryViewModel.initViewModel()
             }
 
             override fun onPermissionDenied(deniedPermissions: ArrayList<String>) {
