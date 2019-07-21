@@ -19,17 +19,14 @@
             android:name=".ui.camera.gallery.GalleryActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".MainActivity"
-            android:noHistory="true">
+            android:name=".ui.camera.capture.CameraActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.camera.capture.CameraActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.FullScreen" />
         <activity android:name=".ui.base.BaseActivity" />
         <activity
             android:name=".ui.camera.preview.PreviewActivity"
