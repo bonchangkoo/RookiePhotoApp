@@ -1,6 +1,8 @@
 package kr.co.yogiyo.rookiephotoapp.ui.diary.edit;
 
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
+import android.app.Service;
 import android.app.TimePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -50,6 +52,7 @@ import kr.co.yogiyo.rookiephotoapp.ui.camera.capture.CameraActivity;
 import kr.co.yogiyo.rookiephotoapp.ui.camera.gallery.GalleryActivity;
 import kr.co.yogiyo.rookiephotoapp.ui.camera.preview.PreviewActivity;
 import kr.co.yogiyo.rookiephotoapp.ui.diary.LocalDiaryViewModel;
+import kr.co.yogiyo.rookiephotoapp.ui.setting.notification.ReminderNotification;
 
 public class DiaryEditActivity extends BaseActivity implements View.OnClickListener {
 
@@ -87,6 +90,9 @@ public class DiaryEditActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_edit);
+
+        NotificationManager manager = (NotificationManager)getSystemService(Service.NOTIFICATION_SERVICE);
+        manager.cancel(ReminderNotification.NOTIFICATION_CODE);
 
         localDiaryViewModel = ViewModelProviders.of(this).get(LocalDiaryViewModel.class);
 

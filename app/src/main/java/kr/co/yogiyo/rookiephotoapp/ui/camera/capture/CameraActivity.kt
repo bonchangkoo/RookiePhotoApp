@@ -1,6 +1,8 @@
 package kr.co.yogiyo.rookiephotoapp.ui.camera.capture
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.graphics.PointF
@@ -23,10 +25,15 @@ import kr.co.yogiyo.rookiephotoapp.ui.camera.gallery.GalleryActivity
 import kr.co.yogiyo.rookiephotoapp.ui.camera.preview.PreviewActivity
 import kr.co.yogiyo.rookiephotoapp.ui.diary.edit.DiaryEditActivity
 import kr.co.yogiyo.rookiephotoapp.ui.diary.main.DiariesActivity
+import kr.co.yogiyo.rookiephotoapp.ui.setting.notification.ReminderNotification
 import kr.co.yogiyo.rookiephotoapp.utils.loadImages
 import java.util.Calendar
 
 class CameraActivity : BaseActivity() {
+
+    private val manager: NotificationManager by lazy {
+        getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     private var backPressedStartTime = 0L
 
@@ -39,6 +46,8 @@ class CameraActivity : BaseActivity() {
 
         (DataBindingUtil.setContentView(this, R.layout.activity_camera) as ActivityCameraBinding)
                 .viewModel = cameraViewModel
+
+        manager.cancel(ReminderNotification.NOTIFICATION_CODE)
 
         initView()
 
