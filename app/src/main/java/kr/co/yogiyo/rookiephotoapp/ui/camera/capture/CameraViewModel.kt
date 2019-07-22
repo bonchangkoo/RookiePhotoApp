@@ -15,15 +15,17 @@ import kr.co.yogiyo.rookiephotoapp.R
 
 class CameraViewModel : ViewModel() {
 
-    val showMoreButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_more_horiz_black_24))
-    val captureSizeButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_crop_square_black_24))
-    val goDiaryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_event_black_24))
-    val timerButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_timer_off_white_24))
-    val flashButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_flash_off_white_24))
-    val flashButtonText: ObservableField<String> = ObservableField(GlobalApplication.globalApplicationContext.getString(R.string.text_flash))
-    val goGalleryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_collections_black_24))
-    val gridButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_grid_off_black_36))
-    val gridButtonText: ObservableField<String> = ObservableField(GlobalApplication.globalApplicationContext.getString(R.string.text_grid))
+    private val appContext = GlobalApplication.globalApplicationContext
+
+    val showMoreButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_more_horiz_black_24))
+    val captureSizeButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_crop_square_black_24))
+    val goDiaryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_event_black_24))
+    val timerButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_timer_off_white_24))
+    val flashButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_flash_off_white_24))
+    val flashButtonText: ObservableField<Int> = ObservableField(R.string.text_flash)
+    val goGalleryButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_collections_black_24))
+    val gridButtonSrc: ObservableField<Drawable?> = ObservableField(ContextCompat.getDrawable(appContext, R.drawable.baseline_grid_off_black_36))
+    val gridButtonText: ObservableField<Int> = ObservableField(R.string.text_grid)
     val delayVisibility: ObservableInt = ObservableInt(View.GONE)
     val delayMessageLabel: ObservableInt = ObservableInt(0)
     val frameControlButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
@@ -31,8 +33,9 @@ class CameraViewModel : ViewModel() {
     val goGalleryButtonVisibility: ObservableInt = ObservableInt(View.VISIBLE)
     val showMoreLayoutVisibility: ObservableInt = ObservableInt(View.GONE)
     val showCaptureSizeLayoutVisibility: ObservableInt = ObservableInt(View.GONE)
-    val textColorByCaptureSize: ObservableInt = ObservableInt(ContextCompat.getColor(GlobalApplication.globalApplicationContext, android.R.color.black))
+    val textColorByCaptureSize: ObservableInt = ObservableInt(ContextCompat.getColor(appContext, android.R.color.black))
     val alphaByCaptureSize: ObservableFloat = ObservableFloat(0.7f)
+
 
     lateinit var captureNow: () -> Unit
     lateinit var updateGalleryButton: () -> Unit
@@ -50,14 +53,14 @@ class CameraViewModel : ViewModel() {
 
     fun isCaptureSizeFull() = captureSizeFull
 
-    fun updateFlashButton(text: String, drawableId: Int) {
-        flashButtonText.set(text)
-        flashButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, drawableId))
+    fun updateFlashButton(textResource: Int, drawableId: Int) {
+        flashButtonText.set(textResource)
+        flashButtonSrc.set(ContextCompat.getDrawable(appContext, drawableId))
     }
 
-    fun updateGridButton(text: String, drawableId: Int) {
-        gridButtonText.set(text)
-        gridButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, drawableId))
+    fun updateGridButton(textResource: Int, drawableId: Int) {
+        gridButtonText.set(textResource)
+        gridButtonSrc.set(ContextCompat.getDrawable(appContext, drawableId))
     }
 
     fun updateViewByCaptureSize(fullScreen: Boolean = captureSizeFull) {
@@ -67,28 +70,28 @@ class CameraViewModel : ViewModel() {
 
         captureSizeFull = fullScreen
         if (fullScreen) {
-            showMoreButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_more_horiz_white_24))
-            captureSizeButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_crop_square_white_24))
-            goDiaryButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_event_white_24))
+            showMoreButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_more_horiz_white_24))
+            captureSizeButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_crop_square_white_24))
+            goDiaryButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_event_white_24))
             updateGalleryButton()
-            gridButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, if (getGridType() == 0) {
+            gridButtonSrc.set(ContextCompat.getDrawable(appContext, if (getGridType() == 0) {
                 R.drawable.baseline_grid_off_white_36
             } else {
                 R.drawable.baseline_grid_on_white_36
             }))
-            textColorByCaptureSize.set(ContextCompat.getColor(GlobalApplication.globalApplicationContext, android.R.color.white))
+            textColorByCaptureSize.set(ContextCompat.getColor(appContext, android.R.color.white))
             alphaByCaptureSize.set(1f)
         } else {
-            showMoreButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_more_horiz_black_24))
-            captureSizeButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_crop_square_black_24))
-            goDiaryButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_event_black_24))
+            showMoreButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_more_horiz_black_24))
+            captureSizeButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_crop_square_black_24))
+            goDiaryButtonSrc.set(ContextCompat.getDrawable(appContext, R.drawable.baseline_event_black_24))
             updateGalleryButton()
-            gridButtonSrc.set(ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, if (getGridType() == 0) {
+            gridButtonSrc.set(ContextCompat.getDrawable(appContext, if (getGridType() == 0) {
                 R.drawable.baseline_grid_off_black_36
             } else {
                 R.drawable.baseline_grid_on_black_36
             }))
-            textColorByCaptureSize.set(ContextCompat.getColor(GlobalApplication.globalApplicationContext, android.R.color.black))
+            textColorByCaptureSize.set(ContextCompat.getColor(appContext, android.R.color.black))
             alphaByCaptureSize.set(0.7f)
         }
     }
@@ -122,9 +125,9 @@ class CameraViewModel : ViewModel() {
 
     fun onClickTimerButton(view: View) {
         timerButtonSrc.set(when (getNextCaptureDelay()) {
-            0 -> ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_timer_off_white_24)
-            3 -> ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_timer_3_white_24)
-            10 -> ContextCompat.getDrawable(GlobalApplication.globalApplicationContext, R.drawable.baseline_timer_10_white_24)
+            0 -> ContextCompat.getDrawable(appContext, R.drawable.baseline_timer_off_white_24)
+            3 -> ContextCompat.getDrawable(appContext, R.drawable.baseline_timer_3_white_24)
+            10 -> ContextCompat.getDrawable(appContext, R.drawable.baseline_timer_10_white_24)
             else -> null
         })
     }
@@ -134,7 +137,7 @@ class CameraViewModel : ViewModel() {
         showMoreLayoutVisibility.set(View.GONE)
         showCaptureSizeLayoutVisibility.set(View.GONE)
         when {
-            GlobalApplication.globalApplicationContext.isFromDiary -> {
+            appContext.isFromDiary -> {
                 goDiaryButtonVisibility.set(View.INVISIBLE)
                 goGalleryButtonVisibility.set(View.INVISIBLE)
             }

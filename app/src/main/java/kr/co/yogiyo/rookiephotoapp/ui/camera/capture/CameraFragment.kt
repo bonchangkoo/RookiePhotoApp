@@ -76,19 +76,19 @@ class CameraFragment : Fragment() {
             when (cameraViewModel.getNextFlashType()) {
                 0 -> {
                     camera.flash = Flash.OFF
-                    cameraViewModel.updateFlashButton(getString(R.string.text_flash), R.drawable.baseline_flash_off_white_24)
+                    cameraViewModel.updateFlashButton(R.string.text_flash, R.drawable.baseline_flash_off_white_24)
                 }
                 1 -> {
                     camera.flash = Flash.ON
-                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_ON), R.drawable.baseline_flash_on_white_24)
+                    cameraViewModel.updateFlashButton(R.string.text_flash_ON, R.drawable.baseline_flash_on_white_24)
                 }
                 2 -> {
                     camera.flash = Flash.AUTO
-                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_AUTO), R.drawable.baseline_flash_auto_white_24)
+                    cameraViewModel.updateFlashButton(R.string.text_flash_AUTO, R.drawable.baseline_flash_auto_white_24)
                 }
                 3 -> {
                     camera.flash = Flash.TORCH
-                    cameraViewModel.updateFlashButton(getString(R.string.text_flash_TORCH), R.drawable.baseline_flash_on_white_24)
+                    cameraViewModel.updateFlashButton(R.string.text_flash_TORCH, R.drawable.baseline_flash_on_white_24)
                 }
             }
         }
@@ -119,7 +119,7 @@ class CameraFragment : Fragment() {
             camera.run {
                 grid = when (cameraViewModel.getNextGridType()) {
                     0 -> {
-                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid),
+                        cameraViewModel.updateGridButton(R.string.text_grid,
                                 if (cameraViewModel.isCaptureSizeFull()) {
                                     R.drawable.baseline_grid_off_white_36
                                 } else {
@@ -128,7 +128,7 @@ class CameraFragment : Fragment() {
                         Grid.OFF
                     }
                     1 -> {
-                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_three_by_three),
+                        cameraViewModel.updateGridButton(R.string.text_grid_three_by_three,
                                 if (cameraViewModel.isCaptureSizeFull()) {
                                     R.drawable.baseline_grid_on_white_36
                                 } else {
@@ -137,7 +137,7 @@ class CameraFragment : Fragment() {
                         Grid.DRAW_3X3
                     }
                     2 -> {
-                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_four_by_four),
+                        cameraViewModel.updateGridButton(R.string.text_grid_four_by_four,
                                 if (cameraViewModel.isCaptureSizeFull()) {
                                     R.drawable.baseline_grid_on_white_36
                                 } else {
@@ -146,7 +146,7 @@ class CameraFragment : Fragment() {
                         Grid.DRAW_4X4
                     }
                     else -> {
-                        cameraViewModel.updateGridButton(context.getString(R.string.text_grid_phi),
+                        cameraViewModel.updateGridButton(R.string.text_grid_phi,
                                 if (cameraViewModel.isCaptureSizeFull()) {
                                     R.drawable.baseline_grid_on_white_36
                                 } else {
