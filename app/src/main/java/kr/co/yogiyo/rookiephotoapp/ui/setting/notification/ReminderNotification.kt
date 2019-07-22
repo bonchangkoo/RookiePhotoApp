@@ -16,8 +16,9 @@ import kr.co.yogiyo.rookiephotoapp.ui.diary.main.DiariesActivity
 
 object ReminderNotification {
 
+    const val NOTIFICATION_CODE = 888
+
     private const val CHANNEL_ID = "channel_reminder"
-    private const val NOTIFICATION_CODE = 888
     private const val PENDING_REQUEST_CODE_CAMERA = 301
     private const val PENDING_REQUEST_CODE_DIARY = 302
     private const val PENDING_REQUEST_CODE_DIARY_ADD = 303

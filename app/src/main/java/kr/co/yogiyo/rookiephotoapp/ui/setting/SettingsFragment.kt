@@ -10,10 +10,13 @@ import kr.co.yogiyo.rookiephotoapp.R
 import kr.co.yogiyo.rookiephotoapp.ui.setting.backup_restore.BackupRestoreDialogFragment
 import kr.co.yogiyo.rookiephotoapp.ui.setting.auth.SignDialogFragment
 import kr.co.yogiyo.rookiephotoapp.ui.setting.auth.SignOutDialogFragment
+import kr.co.yogiyo.rookiephotoapp.ui.setting.notification.ReminderWork
+import androidx.work.WorkManager
 
 // TODO : preference엔 databinding이 지원되지 않는다고 해서 observe로 구현해
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
 
+    private val switchReminderPreference by lazy { findPreference(SettingsActivity.SWITCH_REMINDER_KEY) }
     private val backupDialogPreference by lazy { findPreference(SettingsActivity.BACKUP_DIALOG_KEY) }
     private val restoreDialogPreference by lazy { findPreference(SettingsActivity.RESTORE_DIALOG_KEY) }
     private val signDialogPreference by lazy { findPreference(SettingsActivity.SIGN_DIALOG_KEY) }
@@ -80,6 +83,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         super.onActivityCreated(savedInstanceState)
         signDialogPreference.title = GlobalApplication.globalApplicationContext.firebaseAuth.currentUser?.email
                 ?: getString(R.string.text_need_to_signin)
+        switchReminderPreference.setOnPreferenceChangeListener { _, switchOn ->
+            if (switchOn as Boolean)
+                ReminderWork.enqueueReminder()
+            else
+                WorkManager.getInstance().cancelAllWorkByTag(ReminderWork.TAG_OUTPUT)
+
+            true
+        }
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {

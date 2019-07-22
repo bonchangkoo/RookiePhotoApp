@@ -28,5 +28,6 @@ class SettingsActivity : BaseActivity() {
         const val RESTORE_DIALOG_KEY = "restore_dialog"
         const val SIGN_DIALOG_KEY = "sign_dialog"
         const val PREFERENCE_DIALOG_TAG = "android.support.v7.preference.PreferenceFragment.DIALOG"
+        const val SWITCH_REMINDER_KEY = "switch_reminder"
     }
 }
