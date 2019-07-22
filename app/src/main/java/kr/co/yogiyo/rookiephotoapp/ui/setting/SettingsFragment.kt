@@ -83,8 +83,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClic
         super.onActivityCreated(savedInstanceState)
         signDialogPreference.title = GlobalApplication.globalApplicationContext.firebaseAuth.currentUser?.email
                 ?: getString(R.string.text_need_to_signin)
-        switchReminderPreference.setOnPreferenceChangeListener { _, any ->
-            if (any as Boolean)
+        switchReminderPreference.setOnPreferenceChangeListener { _, switchOn ->
+            if (switchOn as Boolean)
                 ReminderWork.enqueueReminder()
             else
                 WorkManager.getInstance().cancelAllWorkByTag(ReminderWork.TAG_OUTPUT)
